@@ -1,56 +1,186 @@
 
 #include "Equalizer.h"
 
-#include <stdio.h>
+//#include <stdio.h>
 
-std::complex<float> pEqW[LTE_PHY_DFT_SIZE_MAX * LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-std::complex<float> pHdm[LTE_PHY_DFT_SIZE_MAX * LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+//std::complex<float> pEqW[LTE_PHY_DFT_SIZE_MAX * LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+//std::complex<float> pHdm[LTE_PHY_DFT_SIZE_MAX * LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
 
-void FDLSEstimation(std::complex<float> pXt[2 * LTE_PHY_N_ANT_MAX],
-					std::complex<float> pXtDagger[LTE_PHY_N_ANT_MAX * 2],
-					std::complex<float> pYt[2 * LTE_PHY_N_ANT_MAX],
-					std::complex<float> pHTranspose[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX],
+
+static void MatrixProd(int d1, int d2, int d3, float M1[], float M2[], float oM[])
+{
+	int r, c, i;
+
+	for (r = 0; r < d1; r++)
+	{
+		for (c = 0; c < d3; c++)
+		{
+			float tmp[2] = {0.0, 0.0};
+			
+			for (i = 0; i < d2; i++)
+			{
+				//	tmp += M1[r * d2 + i] * M2[i * d3 + c];
+				tmp[0] += (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 0] - M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 1]);
+				tmp[1] += (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 1] + M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 0]);
+			}
+		
+			oM[2 * (r * d3 + c) + 0] = tmp[0];
+			oM[2 * (r * d3 + c) + 1] = tmp[1];
+		}
+	}
+}
+
+
+static void MatrixInv(int sz, float pM[], float pInvM[])
+{
+	float pX[LTE_PHY_N_ANT_MAX * 2 * LTE_PHY_N_ANT_MAX * 2];
+
+	for (int r = 0; r < sz; r++)
+	{
+		for (int c = 0; c < sz; c++)
+		{
+			//	pX[r * (2 * sz) + c] = pM[r * sz + c];
+			pX[2 * (r * (2 * sz) + c) + 0] = pM[2 * (r * sz + c) + 0];
+			pX[2 * (r * (2 * sz) + c) + 1] = pM[2 * (r * sz + c) + 1];
+		}
+		for (int c = sz; c < 2 * sz; c++)
+		{
+			if (c == (r + sz))
+			{
+				//	pX[r * (2 * sz) + c] = (std::complex<float>)1.0;
+				pX[2 * (r * (2 * sz) + c) + 0] = 1.0;
+				pX[2 * (r * (2 * sz) + c) + 1] = 0.0;
+			}
+			else
+			{
+				//	pX[r * (2 * sz) + c] = (std::complex<float>)0.0;
+				pX[2 * (r * (2 * sz) + c) + 0] = 0.0;
+				pX[2 * (r * (2 * sz) + c) + 1] = 0.0;
+			}
+		}
+	}
+
+	float pCurRow[2  * LTE_PHY_N_ANT_MAX * 2];
+
+	for (int r = 0; r < sz; r++)
+	{
+		for (int c = 0; c < (2 * sz); c++)
+		{
+			float A[2], B[2];
+			//	pCurRow[c] = pX[r * (2 * sz) + c] / pX[r * (2 * sz) + r];
+			A[0] = pX[2 * (r * (2 * sz) + c) + 0];
+			A[1] = pX[2 * (r * (2 * sz) + c) + 1];
+			B[0] = pX[2 * (r * (2 * sz) + r) + 0];
+			B[1] = pX[2 * (r * (2 * sz) + r) + 1];
+			pCurRow[2 * c + 0] = (A[0] * B[0] + A[1] * B[1]) / (B[0] * B[0] + B[1] * B[1]);
+			pCurRow[2 * c + 1] = (A[1] * B[0] - A[0] * B[1]) / (B[0] * B[0] + B[1] * B[1]);
+		}
+
+		for (int c = 0; c < (2 * sz); c++)
+		{
+			//	pX[r * (2 * sz) + c] = pCurRow[c];
+			pX[2 * (r * (2 * sz) + c) + 0] = pCurRow[2 * c + 0];
+			pX[2 * (r * (2 * sz) + c) + 1] = pCurRow[2 * c + 1];
+		}
+
+		for (int er = r + 1; er < sz; er++)
+		{
+			float curC[2] = {pX[2 * (er * (2 * sz) + r) + 0], pX[2 * (er * (2 * sz) + r) + 1]};
+
+			for (int c = 0; c < (2 * sz); c++)
+			{
+				//	pX[er * (2 * sz) + c] -= curC * pCurRow[c];
+				pX[2 * (er * (2 * sz) + c) + 0] -= (curC[0] * pCurRow[2 * c + 0] - curC[1] * pCurRow[2 * c + 1]);
+				pX[2 * (er * (2 * sz) + c) + 1] -= (curC[0] * pCurRow[2 * c + 1] + curC[1] * pCurRow[2 * c + 0]);
+			}  
+		}
+	}
+
+	for (int r = sz - 1; r >= 0; r--)
+	{
+		for (int c = 0; c < (2 * sz); c++)
+		{
+			//	pCurRow[c] = pX[r * (2 * sz) + c];
+			pCurRow[2 * c + 0] = pX[2 * (r * (2 * sz) + c) + 0];
+			pCurRow[2 * c + 1] = pX[2 * (r * (2 * sz) + c) + 1];
+		}
+
+		for (int er = r - 1; er >= 0; er--)
+		{
+			float curC[2] = {pX[2 * (er * (2 * sz) + r) + 0], pX[2 * (er * (2 * sz) + r) + 1]};
+
+			for (int c = 0; c < (2 * sz); c++)
+			{
+				//	pX[er * (2 * sz) + c] -= curC * pCurRow[c];
+				pX[2 * (er * (2 * sz) + c) + 0] -= (curC[0] * pCurRow[2 * c + 0] - curC[1] * pCurRow[2 * c + 1]);
+				pX[2 * (er * (2 * sz) + c) + 1] -= (curC[0] * pCurRow[2 * c + 1] + curC[1] * pCurRow[2 * c + 0]);
+			}  
+		}
+	}
+
+	for (int r = 0; r < sz; r++)
+	{
+		for (int c = 0; c < sz; c++)
+		{
+			int col = c + sz;
+
+			//	pInvM[r * sz + c] = pX[r * (2 * sz) + col];
+			pInvM[2 * (r * sz + c) + 0] = pX[2 * (r * (2 * sz) + col) + 0];
+			pInvM[2 * (r * sz + c) + 1] = pX[2 * (r * (2 * sz) + col) + 1];
+		}
+
+	}
+}
+
+void FDLSEstimation(float pXt[2 * LTE_PHY_N_ANT_MAX * 2],
+				    float pXtDagger[LTE_PHY_N_ANT_MAX * 2 * 2],
+					float pYt[2 * LTE_PHY_N_ANT_MAX * 2],
+					float pHTranspose[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2],
 					int NumLayer,
 					int NumRxAntenna)
 {
-	std::complex<float> pXDX[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+	float pXDX[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
 
 	MatrixProd(NumLayer, 2, NumLayer, pXtDagger, pXt, pXDX);
 
-	std::complex<float> pInvXDX[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+	float pInvXDX[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
 
 	MatrixInv(NumLayer, pXDX, pInvXDX);
 
-	std::complex<float> pXDY[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+	float pXDY[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
 
 	MatrixProd(NumLayer, 2, NumRxAntenna, pXtDagger, pYt, pXDY);
 
 	MatrixProd(NumLayer, NumLayer, NumRxAntenna, pInvXDX, pXDY, pHTranspose);
 }
 
-void FDLSEqualization(std::complex<float> pInpData[N_EQ_IN_MAX],
-					  std::complex<float> pHTranspose[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX],
+void FDLSEqualization(float pInpData[N_EQ_IN_MAX * 2],
+					  float pHTranspose[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2],
 					  int m,
 					  int NumLayer,
 					  int NumRxAntenna,
 					  int MDFTPerUser,
-					  std::complex<float> pOutData[N_EQ_OUT_MAX])
+					  float pOutData[N_EQ_OUT_MAX * 2])
 {
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
 //////////////////// Freq Domain Equalize received Data /////////////////
-	std::complex<float> pH[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-	std::complex<float> pHDagger[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-	std::complex<float> pHDH[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-	std::complex<float> pInvHDH[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+	float pH[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
+	float pHDagger[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
+	float pHDH[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
+	float pInvHDH[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
 
-	std::complex<float> pHDY[LTE_PHY_N_ANT_MAX];
+	float pHDY[LTE_PHY_N_ANT_MAX * 2];
 
 	for (int nrx = 0; nrx < NumRxAntenna; nrx++)
 	{
 		for (int layer = 0; layer < NumLayer; layer++)
 		{
-			pH[nrx * NumLayer + layer] = pHTranspose[layer * NumRxAntenna + nrx];
-			pHDagger[layer * NumRxAntenna + nrx] = conj(pHTranspose[layer * NumRxAntenna + nrx]);
+			//	pH[nrx * NumLayer + layer] = pHTranspose[layer * NumRxAntenna + nrx];
+			pH[2 * (nrx * NumLayer + layer) + 0] = pHTranspose[2 * (layer * NumRxAntenna + nrx) + 0];
+			pH[2 * (nrx * NumLayer + layer) + 1] = pHTranspose[2 * (layer * NumRxAntenna + nrx) + 1];
+			//	pHDagger[layer * NumRxAntenna + nrx] = conj(pHTranspose[layer * NumRxAntenna + nrx]);
+			pHDagger[2 * (layer * NumRxAntenna + nrx) + 0] = pHTranspose[2 * (layer * NumRxAntenna + nrx) + 0];
+			pHDagger[2 * (layer * NumRxAntenna + nrx) + 1] = (-1.0) * pHTranspose[2 * (layer * NumRxAntenna + nrx) + 1];
 		}
 	}
 
@@ -58,19 +188,21 @@ void FDLSEqualization(std::complex<float> pInpData[N_EQ_IN_MAX],
 	MatrixInv(NumLayer, pHDH, pInvHDH);
 
 	////////////////// Equalizing Data /////////////////
-	for(int nSymb=0;nSymb<NumULSymbSF-2;nSymb++)
+	for (int nSymb = 0; nSymb < NumULSymbSF - 2; nSymb++)
 	{
-		std::complex<float> pYData[LTE_PHY_N_ANT_MAX];
+		float pYData[LTE_PHY_N_ANT_MAX * 2];
 
-		for(int nrx=0;nrx<NumRxAntenna;nrx++)
+		for (int nrx = 0; nrx < NumRxAntenna; nrx++)
 		{
-			int IDX=(NumULSymbSF-2)*nrx+nSymb+2*NumRxAntenna;
+			int IDX = (NumULSymbSF - 2) * nrx + nSymb + 2 * NumRxAntenna;
 			//	*(pYData+nrx)=*(*(pInpData+IDX)+m);
-			pYData[nrx] = pInpData[IDX * MDFTPerUser + m];
+			//	pYData[nrx] = pInpData[IDX * MDFTPerUser + m];
+			pYData[2 * nrx + 0] = pInpData[2 * (IDX * MDFTPerUser + m) + 0];
+			pYData[2 * nrx + 1] = pInpData[2 * (IDX * MDFTPerUser + m) + 1];
 		}
 		MatrixProd(NumLayer, NumRxAntenna, 1, pHDagger, pYData, pHDY);
 
-		std::complex<float> pXData[LTE_PHY_N_ANT_MAX];
+		float pXData[LTE_PHY_N_ANT_MAX];
 		MatrixProd(NumLayer, NumLayer, 1, pInvHDH, pHDY, pXData);
 
 		/*
@@ -111,10 +243,12 @@ void FDLSEqualization(std::complex<float> pInpData[N_EQ_IN_MAX],
 		
 		for (int layer = 0; layer < NumLayer; layer++)
 		{
-			int IDX = (NumULSymbSF-2)*layer+nSymb;
+			int IDX = (NumULSymbSF - 2) * layer + nSymb;
 			
 			//	*(*(pOutData+IDX)+m)=*(pXData+layer);
-			pOutData[IDX * MDFTPerUser + m] = pXData[layer];
+			//	pOutData[IDX * MDFTPerUser + m] = pXData[layer];
+			pOutData[2 * (IDX * MDFTPerUser + m) + 0] = pXData[2 * layer + 0];
+			pOutData[2 * (IDX * MDFTPerUser + m) + 1] = pXData[2 * layer + 1];
 		}
 	}
 }
@@ -206,37 +340,43 @@ void FDMMSEEqualization(std::complex<float> *pInpData, std::complex<float>** pHT
 }
 */
 
-void LSFreqDomain(std::complex<float> pInpData[N_EQ_IN_MAX], std::complex<float> pOutData[N_EQ_OUT_MAX], int MDFT, int NumLayer, int NumRxAntenna)
+void LSFreqDomain(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX * 2], int MDFT, int NumLayer, int NumRxAntenna)
 {
-	std::complex<float> pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX];
+	float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2];
 //	pDMRS = (*VpUser).GetpDMRS();
 	geneDMRS(pDMRS, NumLayer, MDFT);
   
-	for(int m=0;m<MDFT;m++)
+	for (int m = 0; m < MDFT; m++)
 	{
-		std::complex<float> pXt[2 * LTE_PHY_N_ANT_MAX];
-		std::complex<float> pXtDagger[LTE_PHY_N_ANT_MAX * 2];
+		float pXt[2 * LTE_PHY_N_ANT_MAX * 2];
+		float pXtDagger[LTE_PHY_N_ANT_MAX * 2 * 2];
 
-		for(int slot=0;slot<2;slot++)
+		for (int slot = 0; slot < 2; slot++)
 		{
-			for(int layer=0;layer<NumLayer;layer++)
+			for (int layer = 0; layer < NumLayer; layer++)
 			{
-				pXt[slot * NumLayer + layer] = pDMRS[(slot * NumLayer + layer) * MDFT + m];
-				pXtDagger[layer * 2 + slot] = conj(pDMRS[(slot * NumLayer + layer) * MDFT + m]);
+				//	pXt[slot * NumLayer + layer] = pDMRS[(slot * NumLayer + layer) * MDFT + m];
+				pXt[2 * (slot * NumLayer + layer) + 0] = pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 0];
+				pXt[2 * (slot * NumLayer + layer) + 1] = pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 1];
+				//	pXtDagger[layer * 2 + slot] = conj(pDMRS[(slot * NumLayer + layer) * MDFT + m]);
+				pXtDagger[2 * (layer * 2 + slot) + 0] = pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 0];
+				pXtDagger[2 * (layer * 2 + slot) + 1] = (-1.0) * pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 1];
 			}
 		}
 
-		std::complex<float> pYt[2 * LTE_PHY_N_ANT_MAX];
+		float pYt[2 * LTE_PHY_N_ANT_MAX * 2];
 
-		for(int slot=0;slot<2;slot++)
+		for (int slot = 0; slot < 2; slot++)
 		{
-			for(int nrx=0;nrx<NumRxAntenna;nrx++)
+			for (int nrx = 0; nrx < NumRxAntenna; nrx++)
 			{
-				pYt[slot * NumRxAntenna + nrx] = pInpData[(nrx * 2 + slot) * MDFT + m];
+				//	pYt[slot * NumRxAntenna + nrx] = pInpData[(nrx * 2 + slot) * MDFT + m];
+				pYt[2 * (slot * NumRxAntenna + nrx) + 0] = pInpData[2 * ((nrx * 2 + slot) * MDFT + m) + 0];
+				pYt[2 * (slot * NumRxAntenna + nrx) + 1] = pInpData[2 * ((nrx * 2 + slot) * MDFT + m) + 1];
 			}
 		}
 
-		std::complex<float> pHTranspose[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
+		float pHTranspose[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX * 2];
 
 		FDLSEstimation(pXt, pXtDagger, pYt, pHTranspose, NumLayer, NumRxAntenna);
 
@@ -244,7 +384,7 @@ void LSFreqDomain(std::complex<float> pInpData[N_EQ_IN_MAX], std::complex<float>
 	}
 }
 
-void Equalizing(std::complex<float> pInpData[N_EQ_IN_MAX], std::complex<float> pOutData[N_EQ_OUT_MAX], int MDFT, int NumLayer, int NumRxAntenna)
+void Equalizing(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX * 2], int MDFT, int NumLayer, int NumRxAntenna)
 {
 //	int MDFT = lte_phy_params->N_dft_sz;
 //	int NumLayer = lte_phy_params->N_tx_ant;

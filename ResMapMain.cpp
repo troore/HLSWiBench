@@ -1,7 +1,6 @@
 
 #include "ResMapMain.h"
 
-
 //#define SCMapper
 	
 int RANDOMSEED;

@@ -13,7 +13,7 @@
 #include <stdexcept>
 
 #include "gauss.h"
-#include "matrix.h"
+//#include "matrix.h"
 #include "GeneralFunc.h"
 
 #include "ResMapper.h"

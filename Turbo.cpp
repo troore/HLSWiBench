@@ -1,6 +1,4 @@
 
-//#include <string.h>
-//#include <limits.h>
 #include <stdio.h>
 
 #include "Turbo.h"
@@ -26,14 +24,6 @@ int g_output_parity[N_STATES * (N_GENS - 1) * 2];
 int g_rev_output_parity[N_STATES * (N_GENS - 1) * 2];
 
 float Lc;
-
-//std::string metric;
-//float (*com_log)(float, float);
-
-//! Constant definition to speed up trunc_log() and trunc_exp()
-//const double log_double_max = log(std::numeric_limits<double>::max());
-//! Constant definition to speed up trunc_log(), trunc_exp() and log_add()
-//const double log_double_min = log(std::numeric_limits<double>::min());
 
 /*****************End of globals*****************/
 
@@ -97,37 +87,6 @@ float max_log(float a, float b)
 	return (a > b) ? a : b;
 }
 
-/*
-float add_log(float a, float b)
-{
-	float negdelta;
-	
-	if (a < b)
-	{
-		float tmp = a;
-		
-		a = b;
-		b = tmp;
-	}
-	
-	negdelta = b - a;
-	if ((negdelta < log_double_min) || isnan(negdelta))
-		return a;
-	else
-		return (a + log1p(exp(negdelta)));
-}
-*/
-
-/*
-void turbo_init()
-{
-	set_generator_polynomials(g_gens, N_GENS, CST_LEN);
-	
-	Lc = 1.0;
-	com_log = max_log;
-}
-*/
-
 void set_generator_polynomials(int gens[N_GENS], int n_gens, int constraint_length)
 {
 	int i, j;
@@ -171,7 +130,6 @@ void set_generator_polynomials(int gens[N_GENS], int n_gens, int constraint_leng
 	}
 }
 
-/*
 //template <typename T>
 //void internal_interleaver(T in[BLOCK_SIZE], T out[BLOCK_SIZE], int m)
 void internal_interleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
@@ -206,7 +164,6 @@ void internal_interleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
         out[i] = in[idx];
     }
 }
-*/
 
 void internal_interleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
 {
@@ -240,7 +197,6 @@ void internal_interleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
     }
 }
 
-/*
 //template <typename T>
 //void internal_deinterleaver(T in[BLOCK_SIZE], T out[BLOCK_SIZE], int m)
 void internal_deinterleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
@@ -275,7 +231,6 @@ void internal_deinterleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
         out[idx] = in[i];
     }
 }
-*/
 
 void internal_deinterleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
 {
@@ -309,7 +264,6 @@ void internal_deinterleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
     }
 }
 
-/*
 void constituent_encoder(int input[BLOCK_SIZE], int input_len, int tail[N_TAIL], int parity[(N_UNCODED + N_TAIL) * (N_GENS - 1)])
 {
 	int i, j;
@@ -470,7 +424,6 @@ void encode_block(int input_bits[BLOCK_SIZE],
 	// the second encoder
 	constituent_encoder(interleaved_input_bits, blk_len, tail2, parity2);
 }
-*/
 
 int calc_state_transition(int instate, int input, int parity[N_GENS - 1])
 {

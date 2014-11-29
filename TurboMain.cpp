@@ -5,13 +5,12 @@
 
 LTE_PHY_PARAMS lte_phy_params;
 
-/*
 void test_turbo_encoding(LTE_PHY_PARAMS *lte_phy_params)
 {
 	std::cout << "Turbo Encoder starts" << std::endl;
 	
-	ReadInputFromFiles(lte_phy_params->te_in, lte_phy_params->te_in_buf_sz, "TurboEncoderInput");
-//	GeneRandomInput(lte_phy_params->te_in, lte_phy_params->te_in_buf_sz, "TurboEncoderInput");
+//	ReadInputFromFiles(lte_phy_params->te_in, lte_phy_params->te_in_buf_sz, "TurboEncoderInput");
+	GeneRandomInput(lte_phy_params->te_in, lte_phy_params->te_in_buf_sz, "TurboEncoderInput");
 //	WriteOutputToFiles(lte_phy_params->te_in, lte_phy_params->te_in_buf_sz, "TurboEncoderInput");
 
 
@@ -21,7 +20,6 @@ void test_turbo_encoding(LTE_PHY_PARAMS *lte_phy_params)
 
 	std::cout << "Turbo Encoder ends" << std::endl;
 }
-*/
 
 void test_turbo_decoding(LTE_PHY_PARAMS *lte_phy_params, int n_iters)
 {

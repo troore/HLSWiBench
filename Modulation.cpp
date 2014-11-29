@@ -204,7 +204,7 @@ void set_mod_params( p_a *pp_table, int *bits_per_samp, int *mod_table_len, int 
 
 */
 
-void Modulating(/*LTE_PHY_PARAMS *lte_phy_params, */int pBitsSeq[N_MOD_IN_MAX], std::complex<float> pModedSeq[N_MOD_OUT_MAX], int in_buf_sz, int mod_type)
+void Modulating(/*LTE_PHY_PARAMS *lte_phy_params, */int pBitsSeq[N_MOD_IN_MAX], float pModedSeq[N_MOD_OUT_MAX * 2], int in_buf_sz, int mod_type)
 {
 	float I, Q;
 //	float (*p_table)[2];
@@ -218,6 +218,7 @@ void Modulating(/*LTE_PHY_PARAMS *lte_phy_params, */int pBitsSeq[N_MOD_IN_MAX], 
 //	in_buf_sz = lte_phy_params->mod_in_buf_sz;
 
 //	set_mod_params(&p_table, &bits_per_samp, &mod_table_len, mod_type);
+	init_mod_tables();
 
 	bits_per_samp = QAM16_BITS_PER_SAMP;
 	mod_table_len = QAM16_TABLE_LEN;
@@ -239,7 +240,9 @@ void Modulating(/*LTE_PHY_PARAMS *lte_phy_params, */int pBitsSeq[N_MOD_IN_MAX], 
 		I = QAM16_table[idx][0];
 		Q = QAM16_table[idx][1];
 		
-		pModedSeq[n_samp] = std::complex<float>(I, Q);
+		//	pModedSeq[n_samp] = std::complex<float>(I, Q);
+		pModedSeq[2 * n_samp + 0] = I;
+		pModedSeq[2 * n_samp + 1] = Q;
 	}
 }
 
@@ -250,9 +253,9 @@ float vecmin(float pV[MAX_MOD_TABLE_LEN / 2], int len)
 	
 	for (i = 0; i < len; i++)
 	{
-		if (*(pV + i) < minValue)
+		if (pV[i] < minValue)
 		{
-			minValue=*(pV + i);
+			minValue = pV[i];
 		}
 		else
 		{}
@@ -326,7 +329,7 @@ void Demodulating(std::complex<float> pDecSeq[N_MOD_OUT_MAX], int pHD[N_MOD_IN_M
 }
 */
 
-void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */std::complex<float> pDecSeq[N_MOD_OUT_MAX], float pLLR[N_MOD_IN_MAX], int in_buf_sz, int mod_type, float awgnSigma)
+void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MAX * 2], float pLLR[N_MOD_IN_MAX], int in_buf_sz, int mod_type, float awgnSigma)
 {
 
 	float No = 2.0 * (pow(awgnSigma, 2.0));
@@ -345,6 +348,7 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */std::complex<float> pDecSe
 //	in_buf_sz = lte_phy_params->demod_in_buf_sz;
 
 //	set_mod_params(&p_table, &bits_per_samp, &mod_table_len, mod_type);
+	init_mod_tables();
 
 	bits_per_samp = QAM16_BITS_PER_SAMP;
 	mod_table_len = QAM16_TABLE_LEN;
@@ -376,8 +380,13 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */std::complex<float> pDecSe
 		{
 			//	metric[j] = pow(abs((pDecSeq[i] - (std::complex<float>(p_table[j][0], p_table[j][1])))), 2.0);
 			//	metric[j] = pow(abs((pDecSeq[i] - (std::complex<float>(QAM16_table[j][0], QAM16_table[j][1])))), 2.0);
-			std::complex<float> tmp = pDecSeq[i] - (std::complex<float>(QAM16_table[j][0], QAM16_table[j][1]));
-			metric[j] = tmp.imag() * tmp.imag() + tmp.real() * tmp.real();
+			//	std::complex<float> tmp = pDecSeq[i] - (std::complex<float>(QAM16_table[j][0], QAM16_table[j][1]));
+			//	metric[j] = tmp.imag() * tmp.imag() + tmp.real() * tmp.real();
+			float tmp[2];
+			
+			tmp[0] = pDecSeq[2 * i + 0] - QAM16_table[j][0];
+			tmp[1] = pDecSeq[2 * i + 1] - QAM16_table[j][1];
+			metric[j] = tmp[0] * tmp[0] + tmp[1] * tmp[1];
 		}
 
 		for (j = 0; j < bits_per_samp; j++)
