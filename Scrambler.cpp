@@ -13,7 +13,7 @@ void Scrambling(/*LTE_PHY_PARAMS *lte_phy_params, */int pInpSeq[N_SCRAMB_IN_MAX]
 	GenScrambInt(scramb_seq_int, n);
 
 	////////////////////////Scrambling////////////////////////////
-	for (i = 0; i < n; i++)
+	Scrambling_label1:for (i = 0; i < n; i++)
 	{
 		pOutSeq[i] = (pInpSeq[i] + scramb_seq_int[i]) % 2;
 	}
@@ -56,6 +56,44 @@ void Descrambling(/*LTE_PHY_PARAMS *lte_phy_params, */float pInpSeq[N_SCRAMB_IN_
 	}
 }
 
+/*
+void GenScramLoop1(int px1[], int px2[]){
+	int n_init[31] = { 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0};
+	int i;
+
+	GenScramLoop1_label:for (i = 0; i < 31; i++)
+		{
+#pragma HLS PIPELINE
+			px1[i] = 0;
+			px2[i] = n_init[i];
+		}
+		px1[0] = 1;
+}
+
+void GenScramLoop2(int array1[], int array2[], int n){
+	int i;
+	GenScramLoop2_label:for (i = 0; i < 7200 + 1600 - 31; i++)
+		{
+#pragma HLS PIPELINE
+			if(i >= n + 1600 -31)
+				break;
+			array1[i + 31] =(array1[i + 3] + array1[i]) % 2;
+			array2[i + 31] = (array2[i + 3] + array2[i + 2] + array2[i + 1] + array2[i]) % 2;
+		}
+}
+
+void GenScramLoop3(int array1[], int array2[], int arrayout[], int n){
+	int i;
+	GenScramLoop3_label:for (i = 0; i < 7200; i++)
+		{
+#pragma HLS PIPELINE
+			if(i >= n)
+				break;
+			arrayout[i] = (array1[i + 1600] + array2[i + 1600]) % 2;
+		}
+}
+*/
+
 void GenScrambInt(int pScrambInt[N_SCRAMB_IN_MAX], int n)
 {
 	int i;
@@ -67,23 +105,54 @@ void GenScrambInt(int pScrambInt[N_SCRAMB_IN_MAX], int n)
 	int px1[N_SCRAMB_IN_MAX + 1600];
 	int px2[N_SCRAMB_IN_MAX + 1600];
 
+
 	for (i = 0; i < 31; i++)
 	{
 		px1[i] = 0;
 		px2[i] = n_init[i];
 	}
 	px1[0] = 1;
-	
-	for (i = 0; i < n + N_c - 31; i++)
+
+
+	/*
+	GenScramLoop1(px1, px2);
+	GenScramLoop2(px1, px2, n);
+	GenScramLoop3(px1, px2, pScrambInt, n);
+	*/
+
+	int px2_tmp0, px2_tmp1, px2_tmp2, px2_tmp3, px1_tmp0, px1_tmp1, px1_tmp2, px1_tmp3, px1_tmp4, px1_tmp5;
+	px2_tmp0 = px2[0];
+	px2_tmp1 = px2[1];
+	px2_tmp2 = px2[2];
+	px1_tmp0 = px1[0];
+	px1_tmp1 = px1[1];
+	px1_tmp2 = px1[2];
+
+	GenScrambInt_label2:for (i = 0; i < 7200 + N_c - 31; i++)
 	{
-		px1[i + 31] =(px1[i + 3] + px1[i]) % 2;
-		px2[i + 31] = (px2[i + 3] + px2[i + 2] + px2[i + 1] + px2[i]) % 2;
+#pragma HLS PIPELINE
+		if(i >= n + N_c -31)
+			break;
+		px1_tmp3 = px1[i + 3];
+		px1[i + 31] = (px1_tmp3 + px1_tmp0) % 2;
+		px1_tmp0 = px1_tmp1;
+		px1_tmp1 = px1_tmp2;
+		px1_tmp2 = px1_tmp3;
+
+		px2_tmp3 = px2[i + 3];
+		px2[i + 31] = (px2_tmp3 + px2_tmp2 + px2_tmp1 + px2_tmp0) % 2;
+		px2_tmp0 = px2_tmp1;
+		px2_tmp1 = px2_tmp2;
+		px2_tmp2 = px2_tmp3;
 	}
-	for (i = 0; i < n; i++)
+	GenScrambInt_label3:for (i = 0; i < 7200; i++)
 	{
-		pScrambInt[i] = 3; // What is this? Any use?
+#pragma HLS PIPELINE
+		if(i >= n)
+			break;
 		pScrambInt[i] = (px1[i + N_c] + px2[i + N_c]) % 2;
 	}
+
 	/////////////////////END Generate ScrambSeq///////////////////////
 }
 

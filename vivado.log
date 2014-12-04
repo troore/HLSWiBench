@@ -1,0 +1,17 @@
+#-----------------------------------------------------------
+# Vivado v2013.4 (64-bit)
+# SW Build 353583 on Mon Dec  9 17:26:26 MST 2013
+# IP Build 208076 on Mon Dec  2 12:38:17 MST 2013
+# Start of session at: Wed Dec  3 11:05:36 2014
+# Process ID: 8002
+# Log file: /home/bliang/vivado/HLSWiBench/vivado.log
+# Journal file: /home/bliang/vivado/HLSWiBench/vivado.jou
+#-----------------------------------------------------------
+Attempting to get a license: Implementation
+Feature available: Implementation
+Loading parts and site information from /opt/Xilinx/Vivado/2013.4/data/parts/arch.xml
+Parsing RTL primitives file [/opt/Xilinx/Vivado/2013.4/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+Finished parsing RTL primitives file [/opt/Xilinx/Vivado/2013.4/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+start_gui
+exit
+INFO: [Common 17-206] Exiting Vivado at Wed Dec  3 11:08:49 2014...
