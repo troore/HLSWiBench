@@ -81,7 +81,7 @@ void GenScrambInt(int pScrambInt[N_SCRAMB_IN_MAX], int n)
 	}
 	for (i = 0; i < n; i++)
 	{
-		pScrambInt[i] = 3; // What is this? Any use?
+		//	pScrambInt[i] = 3; // What is this? Any use?
 		pScrambInt[i] = (px1[i + N_c] + px2[i + N_c]) % 2;
 	}
 	/////////////////////END Generate ScrambSeq///////////////////////

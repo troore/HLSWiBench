@@ -8,18 +8,24 @@ void ReadInputFromFiles(int *pIn, int Sz, const char *name)
 	FILE *file;
 
 	if((file=fopen(name,"r"))==NULL)
-		throw std::runtime_error ("file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
 	for(int i = 0;i < Sz; i++)
 	{
 		if(fscanf(file,"%d",(pIn+i)) == EOF)
 		{
 			if(ferror(file) != 0)
-				throw std::runtime_error ("file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 
 	}
-	
+
 	fclose(file);
 }
 
@@ -28,42 +34,48 @@ void ReadInputFromFiles(float *pIn,int Sz, const char *name)
 	FILE *file;
 
 	if((file=fopen(name,"r"))==NULL)
-		throw std::runtime_error ("file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
-//	float *pReadIn=new float[(Sz[0]*Sz[1])];
+	//	float *pReadIn=new float[(Sz[0]*Sz[1])];
 	for(int i=0; i < Sz; i++)
 	{
 		if(fscanf(file, "%f", (pIn+i)) == EOF)
 		{
 			if(ferror(file) != 0)
-				throw std::runtime_error ("file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 
 	}
 	fclose(file);
 
 	/*
-	if(Sz[0]==1)
-	{bool flag = (*pIn).Write(pReadIn);}
-	else
-	{
-		float **pReadMatrix=new float*[Sz[0]];
-		for(int r=0;r<Sz[0];r++){*(pReadMatrix+r)=new float[Sz[1]];}
+	   if(Sz[0]==1)
+	   {bool flag = (*pIn).Write(pReadIn);}
+	   else
+	   {
+	   float **pReadMatrix=new float*[Sz[0]];
+	   for(int r=0;r<Sz[0];r++){*(pReadMatrix+r)=new float[Sz[1]];}
 
-		for(int r=0;r<Sz[0];r++)
-		{
-			for(int c=0;c<Sz[1];c++)
-			{
-				*(*(pReadMatrix+r)+c)=*(pReadIn+r*Sz[1]+c);
-			}
-		}
-		bool flag = (*pIn).Write(pReadMatrix);
-		for(int r=0;r<Sz[0];r++){delete[] *(pReadMatrix+r);}
-		delete[] pReadMatrix;
-	}
+	   for(int r=0;r<Sz[0];r++)
+	   {
+	   for(int c=0;c<Sz[1];c++)
+	   {
+	 *(*(pReadMatrix+r)+c)=*(pReadIn+r*Sz[1]+c);
+	 }
+	 }
+	 bool flag = (*pIn).Write(pReadMatrix);
+	 for(int r=0;r<Sz[0];r++){delete[] *(pReadMatrix+r);}
+	 delete[] pReadMatrix;
+	 }
 
-	delete[] pReadIn;
-	*/
+	 delete[] pReadIn;
+	 */
 }
 
 
@@ -72,23 +84,32 @@ void ReadInputFromFiles(complex<float> *pIn, int Sz, const char *nameReal, const
 	FILE *file;
 
 	if((file=fopen(nameReal,"r"))==NULL)
-		throw std::runtime_error ("file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
 	float *pReadInReal=new float[Sz];
-	
+
 	for(int i=0;i<Sz;i++)
 	{
 		if(fscanf(file,"%f",(pReadInReal+i)) == EOF)
 		{
 			if(ferror(file) != 0)
-				throw std::runtime_error ("file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 
 	}
 	fclose(file);
 
 	if((file=fopen(nameImag,"r"))==NULL)
-		throw std::runtime_error ("file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
 	float *pReadInImag=new float[Sz];
 	for(int i=0;i<Sz;i++)
@@ -96,7 +117,10 @@ void ReadInputFromFiles(complex<float> *pIn, int Sz, const char *nameReal, const
 		if(fscanf(file,"%f",(pReadInImag+i)) == EOF)
 		{
 			if(ferror(file) != 0)
-				throw std::runtime_error ("file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 
 	}
@@ -116,23 +140,32 @@ void ReadInputFromFiles(float *pIn, int Sz, const char *nameReal, const char *na
 	FILE *file;
 
 	if((file=fopen(nameReal,"r"))==NULL)
-		throw std::runtime_error ("file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
 	float *pReadInReal=new float[Sz];
-	
+
 	for(int i=0;i<Sz;i++)
 	{
 		if(fscanf(file,"%f",(pReadInReal+i)) == EOF)
 		{
 			if(ferror(file) != 0)
-				throw std::runtime_error ("file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 
 	}
 	fclose(file);
 
 	if((file=fopen(nameImag,"r"))==NULL)
-		throw std::runtime_error ("file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
 	float *pReadInImag=new float[Sz];
 	for(int i=0;i<Sz;i++)
@@ -140,7 +173,10 @@ void ReadInputFromFiles(float *pIn, int Sz, const char *nameReal, const char *na
 		if(fscanf(file,"%f",(pReadInImag+i)) == EOF)
 		{
 			if(ferror(file) != 0)
-				throw std::runtime_error ("file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 
 	}
@@ -148,7 +184,7 @@ void ReadInputFromFiles(float *pIn, int Sz, const char *nameReal, const char *na
 
 	for(int i=0;i<Sz;i++)
 	{
-	//	pIn[i]=complex<float>(pReadInReal[i], pReadInImag[i]);
+		//	pIn[i]=complex<float>(pReadInReal[i], pReadInImag[i]);
 		pIn[2 * i + 0] = pReadInReal[i];
 		pIn[2 * i + 1] = pReadInImag[i];
 	}
@@ -164,24 +200,36 @@ void ReadInputFromFiles(float (*pIn)[2], int Sz, const char *nameReal, const cha
 	int i;
 
 	if ((real_file = fopen(nameReal, "r")) == NULL)
-		throw std::runtime_error ("real file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 	if ((imag_file = fopen(nameImag, "r")) == NULL)
-		throw std::runtime_error ("imag file open error\n");
+	{
+		printf("file operation error.\n"); 
+		exit(1); 
+	}
 
 	for (i = 0; i < Sz; i++)
 	{
 		if (fscanf(real_file, "%f", &(pIn[i][0])) == EOF)
 		{
 			if (ferror(real_file) != 0)
-				throw std::runtime_error ("real file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 		if (fscanf(imag_file, "%f", &(pIn[i][1])) == EOF)
 		{
 			if (ferror(imag_file) != 0)
-				throw std::runtime_error ("imag file read error\n");
+			{
+				printf("file operation error.\n"); 
+				exit(1); 
+			}
 		}
 	}
-	
+
 	fclose(real_file);
 	fclose(imag_file);
 }
@@ -242,9 +290,9 @@ void GeneRandomInput(float *pIn, int Sz, const char *name)
 
 void GeneRandomInput(complex<float> *pIn, int Sz, const char *nameReal, const char *nameImag)
 {
-    FILE *fptr_real=NULL;
-    FILE *fptr_imag=NULL;
-    int sd = -111;
+	FILE *fptr_real=NULL;
+	FILE *fptr_imag=NULL;
+	int sd = -111;
 
 	complex<float> *pRandom=new complex<float>[Sz];
 
@@ -268,9 +316,9 @@ void GeneRandomInput(complex<float> *pIn, int Sz, const char *nameReal, const ch
 
 void GeneRandomInput(float (*pIn)[2], int Sz, const char *nameReal, const char *nameImag)
 {
-    FILE *fptr_real=NULL;
-    FILE *fptr_imag=NULL;
-    int sd = -111;
+	FILE *fptr_real=NULL;
+	FILE *fptr_imag=NULL;
+	int sd = -111;
 
 	fptr_real = fopen(nameReal, "w+");
 	fptr_imag = fopen(nameImag, "w+");
@@ -307,7 +355,7 @@ void WriteOutputToFiles(int *pOut, int Sz, const char *name)
 void WriteOutputToFiles(float *pOut, int Sz, const char *name)
 {
 	FILE *fptr=NULL;
-	
+
 	fptr = fopen(name,"w+");
 	for(int i=0;i<Sz;i++)
 	{
@@ -321,16 +369,16 @@ void WriteOutputToFiles(complex<float> *pOut, int Sz, const char *nameReal, cons
 {
 	FILE *fptr_real=NULL;
 	FILE *fptr_imag=NULL;
-	
+
 	fptr_real = fopen(nameReal, "w+");
 	fptr_imag = fopen(nameImag, "w+");
-	
+
 	for(int i=0;i<Sz;i++)
 	{
 		fprintf(fptr_real,"%f\t",(pOut[i]).real());
 		fprintf(fptr_imag,"%f\t",(pOut[i]).imag());
 	}
-	
+
 	fclose(fptr_real);
 	fclose(fptr_imag);
 }
@@ -339,16 +387,16 @@ void WriteOutputToFiles(float *pOut, int Sz, const char *nameReal, const char *n
 {
 	FILE *fptr_real=NULL;
 	FILE *fptr_imag=NULL;
-	
+
 	fptr_real = fopen(nameReal, "w+");
 	fptr_imag = fopen(nameImag, "w+");
-	
+
 	for(int i=0;i<Sz;i++)
 	{
 		fprintf(fptr_real,"%f\t",pOut[2 * i + 0]);
 		fprintf(fptr_imag,"%f\t",pOut[2 * i + 1]);
 	}
-	
+
 	fclose(fptr_real);
 	fclose(fptr_imag);
 }
@@ -357,16 +405,16 @@ void WriteOutputToFiles(float (*pOut)[2], int Sz, const char *nameReal, const ch
 {
 	FILE *fptr_real = NULL;
 	FILE *fptr_imag = NULL;
-	
+
 	fptr_real = fopen(nameReal, "w+");
 	fptr_imag = fopen(nameImag, "w+");
-	
+
 	for(int i=0;i<Sz;i++)
 	{
 		fprintf(fptr_real, "%f\n", pOut[i][0]);
 		fprintf(fptr_imag, "%f\n", pOut[i][1]);
 	}
-	
+
 	fclose(fptr_real);
 	fclose(fptr_imag);
 }
@@ -380,11 +428,11 @@ void GenerateLTEChainInput(int *pDataSource, int DataK, int *pTxDS, int RANDOMSE
 	{
 		sd -= i;
 		v = (float)gauss1(&sd);
-		
+
 		pTxDS[i] = (v > 0) ? 1 : 0;
 	}
 
-//	(*pDataSource).Write(pTxDS);
+	//	(*pDataSource).Write(pTxDS);
 	for (int i = 0; i < DataK; i++)
 	{
 		pDataSource[i] = pTxDS[i];
@@ -393,7 +441,7 @@ void GenerateLTEChainInput(int *pDataSource, int DataK, int *pTxDS, int RANDOMSE
 
 void ReadLTEChainOutput(int *pFileSink, int *pRxFS, int DataK)
 {
-//	(*pFileSink).Read(pRxFS);
+	//	(*pFileSink).Read(pRxFS);
 	for (int i = 0; i < DataK; i++)
 	{
 		pRxFS[i] = pFileSink[i];
