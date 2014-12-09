@@ -12,7 +12,7 @@
 #include <fstream>
 #include <stdexcept>
 #include "gauss.h"
-#include "FIFO.h"
+//#include "FIFO.h"
 
 using namespace std;
 
@@ -38,10 +38,6 @@ void WriteOutputToFiles(complex<float> *pOut, int Sz, const char *nameReal, cons
 void WriteOutputToFiles(float *pOut, int Sz, const char *nameReal, const char *nameImag);
 void WriteOutputToFiles(float (*pOut)[2], int Sz, const char *nameReal, const char *nameImag);
 
-void ReadOutput(FIFO<int> *pOut,int Sz[]);
-void ReadOutput(FIFO<float> *pOut,int Sz[]);
-void ReadOutput(FIFO<complex<float> > *pOut,int Sz[]);
-
 
 //void GenerateLTEChainInput(FIFO<int> *pDataSource, int DataK, int *pTxDS);
 void GenerateLTEChainInput(int *pDataSource, int DataK, int *pTxDS, int RANDOMSEED);
@@ -51,3 +47,4 @@ void ReadLTEChainOutput(int *pFileSink, int *pRxFS, int DataK);
 
 
 
+>>>>>>> f686e8cf0292a4ef0b7122b5396ef524df532605
