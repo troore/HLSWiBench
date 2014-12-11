@@ -45,6 +45,3 @@ void ReadLTEChainOutput(int *pFileSink, int *pRxFS, int DataK);
 
 #endif
 
-
-
->>>>>>> f686e8cf0292a4ef0b7122b5396ef524df532605

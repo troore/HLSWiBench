@@ -1,0 +1,118 @@
+@I [LIC-101] Checked out feature [VIVADO_HLS]
+@I [HLS-10] Running '/home/troore/Public/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
+            for user 'troore' on host 'debian.pku.edu' (Linux_x86_64 version 3.2.0-4-amd64) on Thu Dec 11 14:23:55 HKT 2014
+            in directory '/home/troore/Projects/comm/HLSWiBench/Modulation'
+@I [HLS-10] Opening project '/home/troore/Projects/comm/HLSWiBench/Modulation/demod_prj'.
+@I [HLS-10] Adding design file 'Modulation.cpp' to the project.
+@I [HLS-10] Adding test bench file 'ModMain.cpp' to the project.
+@I [HLS-10] Adding test bench file 'testModulationOutputReal' to the project.
+@I [HLS-10] Adding test bench file 'testModulationOutputImag' to the project.
+@I [HLS-10] Adding test bench file '../GeneralFunc.cpp' to the project.
+@I [HLS-10] Adding test bench file '../gauss.cpp' to the project.
+@I [HLS-10] Adding test bench file '../lte_phy.cpp' to the project.
+@I [HLS-10] Opening solution '/home/troore/Projects/comm/HLSWiBench/Modulation/demod_prj/solution1'.
+@I [SYN-201] Setting up clock 'default' with a period of 10ns.
+@I [HLS-10] Setting target device to 'xc7vx980tffg1930-2'
+@I [HLS-10] Importing test bench file '../lte_phy.cpp' ... 
+@I [HLS-10] Importing test bench file '../gauss.cpp' ... 
+@I [HLS-10] Importing test bench file '../GeneralFunc.cpp' ... 
+@I [HLS-10] Importing test bench file 'testModulationOutputImag' ... 
+@I [HLS-10] Importing test bench file 'testModulationOutputReal' ... 
+@I [HLS-10] Importing test bench file 'ModMain.cpp' ... 
+@I [HLS-10] Analyzing design file 'Modulation.cpp' ... 
+@I [HLS-10] Validating synthesis directives ...
+@I [HLS-10] Starting code transformations ...
+@I [HLS-10] Checking synthesizability ...
+@I [XFORM-502] Unrolling all sub-loops inside loop 'DEMOD_SYMB_LOOP' (Modulation.cpp:386) in function 'Demodulating' for pipelining.
+@I [XFORM-501] Unrolling loop 'DEMOD_TABLE_LOOP1' (Modulation.cpp:389) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'DEMOD_BITS_LOOP' (Modulation.cpp:403) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'memset_idx' (Modulation.cpp:408) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'DEMOD_TABLE_LOOP2' (Modulation.cpp:410) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'MIN_LOOP0' (Modulation.cpp:431) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'MIN_LOOP1' (Modulation.cpp:438) in function 'Demodulating' completely.
+@I [XFORM-102] Partitioning array 'metric' (Modulation.cpp:348) automatically.
+@I [XFORM-102] Partitioning array 'metric_set' (Modulation.cpp:349) in dimension 1 automatically.
+@I [XFORM-102] Partitioning array 'idx' (Modulation.cpp:408) automatically.
+@I [XFORM-102] Partitioning array 'metric_set.0' (Modulation.cpp:349) automatically.
+@I [XFORM-102] Partitioning array 'metric_set.1' (Modulation.cpp:349) automatically.
+@I [HLS-111] Elapsed time: 2.32 seconds; current memory usage: 61 MB.
+@I [HLS-10] Starting hardware synthesis ...
+@I [HLS-10] Synthesizing 'Demodulating' ...
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Scheduling module 'init_mod_tables' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [SCHED-11] Starting scheduling ...
+@I [SCHED-11] Finished scheduling.
+@I [HLS-111] Elapsed time: 0.13 seconds; current memory usage: 62.1 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Exploring micro-architecture for module 'init_mod_tables' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [BIND-100] Starting micro-architecture generation ...
+@I [BIND-101] Performing variable lifetime analysis.
+@I [BIND-101] Exploring resource sharing.
+@I [BIND-101] Binding ...
+@I [BIND-100] Finished micro-architecture generation.
+@I [HLS-111] Elapsed time: 0.09 seconds; current memory usage: 63.2 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Scheduling module 'Demodulating' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [SCHED-11] Starting scheduling ...
+@I [SCHED-61] Pipelining loop 'DEMOD_SYMB_LOOP'.
+@W [SCHED-69] Unable to schedule 'load' operation ('QAM16_table_load_16', Modulation.cpp:398) on array 'QAM16_table' due to limited memory ports.
+@I [SCHED-61] Pipelining result: Target II: 1, Final II: 16, Depth: 53.
+@I [SCHED-11] Finished scheduling.
+@I [HLS-111] Elapsed time: 0.64 seconds; current memory usage: 64.7 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Exploring micro-architecture for module 'Demodulating' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [BIND-100] Starting micro-architecture generation ...
+@I [BIND-101] Performing variable lifetime analysis.
+@I [BIND-101] Exploring resource sharing.
+@I [BIND-101] Binding ...
+@I [BIND-100] Finished micro-architecture generation.
+@I [HLS-111] Elapsed time: 0.12 seconds; current memory usage: 66.3 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Generating RTL for module 'init_mod_tables' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [RTGEN-100] Generating core module 'Demodulating_ddiv_64ns_64ns_64_17': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fpext_32ns_64_3': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fptrunc_64ns_32_3': 1 instance(s).
+@I [RTGEN-100] Finished creating RTL model for 'init_mod_tables'.
+@I [HLS-111] Elapsed time: 0.27 seconds; current memory usage: 68.2 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Generating RTL for module 'Demodulating' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [RTGEN-500] Setting interface mode on port 'Demodulating/pDecSeq' to 'ap_memory'.
+@I [RTGEN-500] Setting interface mode on port 'Demodulating/pLLR' to 'ap_memory'.
+@I [RTGEN-500] Setting interface mode on port 'Demodulating/in_buf_sz' to 'ap_none'.
+@I [RTGEN-500] Setting interface mode on port 'Demodulating/mod_type' to 'ap_none'.
+@I [RTGEN-500] Setting interface mode on port 'Demodulating/awgnSigma' to 'ap_none'.
+@I [RTGEN-500] Setting interface mode on function 'Demodulating' to 'ap_ctrl_hs'.
+@W [RTGEN-101] Global array 'BPSK_table' will not be exposed as RTL port.
+@W [RTGEN-101] Global array 'QPSK_table' will not be exposed as RTL port.
+@W [RTGEN-101] Global array 'QAM16_table' will not be exposed as RTL port.
+@W [RTGEN-101] Global array 'QAM64_table' will not be exposed as RTL port.
+@W [RTGEN-101] Port 'Demodulating/in_buf_sz' has no fanin or fanout and is left dangling.
+               Please use C simulation to confirm this function argument can be read from or written to.
+@W [RTGEN-101] Port 'Demodulating/mod_type' has no fanin or fanout and is left dangling.
+               Please use C simulation to confirm this function argument can be read from or written to.
+@I [RTGEN-100] Generating core module 'Demodulating_dmul_64ns_64ns_64_5_max_dsp': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_faddfsub_32ns_32ns_32_4_full_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fcmp_32ns_32ns_1_3': 4 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fdiv_32ns_32ns_32_8': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fmul_32ns_32ns_32_3_max_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fpext_32ns_64_3': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fptrunc_64ns_32_3': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fsub_32ns_32ns_32_4_full_dsp': 2 instance(s).
+@I [RTGEN-100] Finished creating RTL model for 'Demodulating'.
+@I [HLS-111] Elapsed time: 0.28 seconds; current memory usage: 73.9 MB.
+@I [RTMG-278] Implementing memory 'init_mod_tables_BPSK_table_ram' using block RAMs with power-on initialization.
+@I [RTMG-278] Implementing memory 'init_mod_tables_QPSK_table_ram' using block RAMs with power-on initialization.
+@I [RTMG-278] Implementing memory 'init_mod_tables_QAM64_table_ram' using block RAMs with power-on initialization.
+@I [RTMG-278] Implementing memory 'Demodulating_QAM16_table_ram' using block RAMs with power-on initialization.
+@I [HLS-10] Finished generating all RTL models.
+@I [WSYSC-301] Generating RTL SystemC for 'Demodulating'.
+@I [WVHDL-304] Generating RTL VHDL for 'Demodulating'.
+@I [WVLOG-307] Generating RTL Verilog for 'Demodulating'.
+@I [HLS-112] Total elapsed time: 6.370 seconds; peak memory usage: 73.9 MB.
+@I [LIC-101] Checked in feature [VIVADO_HLS]

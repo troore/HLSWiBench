@@ -1,0 +1,77 @@
+@I [LIC-101] Checked out feature [VIVADO_HLS]
+@I [HLS-10] Running '/home/troore/Public/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
+            for user 'troore' on host 'debian.pku.edu' (Linux_x86_64 version 3.2.0-4-amd64) on Thu Dec 11 10:18:19 HKT 2014
+            in directory '/home/troore/Projects/comm/HLSWiBench/Scrambling'
+@I [HLS-10] Opening project '/home/troore/Projects/comm/HLSWiBench/Scrambling/scrb_prj'.
+@I [HLS-10] Opening solution '/home/troore/Projects/comm/HLSWiBench/Scrambling/scrb_prj/solution1'.
+@I [SYN-201] Setting up clock 'default' with a period of 10ns.
+@I [HLS-10] Setting target device to 'xc7vx980tffg1930-2'
+@I [SIM-47] Using XSIM for RTL simulation.
+@I [SIM-14] Instrumenting C test bench ...
+   Build using "/home/troore/Public/Xilinx/Vivado_HLS/2013.4/lnx64/tools/gcc/bin/g++"
+   Compiling apatb_Scrambling.cpp
+   Compiling gauss.cpp_pre.cpp.tb.cpp
+   Compiling GeneralFunc.cpp_pre.cpp.tb.cpp
+   Compiling lte_phy.cpp_pre.cpp.tb.cpp
+   Compiling Scrambler.cpp_pre.cpp.tb.cpp
+   Compiling ScrambMain.cpp_pre.cpp.tb.cpp
+   Generating cosim.tv.exe
+@I [SIM-302] Generating test vectors ... 
+Tx scrambling starts
+Tx scrambling ends
+@I [SIM-333] Generating C post check test bench ...
+@I [SIM-12] Generating RTL test bench ...
+@I [SIM-323] Starting verilog simulation. 
+@I [SIM-15] Starting XSIM ...
+Vivado Simulator 2013.4
+Copyright 1986-1999, 2001-2013 Xilinx, Inc. All Rights Reserved.
+Running: /home/troore/Public/Xilinx/Vivado/2013.4/bin/unwrapped/lnx64.o/xelab apatb_Scrambling_top -prj Scrambling.prj --lib ieee_proposed=./ieee_proposed -s Scrambling 
+Determining compilation order of HDL files.
+INFO: [VRFC 10-165] Analyzing Verilog file "GenScrambInt_px2.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "Scrambling_scramb_seq_int.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "Scrambling.autotb.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "AESL_automem_pInpSeq.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "GenScrambInt.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "GenScrambInt_px1.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "GenScrambInt_n_init.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "Scrambling.v" into library work
+INFO: [VRFC 10-165] Analyzing Verilog file "AESL_automem_pOutSeq.v" into library work
+Starting static elaboration
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module work.Scrambling_scramb_seq_int_ram
+Compiling module work.Scrambling_scramb_seq_int(DataWi...
+Compiling module work.GenScrambInt_n_init_rom
+Compiling module work.GenScrambInt_n_init(DataWidth=1,...
+Compiling module work.GenScrambInt_px1_ram
+Compiling module work.GenScrambInt_px1(DataWidth=4,Add...
+Compiling module work.GenScrambInt_px2_ram
+Compiling module work.GenScrambInt_px2(DataWidth=3,Add...
+Compiling module work.GenScrambInt
+Compiling module work.Scrambling
+Compiling module work.AESL_automem_pInpSeq
+Compiling module work.AESL_automem_pOutSeq
+Compiling module work.apatb_Scrambling_top
+Built simulation snapshot Scrambling
+
+****** xsim v2013.4 (64-bit)
+  **** SW Build 353583 on Mon Dec  9 17:26:26 MST 2013
+  **** IP Build 208076 on Mon Dec  2 12:38:17 MST 2013
+    ** Copyright 1986-1999, 2001-2013 Xilinx, Inc. All Rights Reserved.
+
+source xsim.dir/Scrambling/xsim_script.tcl
+# xsim {Scrambling} -maxdeltaid 10000 -tclbatch {Scrambling.tcl}
+Vivado Simulator 2013.4
+Time resolution is 1 ps
+source Scrambling.tcl
+## run all
+$finish called at time : 232265400 ps : File "Scrambling.autotb.v" Line 317
+## quit
+INFO: [Common 17-206] Exiting xsim at Thu Dec 11 10:18:59 2014...
+@I [SIM-316] Starting C post checking ...
+Tx scrambling starts
+Tx scrambling ends
+@I [SIM-1000] *** C/RTL co-simulation finished: PASS ***
+@I [LIC-101] Checked in feature [VIVADO_HLS]

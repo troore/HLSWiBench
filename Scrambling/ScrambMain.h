@@ -1,6 +1,6 @@
 
-#ifndef __TRANSFORMPREMAIN_H_
-#define __TRANSFORMPREMAIN_H_
+#ifndef __SCRAMBMAIN_H_
+#define __SCRAMBMAIN_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,10 +11,10 @@
 #include <string>
 #include <fstream>
 #include <stdexcept>
+
 #include "gauss.h"
-#include "matrix.h"
 #include "GeneralFunc.h"
 
-#include "TransformPrecoder.h"
+#include "Scrambler.h"
 
 #endif

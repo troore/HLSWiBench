@@ -15,6 +15,7 @@ void Scrambling(/*LTE_PHY_PARAMS *lte_phy_params, */int pInpSeq[N_SCRAMB_IN_MAX]
 	////////////////////////Scrambling////////////////////////////
 	Scrambling_label1:for (i = 0; i < n; i++)
 	{
+#pragma HLS PIPELINE
 		pOutSeq[i] = (pInpSeq[i] + scramb_seq_int[i]) % 2;
 	}
 	////////////////////////END Scrambling////////////////////////////
@@ -108,6 +109,7 @@ void GenScrambInt(int pScrambInt[N_SCRAMB_IN_MAX], int n)
 
 	for (i = 0; i < 31; i++)
 	{
+#pragma HLS PIPELINE
 		px1[i] = 0;
 		px2[i] = n_init[i];
 	}
@@ -128,11 +130,11 @@ void GenScrambInt(int pScrambInt[N_SCRAMB_IN_MAX], int n)
 	px1_tmp1 = px1[1];
 	px1_tmp2 = px1[2];
 
-	GenScrambInt_label2:for (i = 0; i < 7200 + N_c - 31; i++)
+	GenScrambInt_label2:for (i = 0; i < n + N_c - 31; i++)
 	{
 #pragma HLS PIPELINE
-		if(i >= n + N_c -31)
-			break;
+//		if(i >= n + N_c -31)
+//			break;
 		px1_tmp3 = px1[i + 3];
 		px1[i + 31] = (px1_tmp3 + px1_tmp0) % 2;
 		px1_tmp0 = px1_tmp1;
@@ -145,11 +147,11 @@ void GenScrambInt(int pScrambInt[N_SCRAMB_IN_MAX], int n)
 		px2_tmp1 = px2_tmp2;
 		px2_tmp2 = px2_tmp3;
 	}
-	GenScrambInt_label3:for (i = 0; i < 7200; i++)
+	GenScrambInt_label3:for (i = 0; i < n; i++)
 	{
 #pragma HLS PIPELINE
-		if(i >= n)
-			break;
+//		if(i >= n)
+//			break;
 		pScrambInt[i] = (px1[i + N_c] + px2[i + N_c]) % 2;
 	}
 
