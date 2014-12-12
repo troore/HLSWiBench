@@ -3,7 +3,7 @@
 #define __EQUALIZER_H_
 
 #include "lte_phy.h"
-#include "ResMapper.h"
+#include "dmrs.h"
 
 void FDLSEstimation(float pXt[], float pXtDagger[], float pYt[], float pHTranspose[], int NumLayer, int NumRxAntenna);
 

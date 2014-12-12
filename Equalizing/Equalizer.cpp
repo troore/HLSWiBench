@@ -3,10 +3,6 @@
 
 //#include <stdio.h>
 
-//std::complex<float> pEqW[LTE_PHY_DFT_SIZE_MAX * LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-//std::complex<float> pHdm[LTE_PHY_DFT_SIZE_MAX * LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-
-
 static void MatrixProd(int d1, int d2, int d3, float M1[], float M2[], float oM[])
 {
 	int r, c, i;
