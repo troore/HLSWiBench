@@ -1,5 +1,6 @@
 
 #open_project -reset mod_base_prj
+#open_project -reset demod_split_prj
 open_project -reset demod_prj
 set_top Demodulating
 add_files Modulation.cpp -cflags "-I../"
@@ -17,7 +18,7 @@ create_clock -period 10 -name default
 
 #source "./mod_prj/solution1/directives.tcl"
 csim_design
-#csynth_design
+csynth_design
 #cosim_design
 #export_design 
 exit

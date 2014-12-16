@@ -1,13 +1,14 @@
+
 #ifndef __FFT_H_
 #define __FFT_H_
 
-#define N (1 << 3)
+void fft_recur(int n, float (*a)[2], float (*y)[2], int direction);
 
-#ifndef PI
-#define PI	3.14159265358979323846264338327950288
-#endif
+void fft_iter(int n, float a[], float y[], int direction);
+void fft_iter(int n, float *a_real, float *a_imag, float *y_real, float *y_imag, int direction);
 
-/* function prototypes */
-void fft(int n, float a[N * 2], float y[N * 2], int direction);
+void fft_nrvs(int n, float *a, float *y, int direction);
+
+void fft_nrvs(int n, float *a_real, float *a_imag, float *y_real, float *y_imag, int direction);
 
 #endif
