@@ -1,0 +1,36 @@
+In the "dmrs.cpp":
+
+The negate_pDMRS_loop which deals with the layer2 cannot be pipelined as II = 1. For each iteration of the loop, there is an offset added to the index. It seems that even with the pragma of DEPENDENCY to indicate there is no carried dependency, it still fails to PIPELINE with II = 1. If the offset is removed, it can be pipelined as II = 1.
+
+The calculate_pDMRS_from_px_loop has a similar situation. So the II = 2. 
+
+
+
+
+In the "Equalizer.cpp":
+
+The from_pDMRS_to_pXt_pXtdagger_loop and the from_pInputdata_pYt_loop also have carried dependency because of index offset. They are pipeline to II = 2. Consider changing the data structure and eliminating index offset if we want that II = 1.
+
+
+
+
+In the MatrixInv function:
+in the loop of appending unit matrix, two assignments in one iteration and II = 2. The same as one assignment in one interation and II = 1.
+
+in the second loop of calculating pX matrix from 0 to size: the 1st innerloop: move the assgin of B[2] outside of it so as to eliminate the limit of memory ports; the 2nd inner loop: two assignments in one iteration, II = 2; the 3rd inner loop: if it is pipelined it will violate timing constraints.
+
+in the second loop of calculating pX matrix from size down to 0: it seems that HLS can only recognize very very simple variable index and tell there is no dependency between iteration, such as "2*c + 0" and "2 * c + 1". It cannot tell such as 2 * (er * 2 * sz + c) + 0. If pipeline the second inner loop, it will violate timing constraints, in the critical path, fmul 7.05ns, fsub 6.77ns, and their sum exceed 10 ns. 
+
+in the 4th loop of assigning pX matrix to pInv matrix, carried dependency limit II to 2 as two assignments in one iteration. 
+
+
+In the MatrixProd function:
+Estimation function calls this function three times. In two times, the most inner loop bound (d2) is 2. HLS implement a selection and the whole nested loop is flattened, even though nested loop is not perfect. The PERFORMANCE report seems confusing and cannot find reference in user manual. 
+For the third time, it cannot be flattened as the most innner loop bound is a variable instead of constant 2.
+
+
+
+
+ 
+
+
