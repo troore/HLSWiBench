@@ -4,12 +4,8 @@
 #include "fft.h"
 #include "lte_phy.h"
 
-
-
-void ofmodulating_same_array(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData)
+void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData)
 {
-#pragma HLS INTERFACE ap_bus port=pOutData
-#pragma HLS INTERFACE ap_bus port=pInpData
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -110,10 +106,6 @@ void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOut
 void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
 				  float *pOutDataReal, float *pOutDataImag)
 {
-#pragma HLS INTERFACE ap_bus port=pOutDataImag
-#pragma HLS INTERFACE ap_bus port=pOutDataReal
-#pragma HLS INTERFACE ap_bus port=pInpDataImag
-#pragma HLS INTERFACE ap_bus port=pInpDataReal
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -128,7 +120,7 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pI
 			int symb_idx = nlayer * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT);
 			
-			fft_iter(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
+			fft_nrvs(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
 					 pOutDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pOutDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
 					 -1);
 			

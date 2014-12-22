@@ -1,0 +1,44 @@
+MODULATING:
+
+1. Real and image in the same array:
+   
+   ITERATION:
+
+   Original report:
+   iteration latency: bit reverse: 4
+   		      fft iteration nested loop: 191~731
+   Optimize process:
+   For the bit reverse loop: Bitreverse function has a loop. It has a variable bound "size". Size is the bidwidth of number of points in FFT. Restrict "size" to 11, and the maximum number of points in FFT is 2048. Then FLATTEN the loop in Bitreverse function for the PIPELINE of bitreverse loop in fft_iter function. The result is the II = 2 because of variable index dependency when storing y array. Then create a "assign" function, parallelly assgin a array to y array. In the situation, inside the loop of bitreverse, there are only three function calls and no other operations. This loop "disappers" in the report. But pipelining the bitreverse loop still takes effect because HLS will unroll the loop in the function "bitreverse". 
+
+   For the fft iteration nested loop: the layer 3 loop has a false carried dependency: use the "array DEPENDENCY inter false" to eliminate it. y array is read 4 times in layer 3 loop. And the elements are not read repeatedly. So for the dual port memory, II = 4.
+
+   NRVS:
+
+   Original report:
+   iteration latency: nrvs_fft_calculate_loop:210~750
+
+   Optimize:
+   PIPELINE the fft_calculate_loop and declare dependency to be false.
+   In the loop of assigning y array to a array, call the assign function to execute assignment parallelly.
+
+   result: latency of nrvs_fft_calculate_loop: 103     II = 2
+
+2. Real and image in different arrays:
+
+   ITERATION:
+
+   Original report:
+   iteration latency: fail to optimize. For the synthesis, in the OFDM.cpp, we have to declare the input and output interface to be ap_bus, but if the loop is pipelined, it will violate the timing constraint and carried dependency occurs even if I declare the dependency is false. It is dependency between "bus request on port".    
+
+   NRVS:
+
+   Original report:
+   iteration latency: nrvs_fft_calculate_loop:208~748
+
+   Optimize:
+   Similar as real and imag in the same array. 
+
+
+
+
+
