@@ -271,7 +271,7 @@ void fft_iter_two_arrays(int n, float a_real[N], float a_imag[N], float y_real[N
 	}
 }
 
-void fft_nrvs_same_array(/*int n,*/ float a[NUMBER * 2], float y[NUMBER * 2], int direction)
+void fft_nrvs_same_array(int n, float a[NUMBER * 2], float y[NUMBER * 2], int direction)
 {
 	int p, i, k;
 	int lgn;
@@ -325,7 +325,7 @@ void fft_nrvs_same_array(/*int n,*/ float a[NUMBER * 2], float y[NUMBER * 2], in
 	}
 }
 
-void fft_nrvs_two_arrays(/*int n,*/ float a_real[NUMBER], float a_imag[NUMBER],
+void fft_nrvs_two_arrays(int n, float a_real[NUMBER], float a_imag[NUMBER],
 			  float y_real[NUMBER], float y_imag[NUMBER],
 			  int direction)
 {
@@ -381,7 +381,6 @@ void fft_nrvs_two_arrays(/*int n,*/ float a_real[NUMBER], float a_imag[NUMBER],
 	}
 }
 
-/*
 int main(int argc, char *argv[])
 {
 //	float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
@@ -417,14 +416,15 @@ int main(int argc, char *argv[])
 //	v[6]=3;v[7]=0;
 
 //	print_vector("Orig", v, N);
-	print_vector("Orig", v_real, v_imag, N);
+//	print_vector("Orig", v_real, v_imag, N);
 #ifdef DEBUG
 	fft_recur(N, v, vout, -1);
 #else
 //	fft_nrvs(N, v, vout, -1);
-	fft_nrvs(N, v_real, v_imag, vout_real, vout_imag, -1);
+	fft_nrvs_two_arrays(N, v_real, v_imag, vout_real, vout_imag, -1);
 #endif
 
+	/*
 #ifdef DEBUG
 	for (k = 0; k < N; k++)
 	{
@@ -441,22 +441,22 @@ int main(int argc, char *argv[])
 	}
 #endif
 //	print_vector("iFFT", vout, N);
-	print_vector("iFFT", vout_real, vout_imag, N);
+//	print_vector("iFFT", vout_real, vout_imag, N);
 #ifdef DEBUG
 	fft_recur(N, vout, v, 1);
 #else
 //	fft_nrvs(N, vout, v, 1);
-	fft_nrvs(N, vout_real, vout_imag, v_real, v_imag, 1);
+	fft_nrvs_two_array(N, vout_real, vout_imag, v_real, v_imag, 1);
 #endif
 //	print_vector(" FFT", v, N);
-	print_vector(" FFT", v_real, v_imag, N);
+//	print_vector(" FFT", v_real, v_imag, N);
 
 //	print_vector("Orig", v1, N);
 //	fft(N, v1, v1out, -1);
 //	print_vector(" FFT", v1out, N);
 //	fft(N, v1out, v1, 1);
 //	print_vector("iFFT", v1, N);
+	*/
 
 	return 0;
 }
-*/

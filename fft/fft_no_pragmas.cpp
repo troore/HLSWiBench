@@ -17,7 +17,9 @@
 #ifdef DEBUG
 float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
 #else
-//float v[2 * N], v1[2 * N], vout[2 * N], v1out[2 * N];
+/*
+float v[2 * N], v1[2 * N], vout[2 * N], v1out[2 * N];
+*/
 float v_real[N], v1_real[N], vout_real[N], v1out_real[N];
 float v_imag[N], v1_imag[N], vout_imag[N], v1out_imag[N];
 #endif
@@ -264,7 +266,7 @@ void fft_iter_two_arrays(int n, float a_real[N], float a_imag[N], float y_real[N
 	}
 }
 
-void fft_nrvs_same_array(/*int n,*/ float a[NUMBER * 2], float y[NUMBER * 2], int direction)
+void fft_nrvs_same_array(int n, float a[NUMBER * 2], float y[NUMBER * 2], int direction)
 {
 	int p, i, k;
 	int lgn;
@@ -315,7 +317,7 @@ void fft_nrvs_same_array(/*int n,*/ float a[NUMBER * 2], float y[NUMBER * 2], in
 	}
 }
 
-void fft_nrvs_two_arrays(/*int n,*/ float a_real[NUMBER], float a_imag[NUMBER],
+void fft_nrvs_two_arrays(int n, float a_real[NUMBER], float a_imag[NUMBER],
 			  float y_real[NUMBER], float y_imag[NUMBER],
 			  int direction)
 {
@@ -368,7 +370,6 @@ void fft_nrvs_two_arrays(/*int n,*/ float a_real[NUMBER], float a_imag[NUMBER],
 	}
 }
 
-/*
 int main(int argc, char *argv[])
 {
 //	float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
@@ -386,10 +387,10 @@ int main(int argc, char *argv[])
 		v[k][0] = 0.125 * cos((2 * PI * k ) / (float)N);
 		v[k][1] = 0.125 * sin((2 * PI * k) / (float)N);
 #else
-		//	v[k] = 0.125 * cos((2 * PI * k) / (float)N);
-		//	v[k + N] = 0.125 * sin((2 * PI * k ) / (float)N);
+//			v[k] = 0.125 * cos((2 * PI * k) / (float)N);
+//			v[k + N] = 0.125 * sin((2 * PI * k ) / (float)N);
 		v_real[k] = 0.125 * cos((2 * PI * k) / (float)N);
-		v_imag[k + N] = 0.125 * sin((2 * PI * k ) / (float)N);
+		v_imag[k] = 0.125 * sin((2 * PI * k ) / (float)N);
 #endif
 	//	v1[k][0] =  0.3*cos(2*PI*k/(float)N);
 	//	v1[k][1] = -0.3*sin(2*PI*k/(float)N);
@@ -404,14 +405,16 @@ int main(int argc, char *argv[])
 //	v[6]=3;v[7]=0;
 
 //	print_vector("Orig", v, N);
-	print_vector("Orig", v_real, v_imag, N);
+//	print_vector("Orig", v_real, v_imag, N);
 #ifdef DEBUG
 	fft_recur(N, v, vout, -1);
 #else
 //	fft_nrvs(N, v, vout, -1);
-	fft_nrvs(N, v_real, v_imag, vout_real, vout_imag, -1);
+//	fft_nrvs_same_array(N, v, vout, -1);
+	fft_nrvs_two_arrays(N, v_real, v_imag, vout_real, vout_imag, -1);
 #endif
 
+	/*
 #ifdef DEBUG
 	for (k = 0; k < N; k++)
 	{
@@ -443,7 +446,6 @@ int main(int argc, char *argv[])
 //	print_vector(" FFT", v1out, N);
 //	fft(N, v1out, v1, 1);
 //	print_vector("iFFT", v1, N);
-
+*/
 	return 0;
 }
-*/
