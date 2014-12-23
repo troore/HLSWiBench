@@ -1,7 +1,14 @@
 
-#include "ResMapMain.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
 
-//#define SCMapper
+#include "gauss.h"
+#include "GeneralFunc.h"
+
+#include "ResMapper.h"
+
+#define SCMapper
 	
 int RANDOMSEED;
 

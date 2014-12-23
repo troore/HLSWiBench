@@ -4,11 +4,11 @@
 #define PI 3.14159265358979
 
 void geneDMRS(float pDMRS[],
-		int N_layer,
-		int N_dft)
+			  int N_layer,
+			  int N_dft)
 {
 	int i;
-
+	
 	int pPrimeTable[6][2];
 	int ncs[2] = {3, 11};
 	int Nzc;
@@ -16,7 +16,7 @@ void geneDMRS(float pDMRS[],
 	int idx;
 	int RSu, RSv;
 	double qbar, q;
-	//	std::complex<double> px[1200];
+//	std::complex<double> px[1200];
 	double px[1200][2];
 
 	pPrimeTable[0][0] = 75;		pPrimeTable[0][1] = 73;
@@ -28,7 +28,7 @@ void geneDMRS(float pDMRS[],
 
 	zc_flag = 1;
 	idx = 0;
-	while (zc_flag)
+	look_up_prime_table_loop:while (zc_flag)
 	{
 		if (pPrimeTable[idx][0] == N_dft)
 		{ 
@@ -40,10 +40,10 @@ void geneDMRS(float pDMRS[],
 			idx++;
 		}
 	}
-
+	
 	float tmp1;
 	int tmp2;
-
+	
 	RSu = 0;
 	RSv = 0;
 	qbar = (double)Nzc * (RSu + 1.0) / 31.0;
@@ -54,23 +54,28 @@ void geneDMRS(float pDMRS[],
 	q = floor((qbar + 0.5)) + RSv * /*pow(-1.0,(floor((2.0*qbar))))*/ tmp2;
 
 
-	for (int m = 0;m < Nzc; m++)
+	double theta_pre = -PI * q / (double)Nzc;
+	calculate_px_array_loop:for (int m = 0;m < Nzc; m++)
 	{
-		double theta = -PI * q * m * (m + 1.0)/((double)Nzc);
+#pragma HLS PIPELINE
+		double theta = theta_pre *  m * (m + 1.0);
 		//	px[m] = std::complex<double>(cos(theta), sin(theta));
 		px[m][0] = cos(theta);
 		px[m][1] = sin(theta);
 	}
 
-	for (int slot = 0; slot < 2; slot++)
+	calculate_pDMRS_from_px_loop:for (int slot = 0; slot < 2; slot++)
 	{
 		for (int layer = 0; layer < N_layer; layer++)
 		{
-			int cs = ncs[slot] + 6 * layer;
-			double alpha = 2.0 * PI * cs / 12.0;
-
 			for (int n = 0; n < N_dft; n++)
 			{
+#pragma HLS PIPELINE
+				int cs = ncs[slot] + 6 * layer;
+				double alpha = 2.0 * PI * cs / 12.0;
+				int index = ((slot * N_layer + layer) * N_dft + n) * 2 ;
+#pragma HLS DEPENDENCE variable=index inter false
+
 				int idx = n % Nzc;
 				double a = cos(alpha * n);
 				double b = sin(alpha * n);
@@ -79,22 +84,27 @@ void geneDMRS(float pDMRS[],
 				double c[2] = {a, b};
 				//	*(*(*(pDMRS+slot)+layer)+n)=(complex<float>)(c * px[idx]);
 				//	pDMRS[(slot * N_layer + layer) * N_dft + n] = (std::complex<float>)(c * px[idx]);
-				pDMRS[((slot * N_layer + layer) * N_dft + n) * 2 + 0] = c[0] * px[idx][0] - c[1] * px[idx][1];
-				pDMRS[((slot * N_layer + layer) * N_dft + n) * 2 + 1] = c[0] * px[idx][1] + c[1] * px[idx][0];
+				pDMRS[index] = c[0] * px[idx][0] - c[1] * px[idx][1];
+				pDMRS[index + 1] = c[0] * px[idx][1] + c[1] * px[idx][0];
 			}
 		}
 	}
 
 	if (N_layer == 2)
 	{
-		for (int n = 0; n < N_dft; n++)
+		int index_offset = 2 * (1 * N_layer + 1) * N_dft ;
+		negate_pDMRS_loop:for (int n = 0 + index_offset; n < N_dft * 2 + index_offset; n ++)
 		{
+#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE variable=n inter false
 			//	(*(*(*(pDMRS+1)+1)+n))*=(-1.0);
 			//	pDMRS[(1 * N_layer + 1) * N_dft + n] *= (-1.0);
-			pDMRS[2 * ((1 * N_layer + 1) * N_dft + n) + 0] = -1.0 * pDMRS[2 * ((1 * N_layer + 1) * N_dft + n) + 0];
-			pDMRS[2 * ((1 * N_layer + 1) * N_dft + n) + 1] = -1.0 * pDMRS[2 * ((1 * N_layer + 1) * N_dft + n) + 1];
+			//int index = 2 * ((1 * N_layer + 1) * N_dft + n);
+			pDMRS[n] = -1.0 * pDMRS[n];
+			//pDMRS[index + 1] = -1.0 * pDMRS[index + 1];
 		}
 	}
 	else
 	{}
 }
+

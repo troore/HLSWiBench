@@ -1,5 +1,6 @@
 
-#include "ResMapper.h"
+#include "dmrs.h"
+#include "lte_phy.h"
 
 void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 	float pInpData[N_RESMAPPER_IN_MAX * 2],
@@ -10,6 +11,12 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 	int NIFFT,
 	int MDFT)
 {
+#pragma HLS DEPENDENCE variable=pOutData array intra WAW false
+#pragma HLS DEPENDENCE variable=pOutData array intra WAW false
+#pragma HLS DEPENDENCE variable=pOutData array intra WAW false
+#pragma HLS ARRAY_PARTITION variable=pOutData block factor=2 dim=1
+#pragma HLS ARRAY_PARTITION variable=pInpData block factor=2 dim=1
+
 //	int NumLayer = lte_phy_params->N_tx_ant;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
 //	int SCLoc = lte_phy_params->sc_loc;
@@ -17,6 +24,7 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 //	int MDFT = lte_phy_params->N_dft_sz;
 
 	float DMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2];
+#pragma HLS ARRAY_PARTITION variable=DMRS block factor=2 dim=1
 
 	geneDMRS(DMRS, NumLayer, MDFT);
 
@@ -26,8 +34,9 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 		{
 			int SymIdx = nlayer * NumULSymbSF + nsym;
 
-			for (int n = 0; n < NIFFT; n++)
+			FFT_LOOP0:for (int n = 0; n < NIFFT; n++)
 			{
+#pragma HLS PIPELINE
 				//	pOutData[SymIdx * NIFFT + n] = std::complex<float>(1.0, 0.0);
 				pOutData[2 * (SymIdx * NIFFT + n) + 0] = 1.0;
 				pOutData[2 * (SymIdx * NIFFT + n) + 1] = 0.0;
@@ -45,8 +54,9 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 				
 			if (nsym == /*lte_phy_params->*/dmrs_symb_pos[DMRSslot])
 			{
-				for (int n = SCLoc; n < SCLoc + MDFT; n++)
+				DFT_LOOP0:for (int n = SCLoc; n < SCLoc + MDFT; n++)
 				{
+#pragma HLS PIPELINE
 					//	pOutData[SymIdx * NIFFT + n] = *(*(*(VpDMRS + DMRSslot) + nlayer) + n - SCLoc);
 					//	pOutData[SymIdx * NIFFT + n] = DMRS[(DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)];
 					pOutData[2 * (SymIdx * NIFFT + n) + 0] = DMRS[2 * ((DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)) + 0];
@@ -57,8 +67,9 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 			else
 			{
 
-				for (int n = SCLoc; n < SCLoc + MDFT; n++)
+				DFT_LOOP1:for (int n = SCLoc; n < SCLoc + MDFT; n++)
 				{
+#pragma HLS PIPELINE
 					//	*(*(pOutData+SymIdx)+n)=*(*(pInpData+nlayer*(NumULSymbSF-2)+nsym-DMRSslot)+n-SCLoc);
 					//	pOutData[SymIdx * NIFFT + n] = pInpData[nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc];
 					pOutData[2 * (SymIdx * NIFFT + n) + 0] = pInpData[2 * (nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc) + 0];
