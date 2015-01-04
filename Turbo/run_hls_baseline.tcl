@@ -1,7 +1,7 @@
 
-open_project -reset turbodec_prj_for_cosym
+open_project -reset turbodec_baseline_prj
 set_top turbo_decoding
-add_files Turbo.cpp -cflags "-I../"
+add_files Turbo_baseline.cpp -cflags "-I../"
 add_files -tb TurboMain.cpp -cflags "-I../"
 add_files -tb testTurboEncoderOutput
 add_files -tb ../GeneralFunc.cpp -cflags "-I../"

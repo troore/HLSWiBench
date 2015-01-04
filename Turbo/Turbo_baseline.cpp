@@ -1,4 +1,3 @@
-#include <assert.h>
 
 #include <stdio.h>
 
@@ -88,7 +87,7 @@ float max_log(float a, float b)
 	return (a > b) ? a : b;
 }
 
-void set_generator_polynomials(int gens[N_GENS], int n_gens /*it is 2*/, int constraint_length)
+void set_generator_polynomials(int gens[N_GENS], int n_gens, int constraint_length)
 {
 	int i, j;
 	int K = constraint_length;
@@ -99,24 +98,20 @@ void set_generator_polynomials(int gens[N_GENS], int n_gens /*it is 2*/, int con
 	int p0[N_GENS - 1];
 	int p1[N_GENS - 1];
 
-	set_generator_polynomials_loop1:for (i = 0; i < 2 /*n_gens*/; i++)
+	for (i = 0; i < n_gens; i++)
 	{
-#pragma HLS UNROLL
-		if(i >= n_gens)
-			break;
 		g_gen_pols[i] = gens[i];
 		g_rev_gen_pols[i] = reverse_int(K, gens[i]);
 	}
 
-	set_generator_polynomials_loop2:for (s_prim = 0; s_prim < N_STATES; s_prim++)
+	for (s_prim = 0; s_prim < N_STATES; s_prim++)
 	{
-#pragma HLS UNROLL
 //		std::cout << s_prim << std::endl;
 		s0 = calc_state_transition(s_prim, 0, p0);
 //		std::cout << s0 << "\t";
 		g_state_trans[s_prim * 2 + 0] = s0;
 		g_rev_state_trans[s0 * 2 + 0] = s_prim;
-		set_generator_polynomials_loop2_in1:for (j = 0; j < (n_gens - 1); j++)
+		for (j = 0; j < (n_gens - 1); j++)
 		{
 			g_output_parity[s_prim * (n_gens - 1) * 2 + 2 * j + 0] = p0[j];
 			g_rev_output_parity[s0 * (n_gens - 1) * 2 + 2 * j + 0] = p0[j];
@@ -126,7 +121,7 @@ void set_generator_polynomials(int gens[N_GENS], int n_gens /*it is 2*/, int con
 //		std::cout << s1 << std::endl;
 		g_state_trans[s_prim * 2 + 1] = s1;
 		g_rev_state_trans[s1 * 2 + 1] = s_prim;
-		set_generator_polynomials_loop2_in2:for (j = 0; j < (n_gens - 1); j++)
+		for (j = 0; j < (n_gens - 1); j++)
 		{
 			g_output_parity[s_prim * (n_gens - 1) * 2 + 2 * j + 1] = p1[j];
 			g_rev_output_parity[s1 * (n_gens - 1) * 2 + 2 * j + 1] = p1[j];
@@ -155,7 +150,6 @@ void internal_interleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for(i = 0; i < m; i++)
     {
 		if ((0 == f1) && (0 == f2))
@@ -181,7 +175,6 @@ void internal_interleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
     // Determine f1 and f2
     for(i = 0; i < TURBO_INT_K_TABLE_SIZE; i++)
     {
-#pragma HLS UNROLL
         if(m == TURBO_INT_K_TABLE[i])
         {
             f1 = TURBO_INT_F1_TABLE[i];
@@ -190,10 +183,8 @@ void internal_interleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for(i = 0; i < m; i++)
     {
-#pragma HLS PIPELINE
 		if ((0 == f1) && (0 == f2))
 		{
 			idx = i;
@@ -226,7 +217,6 @@ void internal_deinterleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for (i = 0; i < m; i++)
     {
 		if ((0 == f1) && (0 == f2))
@@ -252,7 +242,6 @@ void internal_deinterleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
     // Determine f1 and f2
     for (i = 0; i < TURBO_INT_K_TABLE_SIZE; i++)
     {
-#pragma HLS UNROLL
         if (m == TURBO_INT_K_TABLE[i])
         {
             f1 = TURBO_INT_F1_TABLE[i];
@@ -261,10 +250,8 @@ void internal_deinterleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for (i = 0; i < m; i++)
     {
-#pragma HLS PIPELINE
 		if ((0 == f1) && (0 == f2))
 		{
 			idx = i;
@@ -444,31 +431,23 @@ int calc_state_transition(int instate, int input, int parity[N_GENS - 1])
 	int temp = (g_gen_pols[0] & instate), parity_temp, parity_bit;
 	int i, j;
 
-	calc_state_transition_loop1:for (i = 0; i < CST_LEN; i++)
+	for (i = 0; i < CST_LEN; i++)
 	{
 		in = (temp & 1) ^ in;
 		temp = temp >> 1;
 	}
 	in = in ^ input;
 
-	calc_state_transition_loop2:for (j = 0; j < (N_GENS - 1); j++)
+	for (j = 0; j < (N_GENS - 1); j++)
 	{
-		/*parity_temp = (instate | (in << (CST_LEN - 1))) & g_gen_pols[j + 1];
-		parity_bit = 0;*/
-		calc_state_transition_loop2_in:for (i = 0; i < CST_LEN; i++)
+		parity_temp = (instate | (in << (CST_LEN - 1))) & g_gen_pols[j + 1];
+		parity_bit = 0;
+		for (i = 0; i < CST_LEN; i++)
 		{
-#pragma HLS LOOP_FLATTEN
-			if(i == 0){
-				parity_temp = (instate | (in << (CST_LEN - 1))) & g_gen_pols[j + 1];
-				parity_bit = 0;
-			}
 			parity_bit = (parity_temp & 1) ^ parity_bit;
 			parity_temp = parity_temp >> 1;
-			if(i == CST_LEN){
-				parity[j] = parity_bit;
-			}
 		}
-		/*parity[j] = parity_bit;*/
+		parity[j] = parity_bit;
 	}
 	
 	return (in << (CST_LEN - 2) | (instate >> 1)) & ((1 << (CST_LEN - 1)) - 1);
@@ -497,37 +476,23 @@ int reverse_int(int length, int in)
  */
 void turbo_decoding(float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX], int out_data_length, int n_iters)
 {
-#pragma HLS DATAFLOW
-#pragma HLS ARRAY_PARTITION variable=pInpData cyclic factor=3 dim=1
 //	int out_data_length;
-
 	int n_blocks;
-	int n_blocks_max;
 	int last_block_length;
 	int out_bit_offset, out_block_offset;
 	int cur_blk_len;
-
+	
 	float recv_syst1[N_UNCODED + N_TAIL];
 	float recv_syst2[N_UNCODED + N_TAIL];
 	float recv_parity1[(N_UNCODED + N_TAIL) * (N_GENS - 1)];
 	float recv_parity2[(N_UNCODED + N_TAIL) * (N_GENS - 1)];
 
-	/*float recv_syst1[(N_UNCODED + N_TAIL) * 3];
-		float recv_syst2[(N_UNCODED + N_TAIL) * 3];
-		float recv_parity1[((N_UNCODED + N_TAIL) * (N_GENS - 1)) * 3];
-		float recv_parity2[((N_UNCODED + N_TAIL) * (N_GENS - 1)) * 3];*/
-
 	int i, j, k;
 
 	set_generator_polynomials(g_gens, N_GENS, CST_LEN);
-
+	
 //	out_data_length = lte_phy_params->td_out_buf_sz;
-//  according to lte_phy.cpp, maximum of td_out_buf_sz is 18432 (72 MHz).
-
-//	assert(out_data_length < 18433);
 	n_blocks = ((out_data_length + BLOCK_SIZE - 1) / BLOCK_SIZE);
-//	assert(n_blocks < 4);
-
 	if (out_data_length % BLOCK_SIZE)
 	{
 		last_block_length = (out_data_length % BLOCK_SIZE);
@@ -540,73 +505,51 @@ void turbo_decoding(float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX
 	// Clear data part of recv_syst2
 	for (i = 0; i < N_UNCODED; i++)
 	{
-#pragma HLS UNROLL
 		recv_syst2[i] = 0.0;
 	}
 
 	out_bit_offset = 0;
 	out_block_offset = 0;
-	n_blocks_decode(n_blocks, cur_blk_len, last_block_length, recv_syst1, recv_syst2, recv_parity1, recv_parity2, pInpData, pOutBits, n_iters);
-}
 
-void n_blocks_decode(int n_blocks, int cur_blk_len, int last_block_length, float recv_syst1[N_UNCODED + N_TAIL], float recv_syst2[N_UNCODED + N_TAIL], float recv_parity1[(N_UNCODED + N_TAIL) * (N_GENS - 1)], float recv_parity2[(N_UNCODED + N_TAIL) * (N_GENS - 1)], float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX], int n_iters){
-#pragma HLS DATAFLOW
-
-	int i, j ,k;
-	int out_bit_offset, out_block_offset;
-
-	out_bit_offset = 0;
-	out_block_offset = 0;
-	//	for (i = 0; i < n_blocks; i++)
-		for (i = 0; i < 3; i++)
+	for (i = 0; i < n_blocks; i++)
+	{
+		cur_blk_len = (i != (n_blocks - 1)) ? BLOCK_SIZE : last_block_length;
+		// data part
+		for (j = 0; j < cur_blk_len; j++)
 		{
-	#pragma HLS UNROLL
-	//#pragma HLS LOOP_TRIPCOUNT max=3
-			if(i >= n_blocks)
-				break;
-
-			cur_blk_len = (i != (n_blocks - 1)) ? BLOCK_SIZE : last_block_length;
-			// data part
-			for (j = 0; j < BLOCK_SIZE; j++)
+			recv_syst1[j] = pInpData[out_bit_offset++];
+			for (k = 0; k < N_GENS - 1; k++)
 			{
-	#pragma HLS PIPELINE
-				if(j >= cur_blk_len)
-					break;
-				recv_syst1[j] = pInpData[out_bit_offset++];
-				for (k = 0; k < N_GENS - 1; k++)
-				{
-					recv_parity1[j * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
-				}
-				for (k = 0; k < N_GENS - 1; k++)
-				{
-					recv_parity2[j * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
-				}
+				recv_parity1[j * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
 			}
-			// first tail
-			for (j = 0; j < N_TAIL; j++)
+			for (k = 0; k < N_GENS - 1; k++)
 			{
-	#pragma HLS PIPELINE
-				recv_syst1[cur_blk_len + j] = pInpData[out_bit_offset++];
-				for (k = 0; k < N_GENS - 1; k++)
-				{
-					recv_parity1[(cur_blk_len + j) * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
-				}
+				recv_parity2[j * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
 			}
-			// second tail
-			for (j = 0; j < N_TAIL; j++)
-			{
-	#pragma HLS PIPELINE
-				recv_syst2[cur_blk_len + j] = pInpData[out_bit_offset++];
-				for (k = 0; k < N_GENS - 1; k++)
-				{
-					recv_parity2[(cur_blk_len + j) * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
-				}
-			}
-
-			decode_block(recv_syst1, recv_syst2, recv_parity1, recv_parity2, pOutBits + out_block_offset, cur_blk_len, n_iters);
-			out_block_offset += cur_blk_len;
 		}
+		// first tail
+		for (j = 0; j < N_TAIL; j++)
+		{
+			recv_syst1[cur_blk_len + j] = pInpData[out_bit_offset++];
+			for (k = 0; k < N_GENS - 1; k++)
+			{
+				recv_parity1[(cur_blk_len + j) * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
+			}
+		}
+		// second tail
+		for (j = 0; j < N_TAIL; j++)
+		{
+			recv_syst2[cur_blk_len + j] = pInpData[out_bit_offset++];
+			for (k = 0; k < N_GENS - 1; k++)
+			{
+				recv_parity2[(cur_blk_len + j) * (N_GENS - 1) + k] = pInpData[out_bit_offset++];
+			}
+		}
+		decode_block(recv_syst1, recv_syst2, recv_parity1, recv_parity2, pOutBits + out_block_offset, cur_blk_len, n_iters);
+		out_block_offset += cur_blk_len;
+	}
 }
+
 
 void decode_block(float recv_syst1[N_UNCODED + N_TAIL], 
 		float recv_syst2[N_UNCODED + N_TAIL],
@@ -617,7 +560,6 @@ void decode_block(float recv_syst1[N_UNCODED + N_TAIL],
 		int n_iters)
 {
 	int n_tailed = interleaver_size + N_TAIL;
-	assert(n_tailed < 6148);
 	int i;
 	int j;
 	
@@ -640,27 +582,21 @@ void decode_block(float recv_syst1[N_UNCODED + N_TAIL],
 	internal_deinterleaver(recv_syst2, deint_recv_syst2, interleaver_size);
 
 	// Combine the results from recv_syst1 and recv_syst2 (in case some bits are transmitted several times)
-	assert(interleaver_size < 6145);
 	for (i = 0; i < interleaver_size; i++)
 	{
-#pragma HLS PIPELINE
 		recv_syst[i] = recv_syst1[i] + deint_recv_syst2[i];
 	}
 	for (i = 0; i < interleaver_size; i++)
 	{
-#pragma HLS PIPELINE
 		int_recv_syst[i] = recv_syst2[i] + int_recv_syst1[i];
 	}
 	for (i = interleaver_size; i < n_tailed; i++)
 	{
-#pragma HLS PIPELINE
-#pragma HLS LOOP_TRIPCOUNT min=3 max=3 avg=3
 		recv_syst[i] = recv_syst1[i];
 		int_recv_syst[i] = recv_syst2[i];
 	}
 
 	// do the iterative decoding
-	assert(n_iters < 101);
 	for (i = 0; i < n_iters; i++)
 	{
 	//	map_decoder(recv_syst1, recv_parity1, Le21, Le12, interleaver_size);
@@ -682,7 +618,6 @@ void decode_block(float recv_syst1[N_UNCODED + N_TAIL],
 
 	for (i = 0; i < interleaver_size; i++)
 	{
-#pragma HLS PIPELINE
 		L[i] = recv_syst[i] + Le21[i] + Le12[i];
 	//	std::cout << recv_syst1[i] << "\t" << Le21[i] << "\t" << Le12[i] << std::endl;
 		decoded_bits_i[i] = (L[i] > 0.0) ? 1 : -1;
@@ -696,26 +631,19 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 		float extrinsic[BLOCK_SIZE + N_TAIL],
 		int interleaver_size)
 {
-#pragma HLS ARRAY_PARTITION variable=g_state_trans cyclic factor=2 dim=1
-//#pragma HLS DATAFLOW
 
 	float nom, den, temp0, temp1, exp_temp0, exp_temp1, rp;
-
-#pragma HLS DEPENDENCE variable=nom inter false
-//#pragma HLS DEPENDENCE variable=den inter false
-
 	int i, j, s0, s1, k, kk, l, s, s_prim, s_prim0, s_prim1;
 	int block_length = (interleaver_size + N_TAIL);
 	
 	float alpha[N_STATES * (BLOCK_SIZE + N_TAIL + 1)];
-#pragma HLS ARRAY_PARTITION variable=alpha cyclic factor=2 dim=1
 	float beta[N_STATES * (BLOCK_SIZE + N_TAIL + 1)];
 	float gamma[N_STATES * 2 * (BLOCK_SIZE + N_TAIL + 1)];
 	float denom[BLOCK_SIZE + N_TAIL + 1];
 
 	Lc = 1.0;
 //	com_log = max_log;
-	assert(block_length < 6148);
+
 	for (k = 0; k <= block_length; k++)
 	{
 		denom[k] = -LOG_INFINITY;
@@ -728,17 +656,11 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 
 		for (s_prim = 0; s_prim < N_STATES; s_prim++)
 		{
-			/*exp_temp0 = 0.0;
-			exp_temp1 = 0.0;*/
+			exp_temp0 = 0.0;
+			exp_temp1 = 0.0;
 
 			for (j = 0; j < (N_GENS - 1); j++)
 			{
-#pragma HLS LOOP_FLATTEN
-				if(j == 0){
-					exp_temp0 = 0.0;
-					exp_temp1 = 0.0;
-				}
-
 				rp = recv_parity[kk * (N_GENS - 1) + j];
 				if (0 == g_output_parity[s_prim * (N_GENS - 1) * 2 + j * 2 + 0])
 				{
@@ -756,16 +678,11 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 				{
 					exp_temp1 -= rp; 
 				}
-
-				if(j == N_GENS - 2){
-					gamma[(2 * s_prim + 0) * (block_length + 1) + k] =  0.5 * ((apriori[kk] + recv_syst[kk]) + exp_temp0);
-					gamma[(2 * s_prim + 1) * (block_length + 1) + k] = -0.5 * ((apriori[kk] + recv_syst[kk]) - exp_temp1);
-				}
 			}
 
-			//gamma[(2 * s_prim + 0) * (block_length + 1) + k] =  0.5 * ((apriori[kk] + recv_syst[kk]) + exp_temp0);
+			gamma[(2 * s_prim + 0) * (block_length + 1) + k] =  0.5 * ((apriori[kk] + recv_syst[kk]) + exp_temp0);
 		//	std::cout << gamma[(2 * s_prim + 0) * (block_length + 1) + k] << "\t";
-			//gamma[(2 * s_prim + 1) * (block_length + 1) + k] = -0.5 * ((apriori[kk] + recv_syst[kk]) - exp_temp1);
+			gamma[(2 * s_prim + 1) * (block_length + 1) + k] = -0.5 * ((apriori[kk] + recv_syst[kk]) - exp_temp1);
 		//	std::cout << gamma[(2 * s_prim + 1) * (block_length + 1) + k] << std::endl;
 		}
 	}
@@ -782,25 +699,19 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 	{
 		for (s = 0; s < N_STATES; s++)
 		{
-#pragma HLS DEPENDENCE array inter false
-#pragma HLS PIPELINE
 			s_prim0 = g_rev_state_trans[s * 2 + 0];
 			s_prim1 = g_rev_state_trans[s * 2 + 1];
 			temp0 = alpha[s_prim0 * (block_length + 1) + k - 1] + gamma[(2 * s_prim0 + 0) * (block_length + 1) + k];
 			temp1 = alpha[s_prim1 * (block_length + 1) + k - 1] + gamma[(2 * s_prim1 + 1) * (block_length + 1) + k];
 			//	alpha[s * (block_length + 1) + k] = com_log(temp0, temp1);
 			//	denom[k] = com_log(alpha[s * (block_length + 1) + k], denom[k]);
-			int temp = max_log(temp0, temp1);
-			alpha[s * (block_length + 1) + k] = temp;
-			//denom[k] = max_log(alpha[s * (block_length + 1) + k], denom[k]);
-			denom[k] = max_log(temp, denom[k]);
+			alpha[s * (block_length + 1) + k] = max_log(temp0, temp1);
+			denom[k] = max_log(alpha[s * (block_length + 1) + k], denom[k]);
 		}
 
 		// Normalization of alpha
 		for (l = 0; l < N_STATES; l++)
 		{
-#pragma HLS DEPENDENCE array inter false
-#pragma HLS PIPELINE
 			alpha[l * (block_length + 1) + k] -= denom[k];
 		}
 	}
@@ -815,11 +726,8 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 	// Calculate beta going backward in the trellis
 	for (k = block_length; k >= 2; k--)
 	{
-#pragma HLS LOOP_TRIPCOUNT max=6147
 		for (s_prim = 0; s_prim < N_STATES; s_prim++)
 		{
-#pragma HLS DEPENDENCE array inter false
-#pragma HLS PIPELINE
 			s0 = g_state_trans[s_prim * 2 + 0];
 			s1 = g_state_trans[s_prim * 2 + 1];
 			//	beta[s_prim * (block_length + 1) + k - 1] = com_log(beta[s0 * (block_length + 1) + k] + gamma[(2 * s_prim + 0) * (block_length + 1) + k], beta[s1 * (block_length + 1) + k] + gamma[(2 * s_prim + 1) * (block_length + 1) + k]);
@@ -828,8 +736,6 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 		// Normalization of beta
 		for (l = 0; l < N_STATES; l++)
 		{
-#pragma HLS PIPELINE
-#pragma HLS DEPENDENCE array inter false
 			beta[l * (block_length + 1) + k - 1] -= denom[k];
 		}
 	}
@@ -837,38 +743,17 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 	// Calculate extrinsic output for each bit
 	for (k = 1; k <= block_length; k++)
 	{
-#pragma HLS DEPENDENCE array inter false
-/*		kk = k - 1;
+		kk = k - 1;
 		nom = -LOG_INFINITY;
-		den = -LOG_INFINITY;*/
+		den = -LOG_INFINITY;
 		for (s_prim = 0; s_prim < N_STATES; s_prim++)
 		{
-/*			if(s_prim == 0){
-				kk = k - 1;
-				nom = -LOG_INFINITY;
-				den = -LOG_INFINITY;
-			}*/
-/*			s0 = g_state_trans[s_prim * 2 + 0];
+			s0 = g_state_trans[s_prim * 2 + 0];
 			s1 = g_state_trans[s_prim * 2 + 1];
 			exp_temp0 = 0.0;
-			exp_temp1 = 0.0;*/
+			exp_temp1 = 0.0;
 			for (j = 0; j < (N_GENS - 1); j++)
 			{
-#pragma HLS DEPENDENCE array inter false
-#pragma HLS PIPELINE
-#pragma HLS LOOP_FLATTEN
-				if(s_prim == 0 && j == 0){
-						kk = k - 1;
-						nom = -LOG_INFINITY;
-						den = -LOG_INFINITY;
-				}
-				if(j == 0){
-					s0 = g_state_trans[s_prim * 2 + 0];
-					s1 = g_state_trans[s_prim * 2 + 1];
-					exp_temp0 = 0.0;
-					exp_temp1 = 0.0;
-				}
-
 				rp = recv_parity[kk * (N_GENS - 1) + j];
 				if (0 == g_output_parity[s_prim * (N_GENS - 1) * 2 + j * 2 + 0])
 				{
@@ -886,24 +771,13 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 				{
 					exp_temp1 -= rp;
 				}
-
-
-				if(j == N_GENS - 2){
-					nom = max_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
-					den = max_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
-				}
-				if(j == N_GENS - 2 && s_prim == N_STATES - 1){
-					extrinsic[kk] = nom - den;
-				}
 			}
 			//	nom = com_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
 			//	den = com_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
-//			nom = max_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
-//			den = max_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
-//			if(s_prim == N_STATES - 1)
-//				extrinsic[kk] = nom - den;
+			nom = max_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
+			den = max_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
 		}
-//		extrinsic[kk] = nom - den;
+		extrinsic[kk] = nom - den;
 	//	std::cout << nom << "\t" << den << std::endl;
 	//	std::cout << extrinsic[kk] << std::endl;
 	}
