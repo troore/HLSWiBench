@@ -1,48 +1,48 @@
+================================================================
+  Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
+  Version: 2013.4
+  Build date: Mon Dec 09 17:07:59 PM 2013
+  Copyright (C) 2013 Xilinx Inc. All rights reserved.
+================================================================
 @I [LIC-101] Checked out feature [VIVADO_HLS]
-@I [HLS-10] Running '/home/troore/Public/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
-            for user 'troore' on host 'debian.pku.edu' (Linux_x86_64 version 3.2.0-4-amd64) on Tue Dec 16 02:12:50 HKT 2014
-            in directory '/home/troore/Projects/comm/HLSWiBench/Modulation'
-@I [HLS-10] Opening project '/home/troore/Projects/comm/HLSWiBench/Modulation/demod_split_prj'.
-@I [HLS-10] Adding design file 'Modulation_loop_split.cpp' to the project.
-@I [HLS-10] Adding test bench file '../lte_phy.cpp' to the project.
-@I [HLS-10] Adding test bench file '../gauss.cpp' to the project.
-@I [HLS-10] Adding test bench file '../GeneralFunc.cpp' to the project.
-@I [HLS-10] Adding test bench file 'testModulationOutputImag' to the project.
-@I [HLS-10] Adding test bench file 'testModulationOutputReal' to the project.
+@I [HLS-10] Running '/opt/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
+            for user 'bliang' on host 'ceca7.site' (Linux_x86_64 version 3.7.10-1.40-default) on Fri Jan 09 13:57:49 CST 2015
+            in directory '/home/bliang/vivado/HLSWiBench/Modulation'
+@I [HLS-10] Opening and resetting project '/home/bliang/vivado/HLSWiBench/Modulation/demod_prj'.
+@I [HLS-10] Adding design file 'Modulation.cpp' to the project.
 @I [HLS-10] Adding test bench file 'ModMain.cpp' to the project.
-@I [HLS-10] Opening solution '/home/troore/Projects/comm/HLSWiBench/Modulation/demod_split_prj/solution1'.
+@I [HLS-10] Adding test bench file 'testModulationOutputReal' to the project.
+@I [HLS-10] Adding test bench file 'testModulationOutputImag' to the project.
+@I [HLS-10] Adding test bench file '../GeneralFunc.cpp' to the project.
+@I [HLS-10] Adding test bench file '../gauss.cpp' to the project.
+@I [HLS-10] Adding test bench file '../lte_phy.cpp' to the project.
+@I [HLS-10] Opening and resetting solution '/home/bliang/vivado/HLSWiBench/Modulation/demod_prj/solution1'.
+@I [HLS-10] Cleaning up the solution database.
+@I [HLS-10] Setting target device to 'xc7z020clg484-1'
 @I [SYN-201] Setting up clock 'default' with a period of 10ns.
-@I [HLS-10] Setting target device to 'xc7vx980tffg1930-2'
-@I [HLS-10] Importing test bench file 'ModMain.cpp' ... 
-@I [HLS-10] Importing test bench file 'testModulationOutputReal' ... 
-@I [HLS-10] Importing test bench file 'testModulationOutputImag' ... 
-@I [HLS-10] Importing test bench file '../GeneralFunc.cpp' ... 
-@I [HLS-10] Importing test bench file '../gauss.cpp' ... 
 @I [HLS-10] Importing test bench file '../lte_phy.cpp' ... 
-@I [HLS-10] Analyzing design file 'Modulation_loop_split.cpp' ... 
+@I [HLS-10] Importing test bench file '../gauss.cpp' ... 
+@I [HLS-10] Importing test bench file '../GeneralFunc.cpp' ... 
+@I [HLS-10] Importing test bench file 'testModulationOutputImag' ... 
+@I [HLS-10] Importing test bench file 'testModulationOutputReal' ... 
+@I [HLS-10] Importing test bench file 'ModMain.cpp' ... 
+@I [HLS-10] Analyzing design file 'Modulation.cpp' ... 
 @I [HLS-10] Validating synthesis directives ...
-@W [HLS-40] Directive 'UNROLL' cannot be applied: Label 'Demodulating_label0' does not exist in function 'Demodulating'. 
 @I [HLS-10] Starting code transformations ...
 @I [HLS-10] Checking synthesizability ...
-@I [XFORM-502] Unrolling all sub-loops inside loop 'Loop-2.1' (Modulation_loop_split.cpp:407) in function 'Demodulating' for pipelining.
-@I [XFORM-502] Unrolling all sub-loops inside loop 'Loop-3' (Modulation_loop_split.cpp:420) in function 'Demodulating' for pipelining.
-@I [XFORM-502] Unrolling all sub-loops inside loop 'Loop-4' (Modulation_loop_split.cpp:434) in function 'Demodulating' for pipelining.
-@I [XFORM-502] Unrolling all sub-loops inside loop 'Loop-5' (Modulation_loop_split.cpp:449) in function 'Demodulating' for pipelining.
-@I [XFORM-501] Unrolling loop 'memset_idx' (Modulation_loop_split.cpp:410) in function 'Demodulating' completely.
-@I [XFORM-501] Unrolling loop 'Loop-2.1.2' (Modulation_loop_split.cpp:411) in function 'Demodulating' completely.
-@I [XFORM-501] Unrolling loop 'Loop-3.1' (Modulation_loop_split.cpp:423) in function 'Demodulating' completely.
-@I [XFORM-501] Unrolling loop 'Loop-3.1.1' (Modulation_loop_split.cpp:426) in function 'Demodulating' completely.
-@I [XFORM-501] Unrolling loop 'Loop-4.1' (Modulation_loop_split.cpp:437) in function 'Demodulating' completely.
-@I [XFORM-501] Unrolling loop 'Loop-4.1.1' (Modulation_loop_split.cpp:440) in function 'Demodulating' completely.
-@I [XFORM-501] Unrolling loop 'Loop-5.1' (Modulation_loop_split.cpp:452) in function 'Demodulating' completely.
-@I [XFORM-102] Partitioning array 'min0' (Modulation_loop_split.cpp:419) in dimension 2 automatically.
-@I [XFORM-102] Partitioning array 'min1' (Modulation_loop_split.cpp:433) in dimension 2 automatically.
-@I [XFORM-102] Partitioning array 'idx_table' in dimension 1 automatically.
-@I [XFORM-102] Automatically partitioning small array 'idx' (Modulation_loop_split.cpp:410) completely based on array size.
-@I [XFORM-101] Partitioning array 'idx' (Modulation_loop_split.cpp:410) in dimension 1 completely.
-@I [XFORM-541] Flattening a loop nest 'Loop-0' (Modulation_loop_split.cpp:389) in function 'Demodulating'.
-@I [XFORM-541] Flattening a loop nest 'Loop-1' (Modulation_loop_split.cpp:404) in function 'Demodulating'.
-@I [HLS-111] Elapsed time: 145.46 seconds; current memory usage: 121 MB.
+@I [XFORM-502] Unrolling all sub-loops inside loop 'DEMOD_SYMB_LOOP' (Modulation.cpp:386) in function 'Demodulating' for pipelining.
+@I [XFORM-501] Unrolling loop 'DEMOD_TABLE_LOOP1' (Modulation.cpp:389) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'DEMOD_BITS_LOOP' (Modulation.cpp:403) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'memset_idx' (Modulation.cpp:408) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'DEMOD_TABLE_LOOP2' (Modulation.cpp:410) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'MIN_LOOP0' (Modulation.cpp:431) in function 'Demodulating' completely.
+@I [XFORM-501] Unrolling loop 'MIN_LOOP1' (Modulation.cpp:438) in function 'Demodulating' completely.
+@I [XFORM-102] Partitioning array 'metric' (Modulation.cpp:348) automatically.
+@I [XFORM-102] Partitioning array 'metric_set' (Modulation.cpp:349) in dimension 1 automatically.
+@I [XFORM-102] Partitioning array 'idx' (Modulation.cpp:408) automatically.
+@I [XFORM-102] Partitioning array 'metric_set.0' (Modulation.cpp:349) automatically.
+@I [XFORM-102] Partitioning array 'metric_set.1' (Modulation.cpp:349) automatically.
+@I [HLS-111] Elapsed time: 4.88 seconds; current memory usage: 62.3 MB.
 @I [HLS-10] Starting hardware synthesis ...
 @I [HLS-10] Synthesizing 'Demodulating' ...
 @I [HLS-10] ----------------------------------------------------------------
@@ -50,7 +50,7 @@
 @I [HLS-10] ----------------------------------------------------------------
 @I [SCHED-11] Starting scheduling ...
 @I [SCHED-11] Finished scheduling.
-@I [HLS-111] Elapsed time: 0.18 seconds; current memory usage: 123 MB.
+@I [HLS-111] Elapsed time: 0.32 seconds; current memory usage: 63.5 MB.
 @I [HLS-10] ----------------------------------------------------------------
 @I [HLS-10] -- Exploring micro-architecture for module 'init_mod_tables' 
 @I [HLS-10] ----------------------------------------------------------------
@@ -59,27 +59,16 @@
 @I [BIND-101] Exploring resource sharing.
 @I [BIND-101] Binding ...
 @I [BIND-100] Finished micro-architecture generation.
-@I [HLS-111] Elapsed time: 0.12 seconds; current memory usage: 124 MB.
+@I [HLS-111] Elapsed time: 0.28 seconds; current memory usage: 64.8 MB.
 @I [HLS-10] ----------------------------------------------------------------
 @I [HLS-10] -- Scheduling module 'Demodulating' 
 @I [HLS-10] ----------------------------------------------------------------
 @I [SCHED-11] Starting scheduling ...
-@I [SCHED-61] Pipelining loop 'Loop 1'.
-@I [SCHED-61] Pipelining result: Target II: 1, Final II: 1, Depth: 14.
-@I [SCHED-61] Pipelining loop 'Loop 2'.
-@W [SCHED-69] Unable to schedule 'load' operation ('metric_load_2', Modulation_loop_split.cpp:414) on array 'metric' due to limited memory ports.
-@I [SCHED-61] Pipelining result: Target II: 1, Final II: 8, Depth: 17.
-@I [SCHED-61] Pipelining loop 'Loop 3'.
-@W [SCHED-69] Unable to schedule 'load' operation ('metric_set_load_16', Modulation_loop_split.cpp:425) on array 'metric_set' due to limited memory ports.
-@I [SCHED-61] Pipelining result: Target II: 1, Final II: 16, Depth: 19.
-@I [SCHED-61] Pipelining loop 'Loop 4'.
-@W [SCHED-69] Unable to schedule 'load' operation ('metric_set_load_18', Modulation_loop_split.cpp:439) on array 'metric_set' due to limited memory ports.
-@I [SCHED-61] Pipelining result: Target II: 1, Final II: 16, Depth: 19.
-@I [SCHED-61] Pipelining loop 'Loop 5'.
-@W [SCHED-69] Unable to schedule 'store' operation (Modulation_loop_split.cpp:454) of variable 'tmp_52_2' on array 'pLLR' due to limited memory ports.
-@I [SCHED-61] Pipelining result: Target II: 1, Final II: 2, Depth: 16.
+@I [SCHED-61] Pipelining loop 'DEMOD_SYMB_LOOP'.
+@W [SCHED-69] Unable to schedule 'load' operation ('QAM16_table_load_16', Modulation.cpp:398) on array 'QAM16_table' due to limited memory ports.
+@I [SCHED-61] Pipelining result: Target II: 1, Final II: 16, Depth: 71.
 @I [SCHED-11] Finished scheduling.
-@I [HLS-111] Elapsed time: 1.62 seconds; current memory usage: 127 MB.
+@I [HLS-111] Elapsed time: 1.18 seconds; current memory usage: 66.4 MB.
 @I [HLS-10] ----------------------------------------------------------------
 @I [HLS-10] -- Exploring micro-architecture for module 'Demodulating' 
 @I [HLS-10] ----------------------------------------------------------------
@@ -88,15 +77,15 @@
 @I [BIND-101] Exploring resource sharing.
 @I [BIND-101] Binding ...
 @I [BIND-100] Finished micro-architecture generation.
-@I [HLS-111] Elapsed time: 0.43 seconds; current memory usage: 131 MB.
+@I [HLS-111] Elapsed time: 0.16 seconds; current memory usage: 68.4 MB.
 @I [HLS-10] ----------------------------------------------------------------
 @I [HLS-10] -- Generating RTL for module 'init_mod_tables' 
 @I [HLS-10] ----------------------------------------------------------------
-@I [RTGEN-100] Generating core module 'Demodulating_ddiv_64ns_64ns_64_17': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_ddiv_64ns_64ns_64_31': 1 instance(s).
 @I [RTGEN-100] Generating core module 'Demodulating_fpext_32ns_64_3': 1 instance(s).
 @I [RTGEN-100] Generating core module 'Demodulating_fptrunc_64ns_32_3': 1 instance(s).
 @I [RTGEN-100] Finished creating RTL model for 'init_mod_tables'.
-@I [HLS-111] Elapsed time: 0.55 seconds; current memory usage: 133 MB.
+@I [HLS-111] Elapsed time: 0.34 seconds; current memory usage: 70.4 MB.
 @I [HLS-10] ----------------------------------------------------------------
 @I [HLS-10] -- Generating RTL for module 'Demodulating' 
 @I [HLS-10] ----------------------------------------------------------------
@@ -114,42 +103,109 @@
                Please use C simulation to confirm this function argument can be read from or written to.
 @W [RTGEN-101] Port 'Demodulating/mod_type' has no fanin or fanout and is left dangling.
                Please use C simulation to confirm this function argument can be read from or written to.
-@I [RTGEN-100] Generating core module 'Demodulating_dmul_64ns_64ns_64_5_max_dsp': 1 instance(s).
-@I [RTGEN-100] Generating core module 'Demodulating_fadd_32ns_32ns_32_4_full_dsp': 1 instance(s).
-@I [RTGEN-100] Generating core module 'Demodulating_fcmp_32ns_32ns_1_3': 2 instance(s).
-@I [RTGEN-100] Generating core module 'Demodulating_fdiv_32ns_32ns_32_8': 2 instance(s).
-@I [RTGEN-100] Generating core module 'Demodulating_fmul_32ns_32ns_32_3_max_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_dmul_64ns_64ns_64_6_max_dsp': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_faddfsub_32ns_32ns_32_5_full_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fcmp_32ns_32ns_1_3': 4 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fdiv_32ns_32ns_32_16': 1 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fmul_32ns_32ns_32_4_max_dsp': 2 instance(s).
 @I [RTGEN-100] Generating core module 'Demodulating_fpext_32ns_64_3': 1 instance(s).
 @I [RTGEN-100] Generating core module 'Demodulating_fptrunc_64ns_32_3': 1 instance(s).
-@I [RTGEN-100] Generating core module 'Demodulating_fsub_32ns_32ns_32_4_full_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'Demodulating_fsub_32ns_32ns_32_5_full_dsp': 2 instance(s).
 @I [RTGEN-100] Finished creating RTL model for 'Demodulating'.
-@I [HLS-111] Elapsed time: 0.56 seconds; current memory usage: 142 MB.
+@I [HLS-111] Elapsed time: 0.33 seconds; current memory usage: 76.4 MB.
 @I [RTMG-278] Implementing memory 'init_mod_tables_BPSK_table_ram' using block RAMs with power-on initialization.
 @I [RTMG-278] Implementing memory 'init_mod_tables_QPSK_table_ram' using block RAMs with power-on initialization.
 @I [RTMG-278] Implementing memory 'init_mod_tables_QAM64_table_ram' using block RAMs with power-on initialization.
 @I [RTMG-278] Implementing memory 'Demodulating_QAM16_table_ram' using block RAMs with power-on initialization.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_1_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_2_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_3_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_4_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_5_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_6_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_7_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_8_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_9_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_10_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_11_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_12_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_13_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_14_rom' using auto ROMs.
-@I [RTMG-279] Implementing memory 'Demodulating_idx_table_15_rom' using auto ROMs.
-@I [RTMG-278] Implementing memory 'Demodulating_metric_ram' using block RAMs.
-@I [RTMG-278] Implementing memory 'Demodulating_metric_set_ram' using block RAMs.
-@I [RTMG-278] Implementing memory 'Demodulating_min0_0_ram' using block RAMs.
-@I [RTMG-278] Implementing memory 'Demodulating_min0_1_ram' using block RAMs.
 @I [HLS-10] Finished generating all RTL models.
 @I [WSYSC-301] Generating RTL SystemC for 'Demodulating'.
 @I [WVHDL-304] Generating RTL VHDL for 'Demodulating'.
 @I [WVLOG-307] Generating RTL Verilog for 'Demodulating'.
-@I [HLS-112] Total elapsed time: 152.922 seconds; peak memory usage: 142 MB.
+@I [SIM-14] Instrumenting C test bench ...
+   Build using "/opt/Xilinx/Vivado_HLS/2013.4/lnx64/tools/gcc/bin/g++"
+   Compiling gauss.cpp_pre.cpp.tb.cpp
+   Compiling lte_phy.cpp_pre.cpp.tb.cpp
+   Compiling ModMain.cpp_pre.cpp.tb.cpp
+   Compiling Modulation.cpp_pre.cpp.tb.cpp
+   Compiling apatb_Demodulating.cpp
+   Compiling GeneralFunc.cpp_pre.cpp.tb.cpp
+   Generating cosim.tv.exe
+@I [SIM-302] Generating test vectors ... 
+Demodulation starts
+Demodulation ends
+@I [SIM-333] Generating C post check test bench ...
+@I [SIM-12] Generating RTL test bench ...
+   Build using "/opt/Xilinx/Vivado_HLS/2013.4/lnx64/tools/gcc/bin/g++"
+   Compiling init_mod_tables.cpp
+   Compiling AESL_automem_pLLR.cpp
+   Compiling init_mod_tables_BPSK_table.cpp
+   Compiling init_mod_tables_QPSK_table.cpp
+   Compiling Demodulating_QAM16_table.cpp
+   Compiling Demodulating.autotb.cpp
+   Compiling init_mod_tables_QAM64_table.cpp
+   Compiling AESL_automem_pDecSeq.cpp
+   Compiling Demodulating.cpp
+   Generating cosim.sc.exe
+@I [SIM-11] Starting SystemC simulation ...
+
+             SystemC 2.3.0-ASI --- May 15 2013 06:32:03
+        Copyright (c) 1996-2012 by all Contributors,
+        ALL RIGHTS RESERVED
+
+Note: VCD trace timescale unit is set by user to 1.000000e-12 sec.
+Note: VCD trace timescale unit is set by user to 1.000000e-12 sec.
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+Warning: FP comparator doesn't have such predicate 31 !
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+@I [SIM-316] Starting C post checking ...
+Demodulation starts
+Demodulation ends
+@I [SIM-1000] *** C/RTL co-simulation finished: PASS ***
+@I [IMPL-8] Exporting RTL as an IP in IP-XACT.
+
+****** Vivado v2013.4 (64-bit)
+  **** SW Build 353583 on Mon Dec  9 17:26:26 MST 2013
+  **** IP Build 208076 on Mon Dec  2 12:38:17 MST 2013
+    ** Copyright 1986-1999, 2001-2013 Xilinx, Inc. All Rights Reserved.
+
+Attempting to get a license: Implementation
+Feature available: Implementation
+Loading parts and site information from /opt/Xilinx/Vivado/2013.4/data/parts/arch.xml
+Parsing RTL primitives file [/opt/Xilinx/Vivado/2013.4/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+Finished parsing RTL primitives file [/opt/Xilinx/Vivado/2013.4/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+source run_ippack.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/opt/Xilinx/Vivado/2013.4/data/ip'.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_fcmp_1_no_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_fcmp_1_no_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_fptrunc_1_no_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_fptrunc_1_no_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_fsub_3_full_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_fsub_3_full_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_fdiv_14_no_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_fdiv_14_no_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_ddiv_29_no_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_ddiv_29_no_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_fmul_2_max_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_fmul_2_max_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_faddfsub_3_full_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_faddfsub_3_full_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_fpext_1_no_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_fpext_1_no_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [IP_Flow 19-1686] Generating 'Synthesis' target for IP 'Demodulating_ap_dmul_4_max_dsp'...
+WARNING: [IP_Flow 19-1687] The current project language is set to Verilog. However IP 'Demodulating_ap_dmul_4_max_dsp' does not support 'Verilog Synthesis' output products, delivering 'VHDL Synthesis' output products instead.
+INFO: [Common 17-206] Exiting Vivado at Fri Jan  9 13:59:44 2015...
+@I [HLS-112] Total elapsed time: 143.619 seconds; peak memory usage: 76.4 MB.
 @I [LIC-101] Checked in feature [VIVADO_HLS]

@@ -546,17 +546,7 @@ void turbo_decoding(float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX
 
 	out_bit_offset = 0;
 	out_block_offset = 0;
-	n_blocks_decode(n_blocks, cur_blk_len, last_block_length, recv_syst1, recv_syst2, recv_parity1, recv_parity2, pInpData, pOutBits, n_iters);
-}
 
-void n_blocks_decode(int n_blocks, int cur_blk_len, int last_block_length, float recv_syst1[N_UNCODED + N_TAIL], float recv_syst2[N_UNCODED + N_TAIL], float recv_parity1[(N_UNCODED + N_TAIL) * (N_GENS - 1)], float recv_parity2[(N_UNCODED + N_TAIL) * (N_GENS - 1)], float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX], int n_iters){
-#pragma HLS DATAFLOW
-
-	int i, j ,k;
-	int out_bit_offset, out_block_offset;
-
-	out_bit_offset = 0;
-	out_block_offset = 0;
 	//	for (i = 0; i < n_blocks; i++)
 		for (i = 0; i < 3; i++)
 		{

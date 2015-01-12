@@ -1,0 +1,30 @@
+Module		Remark		|		 Power Baseline	(w)	           |		Power With_Pragmas (w)        |
+				|						   |				  	      |
+				|	Total		Dynamic		Static	   |	Total		Dynamic		Static|
+________________________________|__________________________________________________|__________________________________________|
+
+Modulation				0.399		0.276		0.123		0.422		0.299		0.124
+
+ResMapping				0.519		0.394		0.126		0.693		0.565		0.128
+
+Equalizer				0.76		0.63		0.002		0.715		0.586		0.003
+
+OFDM        FFT_iter_one_array		0.453		0.329		0.006		0.533		0.408		0.019
+
+OFDM	    FFT_iter_two_arrays		0.486		0.361		0.011		0.488		0.364		0.008
+
+OFDM	    FFT_nrvs_one_array		0.459		0.335		0.007		0.584		0.458		0.025
+
+OFDM	    FFT_nrvs_two_array		0.505		0.381		0.007		0.563		0.438		0.004
+
+RateMatcher	Tx			0.164		0.042		0.002		0.244		0.121		0.003
+
+RateMatcher	Rx			0.173		0.051		0.010		0.264		0.140		0.010
+
+Scrambler				0.162		0.040		0.001		0.294		0.171		0.004
+
+TransformPrecoder			0.467		0.343		0.015		0.452		0.328		0.003
+
+Turbo					0.667		0.537		0.003		0.804		0.672		0.011
+
+

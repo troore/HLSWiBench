@@ -1,8 +1,8 @@
 
 #open_project -reset rem_base_prj
-open_project -reset rem_prj
+open_project -reset rem_base_prj
 set_top SubCarrierMapping
-add_files ResMapper.cpp -cflags "-I../dmrs -I../"
+add_files ResMapper_base.cpp -cflags "-I../dmrs -I../"
 add_files ../dmrs/dmrs.cpp -cflags "-I../dmrs -I../"
 add_files -tb SubCarrierMapInputReal
 add_files -tb SubCarrierMapInputImag

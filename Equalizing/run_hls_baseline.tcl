@@ -1,7 +1,7 @@
 
-open_project -reset equalizer_not_zynq_prj
+open_project -reset equalizer_baseline_prj
 set_top Equalizing
-add_files Equalizer.cpp -cflags "-I../"
+add_files Equalizer_baseline.cpp -cflags "-I../"
 add_files dmrs.cpp -cflags "-I../"
 add_files -tb EqualizerMain.cpp -cflags "-I../"
 add_files -tb LSCELSEqInputReal

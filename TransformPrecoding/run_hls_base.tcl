@@ -1,10 +1,10 @@
 
 #open_project -reset tp_base_prj
-open_project -reset tp_prj
+open_project -reset tp_base_prj
 set_top TransformPrecoding
 #set_top TransformDecoding
-add_files TransformPrecoder.cpp -cflags "-I../"
-add_files fft.cpp -cflags "-I../"
+add_files TransformPrecoder_base.cpp -cflags "-I../"
+add_files fft_base.cpp -cflags "-I../"
 add_files -tb TransformPreMain.cpp -cflags "-I../"
 add_files -tb TransformPrecoderInputReal
 add_files -tb TransformPrecoderInputImag

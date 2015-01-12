@@ -1,7 +1,7 @@
 
 #include "RateMatcherMain.h"
 
-#define TxRateM
+//#define TxRateM
 
 LTE_PHY_PARAMS lte_phy_params;
 
@@ -22,7 +22,7 @@ void rx_rate_matching(LTE_PHY_PARAMS *lte_phy_params)
 {
 	std::cout << "Rx RateMatching starts" << std::endl;
 
-	ReadInputFromFiles(lte_phy_params->rdm_in, lte_phy_params->rdm_in_buf_sz, "testTxRateMatchOutput");
+	ReadInputFromFiles(lte_phy_params->rdm_in, lte_phy_params->rdm_in_buf_sz, "RxRateMatchInput");
 //	ReadInputFromFiles(rx_rm_in, in_buf_sz, "RxRateMatchInput");
 
 	RxRateMatching(lte_phy_params->rdm_in, lte_phy_params->rdm_out, lte_phy_params->rdm_hard, lte_phy_params->rdm_out_buf_sz);

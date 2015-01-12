@@ -14,7 +14,6 @@
 
 #include "gauss.h"
 //#include "FIFO.h"
-#include "matrix.h"
 #include "GeneralFunc.h"
 
 #include "SubblockInterleaver_lte.h"

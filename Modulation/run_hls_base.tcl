@@ -1,9 +1,9 @@
 
 #open_project -reset mod_base_prj
 #open_project -reset demod_split_prj
-open_project -reset demod_prj
+open_project -reset demod_base_prj
 set_top Demodulating
-add_files Modulation.cpp -cflags "-I../"
+add_files Modulation_base.cpp -cflags "-I../"
 add_files -tb ModMain.cpp -cflags "-I../"
 #add_files -tb ModulationInput
 add_files -tb testModulationOutputReal

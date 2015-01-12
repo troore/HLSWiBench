@@ -6,10 +6,8 @@
 
 
 
-void ofmodulating_same_array(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData)
+void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT_SIZE_MAX], float pOutData[2 * LTE_PHY_FFT_SIZE_MAX])
 {
-#pragma HLS INTERFACE ap_bus port=pOutData
-#pragma HLS INTERFACE ap_bus port=pInpData
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -20,36 +18,43 @@ void ofmodulating_same_array(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, fl
 
 	int nlayer, nsym, i;
 
-	/*
-	float *p_samp_in_buf = (float *)malloc(2 * NIFFT * sizeof(float));
-	float *p_samp_out_buf = (float *)malloc(2 * NIFFT * sizeof(float));
-	*/
+	
+	//float *p_samp_in_buf = (float *)malloc(2 * NIFFT * sizeof(float));
+	//float *p_samp_out_buf = (float *)malloc(2 * NIFFT * sizeof(float));
+	
 	float p_samp_in_buf[2 * LTE_PHY_FFT_SIZE_MAX];
 	float p_samp_out_buf[2 * LTE_PHY_FFT_SIZE_MAX];
 	
 	for (nlayer = 0; nlayer < NumLayer; nlayer++)
 	{
-		for (nsym = 0; nsym < NumULSymbSF; nsym++)
+		ofmod1_in1:for (nsym = 0; nsym < NumULSymbSF; nsym++)
 		{
+#pragma HLS UNROLL
 			int symb_idx = nlayer * NumULSymbSF + nsym;
-			float norm = (float)sqrt((float)NIFFT)/* (float)NIFFT*/;
+			float norm = (float)sqrt((float)NIFFT);
 
-			for (i = 0; i < NIFFT; i++)
+			ofmod1_in1_in1:for (i = 0; i < NIFFT; i++)
 			{
+#pragma HLS DEPENDENCE array inter false
+#pragma HLS PIPELINE
 				p_samp_in_buf[i] = pInpData[symb_idx * NIFFT + i];
 				p_samp_in_buf[i + NIFFT] = pInpData[symb_idx * NIFFT + i + in_buf_sz];
 			}
 			
-			fft_iter(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
+			fft_nrvs(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
 			
-			for (i = 0; i < NIFFT; i++)
+			ofmod1_in1_in2:for (i = 0; i < NIFFT; i++)
 			{
+#pragma HLS DEPENDENCE array inter false
+#pragma HLS PIPELINE
 				pOutData[symb_idx * (NIFFT + CPLen) + CPLen + i] = p_samp_out_buf[i] / norm;
 				pOutData[symb_idx * (NIFFT + CPLen) + CPLen + i + out_buf_sz] = p_samp_out_buf[i + NIFFT] / norm;
 			}
 		
-			for (i = 0; i < CPLen; i++)
+			ofmod1_in1_in3:for (i = 0; i < CPLen; i++)
 			{
+#pragma HLS DEPENDENCE array inter false
+#pragma HLS PIPELINE
 				pOutData[symb_idx * (NIFFT + CPLen) + i] = pOutData[symb_idx * (NIFFT + CPLen) + NIFFT + i];
 				pOutData[symb_idx * (NIFFT + CPLen) + i + out_buf_sz] = pOutData[symb_idx * (NIFFT + CPLen) + NIFFT + i + out_buf_sz];
 			}
@@ -107,13 +112,9 @@ void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOut
 //	free(p_samp_out_buf);
 }
 
-void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
-				  float *pOutDataReal, float *pOutDataImag)
+void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX],
+				  float pOutDataReal[LTE_PHY_FFT_SIZE_MAX], float pOutDataImag[LTE_PHY_FFT_SIZE_MAX])
 {
-#pragma HLS INTERFACE ap_bus port=pOutDataImag
-#pragma HLS INTERFACE ap_bus port=pOutDataReal
-#pragma HLS INTERFACE ap_bus port=pInpDataImag
-#pragma HLS INTERFACE ap_bus port=pInpDataReal
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -125,21 +126,26 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pI
 	{
 		for (nsym = 0; nsym < NumULSymbSF; nsym++)
 		{
+#pragma HLS loop_flatten
 			int symb_idx = nlayer * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT);
 			
-			fft_iter(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
+			fft_nrvs(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
 					 pOutDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pOutDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
 					 -1);
 			
 			for (i = 0; i < NIFFT; i++)
 			{
+#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE array inter false
 				pOutDataReal[symb_idx * (NIFFT + CPLen) + CPLen + i] /= norm;
 				pOutDataImag[symb_idx * (NIFFT + CPLen) + CPLen + i] /= norm;
 			}
 
 			for (i = 0; i < CPLen; i++)
 			{
+#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE array inter false
 				pOutDataReal[symb_idx * (NIFFT + CPLen) + i] = pOutDataReal[symb_idx * (NIFFT + CPLen) + NIFFT + i];
 				pOutDataImag[symb_idx * (NIFFT + CPLen) + i] = pOutDataImag[symb_idx * (NIFFT + CPLen) + NIFFT + i];
 			}

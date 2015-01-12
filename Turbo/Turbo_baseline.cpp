@@ -5,7 +5,7 @@
 
 #define LOG_INFINITY 1e30
 
-/**************Global variables*****************/
+/**************Globalvariables*****************/
 
 int InpBlockShift;
 int OutBlockShift;

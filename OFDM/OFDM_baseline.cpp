@@ -6,6 +6,8 @@
 
 void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData)
 {
+#pragma HLS INTERFACE ap_bus port=pOutData depth=4096
+#pragma HLS INTERFACE ap_bus port=pInpData depth=4096
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -36,7 +38,7 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutDa
 				p_samp_in_buf[i + NIFFT] = pInpData[symb_idx * NIFFT + i + in_buf_sz];
 			}
 			
-			fft_iter(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
+			fft_nrvs(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
 			
 			for (i = 0; i < NIFFT; i++)
 			{
@@ -103,9 +105,13 @@ void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOut
 //	free(p_samp_out_buf);
 }
 
-void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
+void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
 				  float *pOutDataReal, float *pOutDataImag)
 {
+#pragma HLS INTERFACE ap_bus port=pOutDataReal depth=2048
+#pragma HLS INTERFACE ap_bus port=pOutDataImag depth=2048
+#pragma HLS INTERFACE ap_bus port=pInpDataReal depth=2048
+#pragma HLS INTERFACE ap_bus port=pInpDataImag depth=2048
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -120,7 +126,7 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pI
 			int symb_idx = nlayer * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT);
 			
-			fft_nrvs(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
+			fft_iter(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
 					 pOutDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pOutDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
 					 -1);
 			

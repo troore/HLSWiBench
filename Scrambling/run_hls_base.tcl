@@ -1,13 +1,10 @@
 
-#open_project -reset mod_base_prj
-#open_project -reset demod_split_prj
-open_project -reset demod_prj
-set_top Demodulating
-add_files Modulation.cpp -cflags "-I../"
-add_files -tb ModMain.cpp -cflags "-I../"
-#add_files -tb ModulationInput
-add_files -tb testModulationOutputReal
-add_files -tb testModulationOutputImag
+#open_project -reset scrb_base_prj
+open_project -reset scrb_base_prj
+set_top Scrambling
+add_files Scrambler_base.cpp -cflags "-I../"
+add_files -tb ScrambMain.cpp -cflags "-I../"
+add_files -tb ScrambleInput
 add_files -tb ../GeneralFunc.cpp -cflags "-I../"
 add_files -tb ../gauss.cpp -cflags "-I../"
 add_files -tb ../lte_phy.cpp -cflags "-I../"

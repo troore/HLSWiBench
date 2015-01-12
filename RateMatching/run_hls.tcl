@@ -1,11 +1,11 @@
 
-open_project -reset equalizer_not_zynq_prj
-set_top Equalizing
-add_files Equalizer.cpp -cflags "-I../"
-add_files dmrs.cpp -cflags "-I../"
-add_files -tb EqualizerMain.cpp -cflags "-I../"
-add_files -tb LSCELSEqInputReal
-add_files -tb LSCELSEqInputImag
+open_project -reset ratematch_rx_prj
+set_top RxRateMatching
+add_files RateMatcher.cpp -cflags "-I../"
+add_files SubblockInterleaver_lte.cpp -cflags "-I../"
+add_files -tb RateMatcherMain.cpp -cflags "-I../"
+add_files -tb TxRateMatchInput
+add_files -tb RxRateMatchInput
 add_files -tb ../GeneralFunc.cpp -cflags "-I../"
 add_files -tb ../gauss.cpp -cflags "-I../"
 add_files -tb ../lte_phy.cpp -cflags "-I../"

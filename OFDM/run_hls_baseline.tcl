@@ -1,11 +1,9 @@
 
-open_project -reset equalizer_not_zynq_prj
-set_top Equalizing
-add_files Equalizer.cpp -cflags "-I../"
-add_files dmrs.cpp -cflags "-I../"
-add_files -tb EqualizerMain.cpp -cflags "-I../"
-add_files -tb LSCELSEqInputReal
-add_files -tb LSCELSEqInputImag
+open_project -reset ofmod_baseline_prj4_two_arrays_iter
+set_top ofmodulating_two_arrays
+add_files OFDM_baseline.cpp -cflags "-I../"
+add_files fft_baseline.cpp -cflags "-I../"
+add_files -tb OFDMMain.cpp -cflags "-I../"
 add_files -tb ../GeneralFunc.cpp -cflags "-I../"
 add_files -tb ../gauss.cpp -cflags "-I../"
 add_files -tb ../lte_phy.cpp -cflags "-I../"
@@ -16,6 +14,6 @@ create_clock -period 10 -name default
 
 #csim_design
 csynth_design
-cosim_design
+#cosim_design
 export_design 
 exit
