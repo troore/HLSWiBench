@@ -2,4 +2,9 @@
 *.log
 *.jou
 *_prj/
-testsuite/
+*.out
+*/testsuite/test*
+*/testsuite/*Input
+*/testsuite/*Output
+*/testsuite/*Imag
+*/testsuite/*Real
