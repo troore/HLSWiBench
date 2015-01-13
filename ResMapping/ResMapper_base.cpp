@@ -1,5 +1,5 @@
 
-#include "dmrs.h"
+#include "dmrs/dmrs.h"
 #include "lte_phy.h"
 
 void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */

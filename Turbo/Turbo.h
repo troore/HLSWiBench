@@ -64,9 +64,5 @@ extern int g_output_parity[N_STATES * (N_GENS - 1) * 2];
 extern int g_rev_output_parity[N_STATES * (N_GENS - 1) * 2];
 
 extern float Lc;
-
-extern int TURBO_INT_K_TABLE[TURBO_INT_K_TABLE_SIZE];
-extern int TURBO_INT_F1_TABLE[TURBO_INT_K_TABLE_SIZE];
-extern int TURBO_INT_F2_TABLE[TURBO_INT_K_TABLE_SIZE];
 	
 #endif

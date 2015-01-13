@@ -1,7 +1,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "fft.h"
+#include "fft/fft.h"
 #include "lte_phy.h"
 
 

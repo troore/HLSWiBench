@@ -1,6 +1,7 @@
 #include <assert.h>
 #include "Equalizer.h"
 #include "lte_phy.h"
+#include "dmrs/dmrs.h"
 //#include <stdio.h>
 
 static void MatrixProd(int d1, int d2, int d3, float M1[], float M2[], float oM[])

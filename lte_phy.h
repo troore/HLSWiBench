@@ -1,7 +1,7 @@
 #ifndef __LTE_PHY_H_
 #define __LTE_PHY_H_
 
-#include <iostream>
+//#include <iostream>
 #include <complex>
 
 /******************************************
@@ -54,6 +54,26 @@ DEFINES
 #define LTE_PHY_N_SAMPS_CP_L_0_1_92MHZ    9
 #define LTE_PHY_N_SAMPS_CP_L_ELSE_1_92MHZ 9
 
+// 2.5MHz bandwidths
+#define LTE_PHY_N_SAMPS_PER_SYMB_3_84MHZ  256
+#define LTE_PHY_N_SAMPS_CP_L_0_3_84MHZ    9
+#define LTE_PHY_N_SAMPS_CP_L_ELSE_3_84MHZ 9
+
+// 5MHz bandwidths
+#define LTE_PHY_N_SAMPS_PER_SYMB_7_68MHZ  512
+#define LTE_PHY_N_SAMPS_CP_L_0_7_68MHZ    9
+#define LTE_PHY_N_SAMPS_CP_L_ELSE_7_68MHZ 9
+
+// 10MHz bandwidths
+#define LTE_PHY_N_SAMPS_PER_SYMB_15_36MHZ  1024
+#define LTE_PHY_N_SAMPS_CP_L_0_15_36MHZ    9
+#define LTE_PHY_N_SAMPS_CP_L_ELSE_15_36MHZ 9
+
+// 15MHz bandwidths
+#define LTE_PHY_N_SAMPS_PER_SYMB_23_04MHZ  1536
+#define LTE_PHY_N_SAMPS_CP_L_0_23_04MHZ    9
+#define LTE_PHY_N_SAMPS_CP_L_ELSE_23_04MHZ 9
+
 // 20MHz bandwidths
 #define LTE_PHY_N_SAMPS_PER_SYMB_30_72MHZ  2048
 #define LTE_PHY_N_SAMPS_CP_L_0_30_72MHZ    9
@@ -68,9 +88,9 @@ typedef enum{
     LTE_PHY_FS_3_84MHZ,     // 2.5MHz bandwidth
     LTE_PHY_FS_7_68MHZ,     // 5MHz bandwidth
     LTE_PHY_FS_15_36MHZ,    // 10MHz bandwidth
-	LTE_PHY_FS_23_04MHZ,		// 15MHz bandwidth
-    LTE_PHY_FS_30_72MHZ = 5,    // 20MHz bandwidths
-	LTE_PHY_FS_TEST = 6,
+//	LTE_PHY_FS_23_04MHZ,		// 15MHz bandwidth
+    LTE_PHY_FS_30_72MHZ = 4,    // 20MHz bandwidths
+	LTE_PHY_FS_TEST = 5,
     LTE_PHY_FS_N_ITEMS,
 }LTE_PHY_FS_ENUM;
 
@@ -99,6 +119,7 @@ enum {
 #define MAX_MOD_BITS_PER_SAMP (QAM64_BITS_PER_SAMP)
 
 // Turbo
+#define TURBO_INT_K_TABLE_SIZE 188
 #define BLOCK_SIZE	6144
 #define RATE 3
 #define N_GENS 2 // number of generators
@@ -174,24 +195,11 @@ typedef struct
 	int descramb_out_buf_sz;
 
 	// Modulation
-#define N_MOD_IN_MAX (LTE_PHY_DFT_SIZE_MAX * (LTE_PHY_N_SYMB_PER_SUBFR - 2) * MAX_MOD_BITS_PER_SAMP)
-#define N_MOD_OUT_MAX (LTE_PHY_DFT_SIZE_MAX * (LTE_PHY_N_SYMB_PER_SUBFR - 2))
-	/*
-	 * for Hibbert's MIC implementation
-	 *
-	int mod_in[N_MOD_IN_MAX];
-	std::complex<float> mod_out[N_MOD_OUT_MAX];
-	std::complex<float> demod_in[N_MOD_OUT_MAX];
-	float demod_in_0[N_MOD_IN_MAX];
-	float demod_in_1[N_MOD_IN_MAX];
-	float demod_LLR[N_MOD_IN_MAX];
-	int demod_HD[N_MOD_IN_MAX];
-	int mod_in_buf_sz;
-	int mod_out_buf_sz;
-	int demod_in_buf_sz;
-	int demod_out_buf_sz;
-	*/
+#define N_MOD_IN_MAX (LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * (LTE_PHY_N_SYMB_PER_SUBFR - 2) * MAX_MOD_BITS_PER_SAMP)
+#define N_MOD_OUT_MAX (LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * (LTE_PHY_N_SYMB_PER_SUBFR - 2))
   int mod_in[N_MOD_IN_MAX];
+//	std::complex<float> mod_out[N_MOD_OUT_MAX];
+//	std::complex<float> demod_in[N_MOD_OUT_MAX];
   float mod_out[N_MOD_OUT_MAX * 2];
   float demod_in[N_MOD_OUT_MAX * 2];
   float demod_LLR[N_MOD_IN_MAX];
@@ -282,7 +290,17 @@ typedef struct
 
 }LTE_PHY_PARAMS;
 
+extern int TURBO_INT_K_TABLE[TURBO_INT_K_TABLE_SIZE];
+extern int TURBO_INT_F1_TABLE[TURBO_INT_K_TABLE_SIZE];
+extern int TURBO_INT_F2_TABLE[TURBO_INT_K_TABLE_SIZE];
+
 // Function declarations
-void lte_phy_init(LTE_PHY_PARAMS *lte_phy_params, int mod_type, int enum_fs, int n_tx_ant, int n_rx_ant);
+void lte_phy_init(LTE_PHY_PARAMS *lte_phy_params, int fs_id, int mod_type, int n_tx_ant, int n_rx_ant);
+
+void lte_phy_init(LTE_PHY_PARAMS *lte_phy_params, int fs_id);
+
+void lte_phy_usage_info(char *exec);
+
+void lte_phy_iolen(LTE_PHY_PARAMS *lte_phy_params);
 
 #endif

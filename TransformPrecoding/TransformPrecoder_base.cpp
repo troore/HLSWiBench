@@ -1,26 +1,25 @@
 
 #include "TransformPrecoder.h"
-#include "fft.h"
+#include "dft/dft.h"
 
-void TransformPrecoding(float pInpSeq[N_TRANS_ENCODER_IN_MAX], float pDataMatrix[N_TRANS_ENCODER_OUT_MAX],int NumLayer, int MDFT)
+void TransformPrecoding(float pInpSeq[N_TRANS_ENCODER_IN_MAX], float pDataMatrix[N_TRANS_ENCODER_OUT_MAX], int NumLayer, int MDFT)
 {
 //	int NumLayer = lte_phy_params->N_tx_ant;
 //	int MDFT = lte_phy_params->N_dft_sz;
 
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
 
-	TransformPrecoding_loop1:for(int nlayer = 0; nlayer < /*NumLayer*/ 2; nlayer++)
+	TransformPrecoding_loop1:for(int nlayer = 0; nlayer < NumLayer; nlayer++)
 	{
-		for(int nsym = 0; nsym < /*NumULSymbSF*/14 - 2; nsym++)
+		for(int nsym = 0; nsym < NumULSymbSF - 2; nsym++)
 		{
 
 			int idx = nlayer * (MDFT * (NumULSymbSF - 2)) + nsym * MDFT;
 			float norm = (float)sqrt((float)MDFT);
 			
-			//dft(/*MDFT*/75, pInpSeq + idx * 2, pDataMatrix + idx * 2, 1);
-			fft_iter(/*MDFT*/75, pInpSeq + idx * 2, pDataMatrix + idx * 2, 1);
+			dft(MDFT, pInpSeq + idx * 2, pDataMatrix + idx * 2, 1);
 				
-			TransformPrecoding_loop3:for(int m = 0; m < /*MDFT*/75; m++)
+			TransformPrecoding_loop3:for(int m = 0; m < MDFT; m++)
 			{
 				pDataMatrix[2 * (idx + m) + 0] = pDataMatrix[2 * (idx + m) + 0] / norm;
 				pDataMatrix[2 * (idx + m) + 1] = pDataMatrix[2 * (idx + m) + 1] / norm;
@@ -42,8 +41,7 @@ void TransformDecoding(float pDataMatrix[N_TRANS_DECODER_IN_MAX], float pDecSeq[
 			int idx = nlayer*(MDFT*(NumULSymbSF-2))+nsym*MDFT;
 			float norm = (float)sqrt((float)MDFT);
 
-			//dft(MDFT, pDataMatrix + idx * 2, pDecSeq + idx * 2, -1);
-			fft_iter(MDFT, pDataMatrix + idx * 2, pDecSeq + idx * 2, -1);
+			dft(MDFT, pDataMatrix + idx * 2, pDecSeq + idx * 2, -1);
 
 			for(int m = 0; m < MDFT; m++)
 			{
