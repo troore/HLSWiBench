@@ -336,6 +336,8 @@ void lte_phy_init(LTE_PHY_PARAMS *lte_phy_params, int fs_id)
 		lte_phy_params->data_len_per_subfr = num_blks * BLOCK_SIZE;
 	}
 
+	//printf("%d\n",lte_phy_params->data_len_per_subfr);
+
 	/*
 	 * When there is any input length, i.e., determined by transmitted file, its length
 	 * should be cut into slices gauged by "lte_phy_params->data_len_per_subfr".

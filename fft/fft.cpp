@@ -8,11 +8,10 @@
 #include <time.h>
 
 #include "fft.h"
+#include "lte_phy.h"
 
 #define N (1 << 5)
 #define PI	3.14159265358979323846264338327950288
-
-#define NUMBER 128
 
 #ifdef DEBUG
 float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
@@ -70,13 +69,10 @@ static int BitReverse(int src, int size)
 {
 	int tmp = src;
 	int des = 0;
-	//for (int i=size-1; i>=0; i--)
-	for (int i=1; i<12; i++)
+	for (int i=size-1; i>=0; i--)
 	{
-#pragma HLS UNROLL
-		if(i > size)
-			break;
-		des = ((tmp & 1) << (size - i)) | des;
+#pragma HLS PIPELINE
+		des = ((tmp & 1) << i) | des;
 		tmp = tmp >> 1;
 	}
 	return des;
@@ -91,7 +87,7 @@ static inline int log2(int n)
 {
 	int i = 0;
 
-	log_loop:while (n > 1)
+	while (n > 1)
 	{
 		n /= 2;
 		i++;
@@ -143,11 +139,7 @@ void fft_recur(int n, float (*a)[2], float (*y)[2], int direction)
 	}
 }
 
-void assign(float target, float source){
-	target = source;
-}
-
-void fft_iter_same_array(int n, float a[N * 2], float y[N * 2], int direction)
+void fft_iter(int n, float *a, float *y, int direction)
 {
 	int i, j, s, d, k, m;
 	float t;
@@ -155,21 +147,24 @@ void fft_iter_same_array(int n, float a[N * 2], float y[N * 2], int direction)
 	float wtr, wti;
 	float tr, ti;
 	float xr, xi;
+	int index[LTE_PHY_FFT_SIZE_MAX];
 
 	s = log2(n);
-	bitreverse:for (i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 	{
-#pragma HLS PIPELINE
-		j = BitReverse(i, s);
+		index[i] = BitReverse(i, s);
 		//	y[2 * j + 0] = a[2 * i + 0];
 		//	y[2 * j + 1] = a[2 * i + 1];
-		//y[j] = a[i];
-		//y[j + n] = a[i + n];
-		assign(y[j],a[i]);
-		assign(y[j+n],a[i+n]);
 	}
 
-	fft_iteration:for (j = 1; j <= s; j++)
+	for(i = 0; i < n; i++){
+#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE array inter false
+		y[index[i]] = a[i];
+		y[index[i] + n] = a[i + n];
+	}
+
+	for (j = 1; j <= s; j++)
 	{
 		d  = pow2(j);
 		t = (2 * PI) / d;
@@ -177,12 +172,12 @@ void fft_iter_same_array(int n, float a[N * 2], float y[N * 2], int direction)
 		wdi = ((float)direction) * sin(t);
 
 		wr = 1; wi = 0;
-		fft_iteration2:for (k = 0; k < (d / 2); k++)
+		for (k = 0; k < (d / 2); k++)
 		{
-			fft_iteration3:for (m = k; m < n; m += d)
+			for (m = k; m < n; m += d)
 			{
-#pragma HLS DEPENDENCE array inter false
 #pragma HLS PIPELINE
+#pragma HLS DEPENDENCE array inter false
 				/*
 				tr = wr*y[2 * (m + d/2) + 0] - wi*y[2 * (m + d/2) + 1];
 				ti = wr*y[2 * (m + d/2) + 1] + wi*y[2 * (m + d/2) + 0];
@@ -216,7 +211,7 @@ void fft_iter_same_array(int n, float a[N * 2], float y[N * 2], int direction)
 }
 
 
-void fft_iter_two_arrays(int n, float a_real[N], float a_imag[N], float y_real[N], float y_imag[N], int direction)
+void fft_iter(int n, float *a_real, float *a_imag, float *y_real, float *y_imag, int direction)
 {
 	int i, j, s, d, k, m;
 	float t;
@@ -224,42 +219,58 @@ void fft_iter_two_arrays(int n, float a_real[N], float a_imag[N], float y_real[N
 	float wtr, wti;
 	float tr, ti;
 	float xr, xi;
+	int index[LTE_PHY_FFT_SIZE_MAX];
 
 	s = log2(n);
-	iter_different_array_bitreverse_loop:for (i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 	{
-#pragma HLS PIPELINE
-		j = BitReverse(i, s);
-		assign(y_real[j], a_real[i]);
-		assign(y_imag[j], a_imag[i]);
-		/*
-		y_real[j] = a_real[i];
-		y_imag[j] = a_imag[i];
-		*/
+		index[i] = BitReverse(i, s);
 	}
 
-	iter_different_array_calculate_loop:for (j = 1; j <= s; j++)
+	for(i = 0; i < n; i++){
+#pragma HLS PIPELINE
+		y_real[index[i]] = a_real[i];
+		y_imag[index[i]] = a_imag[i];
+	}
+
+	for (j = 1; j <= s; j++)
 	{
 		d  = pow2(j);
 		t = (2 * PI) / d;
 		wdr = cos(t);
 		wdi = ((float)direction) * sin(t);
 
+		float y_real_tmp[LTE_PHY_FFT_SIZE_MAX];
+		float y_imag_tmp[LTE_PHY_FFT_SIZE_MAX];
+		for(k = 0; k < n; k++)
+		{
+#pragma HLS PIPELINE
+			y_real_tmp[k] = y_real[k];
+			y_imag_tmp[k] = y_imag[k];
+		}
+
 		wr = 1; wi = 0;
 		for (k = 0; k < (d / 2); k++)
 		{
+
 			for (m = k; m < n; m += d)
 			{
-#pragma HLS DEPENDENCE array inter false
 #pragma HLS PIPELINE
+#pragma HLS DEPENDENCE array inter false
+				/*
 				tr = wr * y_real[(m + d / 2)] - wi * y_imag[(m + d / 2)];
 				ti = wr * y_imag[(m + d / 2)] + wi * y_real[(m + d / 2)];
 				xr = y_real[m];
 				xi = y_imag[m];
+				*/
+
+				tr = wr * y_real_tmp[(m + d / 2)] - wi * y_imag_tmp[(m + d / 2)];
+				ti = wr * y_imag_tmp[(m + d / 2)] + wi * y_real_tmp[(m + d / 2)];
+				xr = y_real_tmp[m];
+				xi = y_imag_tmp[m];
 				
 				y_real[m] = xr + tr;
 				y_imag[m] = xi + ti;
-
 				y_real[m + d / 2] = xr - tr;
 				y_imag[m + d / 2] = xi - ti;  
 			}
@@ -271,7 +282,7 @@ void fft_iter_two_arrays(int n, float a_real[N], float a_imag[N], float y_real[N
 	}
 }
 
-void fft_nrvs_same_array(int n, float a[NUMBER * 2], float y[NUMBER * 2], int direction)
+void fft_nrvs(int n, float *a, float *y, int direction)
 {
 	int p, i, k;
 	int lgn;
@@ -283,50 +294,47 @@ void fft_nrvs_same_array(int n, float a[NUMBER * 2], float y[NUMBER * 2], int di
 //	for (i = 0; i < n; i++)
 //		y[i] = a[i];
 
-	for (p = 1; p <= (NUMBER / 2); p <<= 1)
+	for (p = 1; p <= (n / 2); p <<= 1)
 	{
 		//	omega_m[0] = cos((2 * PI) / m);
 		//	omega_m[1] = ((float)direction) * sin((2 * PI) / m);
-		nrvs_fft_calculate_loop:for (i = 0; i < (NUMBER >> 1); i++)
+		for (i = 0; i < (n >> 1); i++)
 		{
-#pragma HLS DEPENDENCE array inter false
 #pragma HLS PIPELINE
-			int o_idx = i + (NUMBER >> 1);
+#pragma HLS DEPENDENCE array inter false
+			int o_idx = i + (n >> 1);
 			
 			k = i & (p - 1); // i % p
 			ang = ((2 * PI * k) / (2 * p));
 			omega[0] = cos(ang);
 			omega[1] = ((float)direction) * sin(ang);
 			// t = omega * a[i + n / 2];
-			t[0] = omega[0] * a[o_idx] - omega[1] * a[o_idx + NUMBER];
-			t[1] = omega[0] * a[o_idx + NUMBER] + omega[1] * a[o_idx];
+			t[0] = omega[0] * a[o_idx] - omega[1] * a[o_idx + n];
+			t[1] = omega[0] * a[o_idx + n] + omega[1] * a[o_idx];
 			// u = a[i];
 			u[0] = a[i];
-			u[1] = a[i + NUMBER];
+			u[1] = a[i + n];
 
 			//	y[2 * i - k] = u + t;
 			y[2 * i - k] = u[0] + t[0];
-			y[2 * i - k + NUMBER] = u[1] + t[1];
+			y[2 * i - k + n] = u[1] + t[1];
 			//	y[2 * i - k + p] = u - t;
 			y[2 * i - k + p] = u[0] - t[0];
-			y[2 * i - k + p + NUMBER] = u[1] - t[1];
+			y[2 * i - k + p + n] = u[1] - t[1];
 		}
 		
-		nrvs_same_array_assign:for (i = 0; i < NUMBER; i++)
+		for (i = 0; i < n; i++)
 		{
 #pragma HLS PIPELINE
-			assign(a[i], y[i]);
-			assign(a[i + NUMBER], y[i + NUMBER]);
-			/*
+#pragma HLS DEPENDENCE array inter false
 			a[i] = y[i];
 			a[i + n] = y[i + n];
-			*/
 		}
 	}
 }
 
-void fft_nrvs_two_arrays(int n, float a_real[NUMBER], float a_imag[NUMBER],
-			  float y_real[NUMBER], float y_imag[NUMBER],
+void fft_nrvs(int n, float *a_real, float *a_imag,
+			  float *y_real, float *y_imag,
 			  int direction)
 {
 	int p, i, k;
@@ -339,15 +347,15 @@ void fft_nrvs_two_arrays(int n, float a_real[NUMBER], float a_imag[NUMBER],
 //	for (i = 0; i < n; i++)
 //		y[i] = a[i];
 
-	for (p = 1; p <= (NUMBER / 2); p <<= 1)
+	for (p = 1; p <= (n / 2); p <<= 1)
 	{
 		//	omega_m[0] = cos((2 * PI) / m);
 		//	omega_m[1] = ((float)direction) * sin((2 * PI) / m);
-		for (i = 0; i < (NUMBER >> 1); i++)
+		for (i = 0; i < (n >> 1); i++)
 		{
-#pragma HLS DEPENDENCE array inter false
 #pragma HLS PIPELINE
-			int o_idx = i + (NUMBER >> 1);
+#pragma HLS DEPENDENCE array inter false
+			int o_idx = i + (n >> 1);
 			
 			k = i & (p - 1); // i % p
 			ang = ((2 * PI * k) / (2 * p));
@@ -368,19 +376,16 @@ void fft_nrvs_two_arrays(int n, float a_real[NUMBER], float a_imag[NUMBER],
 			y_imag[2 * i - k + p] = u[1] - t[1];
 		}
 		
-		for (i = 0; i < NUMBER; i++)
+		for (i = 0; i < n; i++)
 		{
 #pragma HLS PIPELINE
-			assign(a_real[i], y_real[i]);
-			assign(a_imag[i], y_imag[i]);
-			/*
 			a_real[i] = y_real[i];
 			a_imag[i] = y_imag[i];
-			*/
 		}
 	}
 }
 
+/*
 int main(int argc, char *argv[])
 {
 //	float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
@@ -416,7 +421,7 @@ int main(int argc, char *argv[])
 //	v[6]=3;v[7]=0;
 
 //	print_vector("Orig", v, N);
-//	print_vector("Orig", v_real, v_imag, N);
+	print_vector("Orig", v_real, v_imag, N);
 #ifdef DEBUG
 	fft_recur(N, v, vout, -1);
 #else
@@ -424,7 +429,6 @@ int main(int argc, char *argv[])
 	fft_nrvs_two_arrays(N, v_real, v_imag, vout_real, vout_imag, -1);
 #endif
 
-	/*
 #ifdef DEBUG
 	for (k = 0; k < N; k++)
 	{
@@ -441,22 +445,22 @@ int main(int argc, char *argv[])
 	}
 #endif
 //	print_vector("iFFT", vout, N);
-//	print_vector("iFFT", vout_real, vout_imag, N);
+	print_vector("iFFT", vout_real, vout_imag, N);
 #ifdef DEBUG
 	fft_recur(N, vout, v, 1);
 #else
 //	fft_nrvs(N, vout, v, 1);
-	fft_nrvs_two_array(N, vout_real, vout_imag, v_real, v_imag, 1);
+	fft_nrvs_two_arrays(N, vout_real, vout_imag, v_real, v_imag, 1);
 #endif
 //	print_vector(" FFT", v, N);
-//	print_vector(" FFT", v_real, v_imag, N);
+	print_vector(" FFT", v_real, v_imag, N);
 
 //	print_vector("Orig", v1, N);
 //	fft(N, v1, v1out, -1);
 //	print_vector(" FFT", v1out, N);
 //	fft(N, v1out, v1, 1);
 //	print_vector("iFFT", v1, N);
-	*/
 
 	return 0;
 }
+*/

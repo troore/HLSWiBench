@@ -1,5 +1,5 @@
 
-open_project -reset turbodec_baseline_prj
+open_project -reset turbodec_baseline_fix_prj
 set_top turbo_decoding
 add_files Turbo_baseline.cpp -cflags "-I../ -I../lib"
 add_files -tb TurboMain.cpp -cflags "-I../ -I../lib"
@@ -13,8 +13,8 @@ set_part {xc7z020clg484-1}
 create_clock -period 10 -name default
 
 #source "./mod_prj/solution1/directives.tcl"
-csim_design -argv {0}
-csynth_design
+csim_design -argv {4}
+#csynth_design
 #cosim_design -trace_level none -argv {0}
 #export_design 
 exit

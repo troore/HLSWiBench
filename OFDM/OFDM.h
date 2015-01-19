@@ -4,11 +4,11 @@
 
 #include "lte_phy.h"
 
-void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData);
-void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
-				  float *pOutDataReal, float *pOutDataImag);
-void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData);
-void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
-					float *pOutDataReal, float *pOutDataImag);
+void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT_SIZE_MAX], float pOutData[2 * LTE_PHY_FFT_SIZE_MAX]);
+void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX],
+				  float pOutDataReal[LTE_PHY_FFT_SIZE_MAX], float pOutDataImag[LTE_PHY_FFT_SIZE_MAX]);
+void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT_SIZE_MAX], float pOutData[2 * LTE_PHY_FFT_SIZE_MAX]);
+void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX],
+					float pOutDataReal[LTE_PHY_FFT_SIZE_MAX], float pOutDataImag[LTE_PHY_FFT_SIZE_MAX]);
 
 #endif

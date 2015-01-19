@@ -434,6 +434,8 @@ void turbo_decoding(float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX
 
 	int i, j, k;
 
+	printf("%d, %d\n", out_data_length, n_iters);
+
 	set_generator_polynomials(g_gens, N_GENS, CST_LEN);
 	
 //	out_data_length = lte_phy_params->td_out_buf_sz;

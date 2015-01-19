@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "Equalizer.h"
 #include "dmrs/dmrs.h"
 
@@ -386,6 +386,7 @@ void Equalizing(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX * 2
 	//	int MDFT = lte_phy_params->N_dft_sz;
 	//	int NumLayer = lte_phy_params->N_tx_ant;
 	//	int NumRxAntenna = lte_phy_params->N_rx_ant;
-
+	//printf("%d, %d, %d\n", MDFT, NumLayer, NumRxAntenna);
 	LSFreqDomain(pInpData, pOutData, MDFT, NumLayer, NumRxAntenna);
+	//LSFreqDomain(pInpData, pOutData, 1200, 2, 2);
 }

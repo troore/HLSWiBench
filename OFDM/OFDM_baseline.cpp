@@ -4,10 +4,8 @@
 #include "fft/fft.h"
 #include "lte_phy.h"
 
-void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData)
+void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT_SIZE_MAX], float pOutData[2 * LTE_PHY_FFT_SIZE_MAX])
 {
-#pragma HLS INTERFACE ap_bus port=pOutData depth=4096
-#pragma HLS INTERFACE ap_bus port=pInpData depth=4096
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -18,6 +16,8 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutDa
 
 	int nlayer, nsym, i;
 
+
+	//printf("%d,%d,%d,%d\n",NumLayer,NumULSymbSF,NIFFT,CPLen);
 	/*
 	float *p_samp_in_buf = (float *)malloc(2 * NIFFT * sizeof(float));
 	float *p_samp_out_buf = (float *)malloc(2 * NIFFT * sizeof(float));
@@ -59,7 +59,7 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutDa
 }
 
 
-void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOutData)
+void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT_SIZE_MAX], float pOutData[2 * LTE_PHY_FFT_SIZE_MAX])
 {
 	int NumRxAntenna = lte_phy_params->N_rx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
@@ -105,13 +105,8 @@ void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpData, float *pOut
 //	free(p_samp_out_buf);
 }
 
-void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
-				  float *pOutDataReal, float *pOutDataImag)
+void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX], float pOutDataReal[LTE_PHY_FFT_SIZE_MAX], float pOutDataImag[LTE_PHY_FFT_SIZE_MAX])
 {
-#pragma HLS INTERFACE ap_bus port=pOutDataReal depth=2048
-#pragma HLS INTERFACE ap_bus port=pOutDataImag depth=2048
-#pragma HLS INTERFACE ap_bus port=pInpDataReal depth=2048
-#pragma HLS INTERFACE ap_bus port=pInpDataImag depth=2048
 	int NumLayer = lte_phy_params->N_tx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
@@ -145,8 +140,8 @@ void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal
 	}
 }
 
-void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float *pInpDataReal, float *pInpDataImag,
-					float *pOutDataReal, float *pOutDataImag)
+void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX],
+					float pOutDataReal[LTE_PHY_FFT_SIZE_MAX], float pOutDataImag[LTE_PHY_FFT_SIZE_MAX])
 {
 	int NumRxAntenna = lte_phy_params->N_rx_ant;
 	int NIFFT = lte_phy_params->N_fft_sz;

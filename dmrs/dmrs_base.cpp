@@ -16,7 +16,7 @@ void geneDMRS(float pDMRS[],
 	int idx;
 	int RSu, RSv;
 	double qbar, q;
-	//	std::complex<double> px[1200];
+	//std::complex<double> px[1200];
 	double px[1200][2];
 
 	pPrimeTable[0][0] = 75;		pPrimeTable[0][1] = 73;

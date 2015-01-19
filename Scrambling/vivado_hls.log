@@ -1,30 +1,23 @@
-================================================================
-  Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
-  Version: 2013.4
-  Build date: Mon Dec 09 17:07:59 PM 2013
-  Copyright (C) 2013 Xilinx Inc. All rights reserved.
-================================================================
 @I [LIC-101] Checked out feature [VIVADO_HLS]
-@I [HLS-10] Running '/home/troore/Public/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
-            for user 'troore' on host 'debian.pku.edu' (Linux_x86_64 version 3.2.0-4-amd64) on Mon Jan 12 23:40:59 HKT 2015
-            in directory '/home/troore/Projects/comm/HLSWiBench/Scrambling'
-@I [HLS-10] Opening and resetting project '/home/troore/Projects/comm/HLSWiBench/Scrambling/scrb_base_prj'.
-@I [HLS-10] Adding design file 'Scrambler_base.cpp' to the project.
-@I [HLS-10] Adding test bench file 'ScrambMain.cpp' to the project.
-@I [HLS-10] Adding test bench file '../lib/GeneralFunc.cpp' to the project.
-@I [HLS-10] Adding test bench file '../lib/gauss.cpp' to the project.
-@I [HLS-10] Adding test bench file '../lte_phy.cpp' to the project.
-@I [HLS-10] Opening and resetting solution '/home/troore/Projects/comm/HLSWiBench/Scrambling/scrb_base_prj/solution1'.
-@I [HLS-10] Cleaning up the solution database.
-@I [HLS-10] Setting target device to 'xc7z020clg484-1'
+@I [HLS-10] Running '/opt/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
+            for user 'bliang' on host 'ceca7.site' (Linux_x86_64 version 3.7.10-1.40-default) on Mon Jan 19 15:20:10 CST 2015
+            in directory '/home/bliang/HLSWiBench/Scrambling'
+@I [HLS-10] Opening project '/home/bliang/HLSWiBench/Scrambling/scrb_base_prj'.
+@I [HLS-10] Opening solution '/home/bliang/HLSWiBench/Scrambling/scrb_base_prj/solution1'.
 @I [SYN-201] Setting up clock 'default' with a period of 10ns.
-   Compiling ../../../../../lte_phy.cpp in debug mode
-   Compiling ../../../../../lib/gauss.cpp in debug mode
-   Compiling ../../../../../lib/GeneralFunc.cpp in debug mode
-   Compiling ../../../../ScrambMain.cpp in debug mode
-   Compiling ../../../../Scrambler_base.cpp in debug mode
-   Generating csim.exe
-Rx descrambling starts
-Rx descrambling ends
-@I [SIM-1] CSim done with 0 errors.
+@I [HLS-10] Setting target device to 'xc7z020clg484-1'
+@I [IMPL-8] Exporting RTL as an IP in IP-XACT.
+
+****** Vivado v2013.4 (64-bit)
+  **** SW Build 353583 on Mon Dec  9 17:26:26 MST 2013
+  **** IP Build 208076 on Mon Dec  2 12:38:17 MST 2013
+    ** Copyright 1986-1999, 2001-2013 Xilinx, Inc. All Rights Reserved.
+
+Attempting to get a license: Implementation
+Feature available: Implementation
+Loading parts and site information from /opt/Xilinx/Vivado/2013.4/data/parts/arch.xml
+Parsing RTL primitives file [/opt/Xilinx/Vivado/2013.4/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+Finished parsing RTL primitives file [/opt/Xilinx/Vivado/2013.4/data/parts/xilinx/rtl/prims/rtl_prims.xml]
+source run_ippack.tcl -notrace
+INFO: [Common 17-206] Exiting Vivado at Mon Jan 19 15:20:17 2015...
 @I [LIC-101] Checked in feature [VIVADO_HLS]

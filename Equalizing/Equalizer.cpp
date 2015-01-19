@@ -1,4 +1,3 @@
-#include <assert.h>
 #include "Equalizer.h"
 #include "lte_phy.h"
 #include "dmrs/dmrs.h"
@@ -7,40 +6,26 @@
 static void MatrixProd(int d1, int d2, int d3, float M1[], float M2[], float oM[])
 {
 	int r, c, i;
-	float tmp[2];
-
+	float tmp0[5], tmp1[5];
+	tmp0[0] = 0.0; tmp1[0] = 0.0;
 	prod_1:for (r = 0; r < d1; r++)
 	{
 		prod_2:for (c = 0; c < d3; c++)
 		{
-			/*tmp[0] = 0.0;
-			tmp[1] = 0.0;*/
-			
 			prod_3:for (i = 0; i < d2; i++)
 			{
+#pragma HLS loop_flatten
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
-
-				if(i == 0){
-                		        tmp[0] = 0.0;
-		                        tmp[1] = 0.0;
-				}
-
-				//	tmp += M1[r * d2 + i] * M2[i * d3 + c];
-				tmp[0] += (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 0] - M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 1]);
-				tmp[1] += (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 1] + M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 0]);
-
-
 				if(i == d2 - 1){
-					oM[2 * (r * d3 + c) + 0] = tmp[0];
-					oM[2 * (r * d3 + c) + 1] = tmp[1];
+					oM[2 * (r * d3 + c) + 0] = tmp0[i] + (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 0] - M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 1]);
+					oM[2 * (r * d3 + c) + 1] = tmp1[i] + (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 1] + M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 0]);
 				}
-
+				else{
+					tmp0[i + 1] = tmp0[i] + (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 0] - M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 1]);
+					tmp1[i + 1] = tmp1[i] + (M1[2 * (r * d2 + i) + 0] * M2[2 * (i * d3 + c) + 1] + M1[2 * (r * d2 + i) + 1] * M2[2 * (i * d3 + c) + 0]);
+				}
 			}
-			/*	
-			oM[2 * (r * d3 + c) + 0] = tmp[0];
-			oM[2 * (r * d3 + c) + 1] = tmp[1];
-			*/
 		}
 	}
 }
@@ -49,11 +34,11 @@ static void MatrixProd(int d1, int d2, int d3, float M1[], float M2[], float oM[
 static void MatrixInv(int sz, float pM[], float pInvM[])
 {
 	float pX[LTE_PHY_N_ANT_MAX * 2 * LTE_PHY_N_ANT_MAX * 2];
+	float pX_tmp[LTE_PHY_N_ANT_MAX * 2 * LTE_PHY_N_ANT_MAX * 2];
+	float pX_tmp2[LTE_PHY_N_ANT_MAX * 2 * LTE_PHY_N_ANT_MAX * 2];
 
-	assert(sz < 10);
 	inv1:for (int r = 0; r < sz; r++)
 	{
-#pragma HLS loop_merge force
 		for (int c = 0; c < sz; c++)
 		{
 #pragma HLS PIPELINE
@@ -83,14 +68,12 @@ static void MatrixInv(int sz, float pM[], float pInvM[])
 
 	float pCurRow[2  * LTE_PHY_N_ANT_MAX * 2];
 
-	assert(sz < 10);
 	inv2:for (int r = 0; r < sz; r++)
 	{
 		float B[2];
 		B[0] = pX[2 * (r * (2 * sz) + r) + 0];
 		B[1] = pX[2 * (r * (2 * sz) + r) + 1];
 
-		assert(sz < 10);
 		for (int c = 0; c < (2 * sz); c++)
 		{
 #pragma HLS PIPELINE
@@ -113,18 +96,16 @@ static void MatrixInv(int sz, float pM[], float pInvM[])
 
 		for (int er = r + 1; er < sz; er++)
 		{
-
-#pragma HLS LOOP_TRIPCOUNT max=9
-
 			float curC[2] = {pX[2 * (er * (2 * sz) + r) + 0], pX[2 * (er * (2 * sz) + r) + 1]};
 
 			for (int c = 0; c < (2 * sz); c++)
 			{
 #pragma HLS PIPELINE
+#pragma HLS loop_flatten off
 #pragma HLS DEPENDENCE array inter false
 				//	pX[er * (2 * sz) + c] -= curC * pCurRow[c];
-				pX[2 * (er * (2 * sz) + c) + 0] -= (curC[0] * pCurRow[2 * c + 0] - curC[1] * pCurRow[2 * c + 1]);
-				pX[2 * (er * (2 * sz) + c) + 1] -= (curC[0] * pCurRow[2 * c + 1] + curC[1] * pCurRow[2 * c + 0]);
+				pX_tmp[2 * (er * (2 * sz) + c) + 0] = pX[2 * (er * (2 * sz) + c) + 0] - (curC[0] * pCurRow[2 * c + 0] - curC[1] * pCurRow[2 * c + 1]);
+				pX_tmp[2 * (er * (2 * sz) + c) + 1] = pX[2 * (er * (2 * sz) + c) + 1] - (curC[0] * pCurRow[2 * c + 1] + curC[1] * pCurRow[2 * c + 0]);
 			}  
 		}
 	}
@@ -135,23 +116,22 @@ static void MatrixInv(int sz, float pM[], float pInvM[])
 		{
 #pragma HLS PIPELINE
 			//	pCurRow[c] = pX[r * (2 * sz) + c];
-			pCurRow[2 * c + 0] = pX[2 * (r * (2 * sz) + c) + 0];
-			pCurRow[2 * c + 1] = pX[2 * (r * (2 * sz) + c) + 1];
+			pCurRow[2 * c + 0] = pX_tmp[2 * (r * (2 * sz) + c) + 0];
+			pCurRow[2 * c + 1] = pX_tmp[2 * (r * (2 * sz) + c) + 1];
 		}
 
 		for (int er = r - 1; er >= 0; er--)
 		{
-#pragma HLS LOOP_TRIPCOUNT max=8
-
-			float curC[2] = {pX[2 * (er * (2 * sz) + r) + 0], pX[2 * (er * (2 * sz) + r) + 1]};
+			float curC[2] = {pX_tmp[2 * (er * (2 * sz) + r) + 0], pX_tmp[2 * (er * (2 * sz) + r) + 1]};
 
 			for (int c = 0; c < (2 * sz); c++)
 			{
 #pragma HLS PIPELINE
+#pragma HLS loop_flatten off
 #pragma HLS DEPENDENCE array inter false
 				//	pX[er * (2 * sz) + c] -= curC * pCurRow[c];
-				pX[2 * (er * (2 * sz) + c) + 0] -= (curC[0] * pCurRow[2 * c + 0] - curC[1] * pCurRow[2 * c + 1]);
-				pX[2 * (er * (2 * sz) + c) + 1] -= (curC[0] * pCurRow[2 * c + 1] + curC[1] * pCurRow[2 * c + 0]);
+				pX_tmp2[2 * (er * (2 * sz) + c) + 0] = pX_tmp[2 * (er * (2 * sz) + c) + 0] - (curC[0] * pCurRow[2 * c + 0] - curC[1] * pCurRow[2 * c + 1]);
+				pX_tmp2[2 * (er * (2 * sz) + c) + 1] = pX_tmp[2 * (er * (2 * sz) + c) + 1] - (curC[0] * pCurRow[2 * c + 1] + curC[1] * pCurRow[2 * c + 0]);
 			}  
 		}
 	}
@@ -163,10 +143,9 @@ static void MatrixInv(int sz, float pM[], float pInvM[])
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
 			int col = c + sz;
-
 			//	pInvM[r * sz + c] = pX[r * (2 * sz) + col];
-			pInvM[2 * (r * sz + c) + 0] = pX[2 * (r * (2 * sz) + col) + 0];
-			pInvM[2 * (r * sz + c) + 1] = pX[2 * (r * (2 * sz) + col) + 1];
+			pInvM[2 * (r * sz + c) + 0] = pX_tmp2[2 * (r * (2 * sz) + col) + 0];
+			pInvM[2 * (r * sz + c) + 1] = pX_tmp2[2 * (r * (2 * sz) + col) + 1];
 		}
 
 	}
@@ -211,10 +190,8 @@ void FDLSEqualization(float pInpData[N_EQ_IN_MAX * 2],
 
 	float pHDY[LTE_PHY_N_ANT_MAX * 2];
 
-	assert(NumRxAntenna < 10);
 	for (int nrx = 0; nrx < NumRxAntenna; nrx++)
 	{
-		assert(NumLayer < 10);
 		for (int layer = 0; layer < NumLayer; layer++)
 		{
 #pragma HLS DEPENDENCE array inter false
@@ -235,7 +212,6 @@ void FDLSEqualization(float pInpData[N_EQ_IN_MAX * 2],
 	for (int nSymb = 0; nSymb < NumULSymbSF - 2; nSymb++)
 	{
 		float pYData[LTE_PHY_N_ANT_MAX * 2];
-		assert(NumRxAntenna < 10);
 		for (int nrx = 0; nrx < NumRxAntenna; nrx++)
 		{
 #pragma HLS PIPELINE
@@ -250,42 +226,6 @@ void FDLSEqualization(float pInpData[N_EQ_IN_MAX * 2],
 		float pXData[LTE_PHY_N_ANT_MAX];
 		MatrixProd(NumLayer, NumLayer, 1, pInvHDH, pHDY, pXData);
 
-		/*
-		/////////////////////// Get EqW ////////////////////////
-#ifdef DEBUG_EQ
-		std::complex<float> **pW = new std::complex<float>*[NumLayer];
-		for(int layer=0;layer<NumLayer;layer++){*(pW+layer)=new std::complex<float>[NumRxAntenna];}
-	//	MatrixProd<int,std::complex<float> >(NumLayer,NumLayer,1,pInvHDH,pHDagger,pW);
-		MatrixProd<int,std::complex<float> >(NumLayer,NumLayer,NumLayer,pInvHDH,pHDagger,pW);
-#else
-		std::complex<float> pW[LTE_PHY_N_ANT_MAX * LTE_PHY_N_ANT_MAX];
-		MatrixProd(NumLayer, NumLayer, NumLayer, pInvHDH, pHDagger, pW);
-#endif
-		for (int layer = 0; layer < NumLayer; layer++)
-		{
-			for (int nrx = 0; nrx < NumRxAntenna; nrx++)
-			{
-#ifdef DEBUG_EQ
-				*(*(*(pEqW+m)+layer)+nrx)=*(*(pW+layer)+nrx);
-#else
-				pEqW[m * NumLayer * NumRxAntenna + layer * NumRxAntenna + nrx] = pW[layer * NumRxAntenna + nrx];
-#endif
-			}
-		}   
-#ifdef DEBUG_EQ
-		for(int layer=0;layer<NumLayer;layer++){delete[] *(pW+layer);}
-		delete[] pW;
-#endif
-		////////////////////////END Get EqW/////////////////////
-		//////////////////////// Get pHdm ////////////////////////
-		for(int nrx=0;nrx<NumRxAntenna;nrx++)
-		{
-			for(int layer=0;layer<NumLayer;layer++)
-			{*(*(*(pHdm+m)+nrx)+layer)=*(*(pH+nrx)+layer);}
-		}
-		/////////////////////// END Get pHdm /////////////////////
-		*/
-		assert(NumLayer < 10);	
 		for (int layer = 0; layer < NumLayer; layer++)
 		{
 #pragma HLS PIPELINE
@@ -300,100 +240,12 @@ void FDLSEqualization(float pInpData[N_EQ_IN_MAX * 2],
 	}
 }
 
-/*
-/////////////////////////Frequency Domain MMSE Equalization///////////////////////////////////
-////////////////////////////////////////////////////////////
-void FDMMSEEqualization(std::complex<float> *pInpData, std::complex<float>** pHTranspose, int m, int NumLayer, int NumRxAntenna, int MDFTPerUser, float No, std::complex<float> *pOutData)
-{
-	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
-//////////////////// Freq Domain Equalize received Data /////////////////
-	std::complex<float>** pH=new std::complex<float>*[NumRxAntenna];
-	for(int nrx=0;nrx<NumRxAntenna;nrx++){*(pH+nrx)=new std::complex<float>[NumLayer];}
-	std::complex<float>** pHDagger=new std::complex<float>*[NumLayer];
-	for(int layer=0;layer<NumLayer;layer++){*(pHDagger+layer)=new std::complex<float>[NumRxAntenna];}
-	std::complex<float>** pHHD=new std::complex<float>*[NumRxAntenna];
-	for(int nrx=0;nrx<NumRxAntenna;nrx++){*(pHHD+nrx)=new std::complex<float>[NumRxAntenna];}
-	std::complex<float>** pInvHHDN=new std::complex<float>*[NumRxAntenna];
-	for(int nrx=0;nrx<NumRxAntenna;nrx++){*(pInvHHDN+nrx)=new std::complex<float>[NumRxAntenna];}
-
-	std::complex<float>** pEo=new std::complex<float>*[NumLayer];
-	for(int layer=0;layer<NumLayer;layer++){*(pEo+layer)=new std::complex<float>[NumRxAntenna];}
-
-	for(int nrx=0;nrx<NumRxAntenna;nrx++)
-	{
-		for(int layer=0;layer<NumLayer;layer++)
-		{
-			*(*(pH+nrx)+layer)=*(*(pHTranspose+layer)+nrx);
-			*(*(pHDagger+layer)+nrx)=conj((*(*(pHTranspose+layer)+nrx)));
-		}
-	}
-
-	MatrixProd<int,std::complex<float> >(NumRxAntenna,NumLayer,NumRxAntenna,pH,pHDagger,pHHD);
-
-	for(int nrx=0;nrx<NumRxAntenna;nrx++)
-	{(*(*(pHHD+nrx)+nrx))+=No;}   
-
-	MatrixInv<int,std::complex<float> >(NumRxAntenna,pHHD,pInvHHDN);
-	MatrixProd<int,std::complex<float> >(NumLayer,NumRxAntenna,NumRxAntenna,pHDagger,pInvHHDN,pEo);
-    /////////////////////// Get EqW ////////////////////////
-    for(int layer=0;layer<NumLayer;layer++)
-    {
-		for(int nrx=0;nrx<NumRxAntenna;nrx++)
-		{*(*(*(pEqW+m)+layer)+nrx)=*(*(pEo+layer)+nrx);}
-    }   
-    ////////////////////////END Get EqW/////////////////////
-    //////////////////////// Get pHdm ////////////////////////
-    for(int nrx=0;nrx<NumRxAntenna;nrx++)
-    {
-		for(int layer=0;layer<NumLayer;layer++)
-		{*(*(*(pHdm+m)+nrx)+layer)=*(*(pH+nrx)+layer);}
-    }
-    /////////////////////// END Get pHdm /////////////////////
-
-	////////////////// Equalizing Data /////////////////
-	for(int nSymb=0;nSymb<NumULSymbSF-2;nSymb++)
-	{
-		std::complex<float>* pYData=new std::complex<float>[NumRxAntenna];
-		for(int nrx=0;nrx<NumRxAntenna;nrx++)
-		{
-			int IDX=(NumULSymbSF-2)*nrx+nSymb+2*NumRxAntenna;
-			//	*(pYData+nrx)=*(*(pInpData+IDX)+m);
-			*(pYData + nrx) = pInpData[IDX * MDFTPerUser + m];
-		}
-
-		std::complex<float>* pXData=new std::complex<float>[NumLayer];
-		MatrixProd<int,std::complex<float> >(NumLayer,NumRxAntenna,1,pEo,pYData,pXData);
-
-
-		for(int layer=0;layer<NumLayer;layer++)
-		{
-			int IDX = (NumULSymbSF-2)*layer+nSymb;
-			//	*(*(pOutData+IDX)+m)=*(pXData+layer);
-			pOutData[IDX * MDFTPerUser + m] = *(pXData + layer);
-		}
-
-		delete[] pYData;
-		delete[] pXData;
-	}
-	//////////////// END Equalizing Data ///////////////  
-
-	for(int nrx=0;nrx<NumRxAntenna;nrx++){delete[] *(pH+nrx); delete[] *(pHHD+nrx); delete[] *(pInvHHDN+nrx);}
-	delete[] pH; delete[] pHHD; delete[] pInvHHDN;
-	for(int layer=0;layer<NumLayer;layer++)
-	{delete[] *(pHDagger+layer);delete[] *(pEo+layer);}
-	delete[] pHDagger;delete[] pEo;
-//////////////////// END Freq Domain Equalize received Data//////////////////
-
-}
-*/
-
 void LSFreqDomain(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX * 2], int MDFT, int NumLayer, int NumRxAntenna)
 {
 	float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2];
-//	pDMRS = (*VpUser).GetpDMRS();
+	//	pDMRS = (*VpUser).GetpDMRS();
 	geneDMRS(pDMRS, NumLayer, MDFT);
  
-	assert(MDFT <= LTE_PHY_DFT_SIZE_MAX); 
 	for (int m = 0; m < MDFT; m++)
 	{
 		float pXt[2 * LTE_PHY_N_ANT_MAX * 2];
@@ -401,7 +253,6 @@ void LSFreqDomain(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX *
 
 		for (int slot = 0; slot < 2; slot++)
 		{
-			assert(NumLayer < 10);
 			for (int layer = 0; layer < NumLayer; layer++)
 			{
 #pragma HLS PIPELINE
@@ -409,7 +260,6 @@ void LSFreqDomain(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX *
 				//	pXt[slot * NumLayer + layer] = pDMRS[(slot * NumLayer + layer) * MDFT + m];
 				pXt[2 * (slot * NumLayer + layer) + 0] = pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 0];
 				pXt[2 * (slot * NumLayer + layer) + 1] = pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 1];
-				//pXt[slot * NumLayer + layer] = pDMRS[(slot * NumLayer + layer) * MDFT + m];
 				//	pXtDagger[layer * 2 + slot] = conj(pDMRS[(slot * NumLayer + layer) * MDFT + m]);
 				pXtDagger[2 * (layer * 2 + slot) + 0] = pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 0];
 				pXtDagger[2 * (layer * 2 + slot) + 1] = (-1.0) * pDMRS[2 * ((slot * NumLayer + layer) * MDFT + m) + 1];
@@ -420,7 +270,6 @@ void LSFreqDomain(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX *
 
 		for (int slot = 0; slot < 2; slot++)
 		{
-			assert(NumRxAntenna < 10);
 			for (int nrx = 0; nrx < NumRxAntenna; nrx++)
 			{
 #pragma HLS PIPELINE
@@ -441,9 +290,9 @@ void LSFreqDomain(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX *
 
 void Equalizing(float pInpData[N_EQ_IN_MAX * 2], float pOutData[N_EQ_OUT_MAX * 2], int MDFT, int NumLayer, int NumRxAntenna)
 {
-//	int MDFT = lte_phy_params->N_dft_sz;
-//	int NumLayer = lte_phy_params->N_tx_ant;
-//	int NumRxAntenna = lte_phy_params->N_rx_ant;
-	
-	LSFreqDomain(pInpData, pOutData, MDFT, NumLayer, NumRxAntenna);
+	//	int MDFT = lte_phy_params->N_dft_sz;
+	//	int NumLayer = lte_phy_params->N_tx_ant;
+	//	int NumRxAntenna = lte_phy_params->N_rx_ant;
+	//LSFreqDomain(pInpData, pOutData, MDFT, NumLayer, NumRxAntenna);
+	LSFreqDomain(pInpData, pOutData, 1200, 2, 2);
 }

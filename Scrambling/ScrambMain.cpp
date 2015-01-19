@@ -9,7 +9,7 @@
 #include "Scrambler.h"
 //#include "check.h"
 
-//#define Scramb
+#define Scramb
 
 LTE_PHY_PARAMS lte_phy_params;
 

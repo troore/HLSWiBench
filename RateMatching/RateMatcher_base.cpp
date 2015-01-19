@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "RateMatcher.h"
 
 
@@ -86,8 +86,11 @@ void RxRateMatching(float pLLRin[N_RM_OUT_MAX], float pLLRout[N_RM_IN_MAX], int 
 
 	int i, j, r;
 
+	printf("%d\n",out_buf_sz);
+
 //	out_buf_sz = lte_phy_params->rdm_out_buf_sz;
 	rm_blk_sz = BLOCK_SIZE + 4;
+	//rm_data_length = (out_buf_sz / RATE);
 	rm_data_length = (out_buf_sz / RATE);
 
 	n_blocks = (rm_data_length + (rm_blk_sz - 1)) / rm_blk_sz;

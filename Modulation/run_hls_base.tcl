@@ -16,7 +16,7 @@ create_clock -period 10 -name default
 
 #source "./mod_prj/solution1/directives.tcl"
 csim_design -argv {0}
-#csynth_design
-#cosim_design -trace_level none -argv {0}
+csynth_design
+cosim_design -trace_level none -argv {0}
 #export_design 
 exit

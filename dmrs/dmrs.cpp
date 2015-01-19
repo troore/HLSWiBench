@@ -1,6 +1,5 @@
 
 #include <math.h>
-#include <assert.h>
 #include "lte_phy.h"
 
 #define PI 3.14159265358979
@@ -9,6 +8,7 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 			  int N_layer,
 			  int N_dft)
 {
+#pragma HLS ARRAY_PARTITION variable=pDMRS cyclic factor=2 dim=1
 	int i;
 	
 	int pPrimeTable[6][2];
@@ -71,14 +71,14 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 	{
 		for (int layer = 0; layer < N_layer; layer++)
 		{
+#pragma HLS LOOP_FLATTEN
+			int cs = ncs[slot] + 6 * layer;
+			double alpha = 2.0 * PI * cs / 12.0;
 			for (int n = 0; n < N_dft; n++)
 			{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
-				int cs = ncs[slot] + 6 * layer;
-				double alpha = 2.0 * PI * cs / 12.0;
 				int index = ((slot * N_layer + layer) * N_dft + n) * 2 ;
-
 				int idx = n % Nzc;
 				double a = cos(alpha * n);
 				double b = sin(alpha * n);
@@ -96,18 +96,14 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 	if (N_layer == 2)
 	{
 		int index_offset = 2 * (1 * N_layer + 1) * N_dft;
-		int two_N_dft = 2 * N_dft;
-		assert(two_N_dft <= 2 * LTE_PHY_DFT_SIZE_MAX);
-		assert(two_N_dft >= 2 * LTE_PHY_DFT_SIZE_1_92MHZ);
-		negate_pDMRS_loop:for (int n = 0; n < two_N_dft; n ++)
+		negate_pDMRS_loop:for (int n = 0; n < N_dft; n ++)
 		{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
 			//	(*(*(*(pDMRS+1)+1)+n))*=(-1.0);
 			//	pDMRS[(1 * N_layer + 1) * N_dft + n] *= (-1.0);
-			//int index = 2 * ((1 * N_layer + 1) * N_dft + n);
-			pDMRS[n + index_offset] = -1.0 * pDMRS[n + index_offset];
-			//pDMRS[index + 1] = -1.0 * pDMRS[index + 1];
+			pDMRS[index_offset + 2 * n] = -1.0 * pDMRS[index_offset + 2 * n];
+			pDMRS[index_offset + 2 * n + 1] = -1.0 * pDMRS[index_offset + 2 * n + 1];
 		}
 	}
 }

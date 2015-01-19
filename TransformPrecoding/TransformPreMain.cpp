@@ -10,7 +10,7 @@
 
 #include "TransformPrecoder.h"
 
-//#define TransformPre
+#define TransformPre
 
 LTE_PHY_PARAMS lte_phy_params;
 
@@ -20,6 +20,8 @@ void test_encoder(LTE_PHY_PARAMS *lte_phy_params)
 
 //	ReadInputFromFiles(lte_phy_params->trans_encoder_in, lte_phy_params->trans_encoder_in_buf_sz, "../testsuite/TransformPrecoderInputReal", "../testsuite/TransformPrecoderInputImag");
 	GeneRandomInput(lte_phy_params->trans_encoder_in, lte_phy_params->trans_encoder_in_buf_sz, "TransformPrecoderInputReal", "TransformPrecoderInputImag");
+
+	printf("%d\n",lte_phy_params->trans_encoder_in_buf_sz);
 
 	TransformPrecoding(lte_phy_params->trans_encoder_in, lte_phy_params->trans_encoder_out, lte_phy_params->N_tx_ant, lte_phy_params->N_dft_sz);
 

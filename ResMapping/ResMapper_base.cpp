@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "dmrs/dmrs.h"
 #include "lte_phy.h"
 
@@ -17,57 +17,58 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 //	int NIFFT = lte_phy_params->N_fft_sz;
 //	int MDFT = lte_phy_params->N_dft_sz;
 
-	float DMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2];
+    float DMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2];
 
-	geneDMRS(DMRS, NumLayer, MDFT);
+    geneDMRS(DMRS, NumLayer, MDFT);
 
-	for (int nlayer = 0; nlayer < NumLayer; nlayer++)
-	{
-		for (int nsym = 0; nsym < NumULSymbSF; nsym++)
-		{
-			int SymIdx = nlayer * NumULSymbSF + nsym;
+    for (int nlayer = 0; nlayer < NumLayer; nlayer++)
+    {
+            for (int nsym = 0; nsym < NumULSymbSF; nsym++)
+            {
+                    int SymIdx = nlayer * NumULSymbSF + nsym;
 
-			for (int n = 0; n < NIFFT; n++)
-			{
-				//	pOutData[SymIdx * NIFFT + n] = std::complex<float>(1.0, 0.0);
-				pOutData[2 * (SymIdx * NIFFT + n) + 0] = 1.0;
-				pOutData[2 * (SymIdx * NIFFT + n) + 1] = 0.0;
-			}
-		}
-	}
+                    for (int n = 0; n < NIFFT; n++)
+                    {
+                            //      pOutData[SymIdx * NIFFT + n] = std::complex<float>(1.0, 0.0);
+                            pOutData[2 * (SymIdx * NIFFT + n) + 0] = 1.0;
+                            pOutData[2 * (SymIdx * NIFFT + n) + 1] = 0.0;
+                    }
+            }
+    }
 
-	for (int nlayer = 0; nlayer < NumLayer; nlayer++)
-	{
-		int DMRSslot = 0;
-			
-		for (int nsym = 0; nsym < NumULSymbSF; nsym++)
-		{
-			int SymIdx = nlayer * NumULSymbSF + nsym;
-				
-			if (nsym == /*lte_phy_params->*/dmrs_symb_pos[DMRSslot])
-			{
-				for (int n = SCLoc; n < SCLoc + MDFT; n++)
-				{
-					//	pOutData[SymIdx * NIFFT + n] = *(*(*(VpDMRS + DMRSslot) + nlayer) + n - SCLoc);
-					//	pOutData[SymIdx * NIFFT + n] = DMRS[(DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)];
-					pOutData[2 * (SymIdx * NIFFT + n) + 0] = DMRS[2 * ((DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)) + 0];
-					pOutData[2 * (SymIdx * NIFFT + n) + 1] = DMRS[2 * ((DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)) + 1];
-				}
-				DMRSslot++;
-			}
-			else
-			{
+    for (int nlayer = 0; nlayer < NumLayer; nlayer++)
+    {
+            int DMRSslot = 0;
 
-				for (int n = SCLoc; n < SCLoc + MDFT; n++)
-				{
-					//	*(*(pOutData+SymIdx)+n)=*(*(pInpData+nlayer*(NumULSymbSF-2)+nsym-DMRSslot)+n-SCLoc);
-					//	pOutData[SymIdx * NIFFT + n] = pInpData[nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc];
-					pOutData[2 * (SymIdx * NIFFT + n) + 0] = pInpData[2 * (nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc) + 0];
-					pOutData[2 * (SymIdx * NIFFT + n) + 1] = pInpData[2 * (nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc) + 1];
-				}
-			}
-		}
-	}
+            for (int nsym = 0; nsym < NumULSymbSF; nsym++)
+            {
+                    int SymIdx = nlayer * NumULSymbSF + nsym;
+
+                    if (nsym == /*lte_phy_params->*/dmrs_symb_pos[DMRSslot])
+                    {
+                            for (int n = SCLoc; n < SCLoc + MDFT; n++)
+                            {
+                                    //      pOutData[SymIdx * NIFFT + n] = *(*(*(VpDMRS + DMRSslot) + nlayer) + n - SCLoc);
+                                    //      pOutData[SymIdx * NIFFT + n] = DMRS[(DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)];
+                                    pOutData[2 * (SymIdx * NIFFT + n) + 0] = DMRS[2 * ((DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)) + 0];
+                                    pOutData[2 * (SymIdx * NIFFT + n) + 1] = DMRS[2 * ((DMRSslot * NumLayer + nlayer) * MDFT + (n - SCLoc)) + 1];
+                            }
+                            DMRSslot++;
+                    }
+                    else
+                    {
+
+                            for (int n = SCLoc; n < SCLoc + MDFT; n++)
+                            {
+                                    //      *(*(pOutData+SymIdx)+n)=*(*(pInpData+nlayer*(NumULSymbSF-2)+nsym-DMRSslot)+n-SCLoc);
+                                    //      pOutData[SymIdx * NIFFT + n] = pInpData[nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc];
+                                    pOutData[2 * (SymIdx * NIFFT + n) + 0] = pInpData[2 * (nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc) + 0];
+                                    pOutData[2 * (SymIdx * NIFFT + n) + 1] = pInpData[2 * (nlayer * (NumULSymbSF - 2) * MDFT + (nsym - DMRSslot) * MDFT + n - SCLoc) + 1];
+                            }
+                    }
+            }
+    }
+
 }
 
 void SubCarrierDemapping(/*LTE_PHY_PARAMS *lte_phy_params, */
