@@ -32,8 +32,6 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT
 
 			for (i = 0; i < NIFFT; i++)
 			{
-#pragma HLS PIPELINE
-#pragma HLS DEPENDENCE array inter false
 				p_samp_in_buf[i] = pInpData[symb_idx * NIFFT + i];
 				p_samp_in_buf[i + NIFFT] = pInpData[symb_idx * NIFFT + i + in_buf_sz];
 			}
@@ -42,16 +40,12 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT
 			
 			for (i = 0; i < NIFFT; i++)
 			{
-#pragma HLS PIPELINE
-#pragma HLS DEPENDENCE array inter false
 				pOutData[symb_idx * (NIFFT + CPLen) + CPLen + i] = p_samp_out_buf[i] / norm;
 				pOutData[symb_idx * (NIFFT + CPLen) + CPLen + i + out_buf_sz] = p_samp_out_buf[i + NIFFT] / norm;
 			}
 		
 			for (i = 0; i < CPLen; i++)
 			{
-#pragma HLS PIPELINE
-#pragma HLS DEPENDENCE array inter false
 				pOutData[symb_idx * (NIFFT + CPLen) + i] = pOutData[symb_idx * (NIFFT + CPLen) + NIFFT + i];
 				pOutData[symb_idx * (NIFFT + CPLen) + i + out_buf_sz] = pOutData[symb_idx * (NIFFT + CPLen) + NIFFT + i + out_buf_sz];
 			}
@@ -122,7 +116,6 @@ void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[
 	{
 		for (nsym = 0; nsym < NumULSymbSF; nsym++)
 		{
-#pragma HLS loop_flatten
 			int symb_idx = nlayer * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT);
 			
@@ -132,16 +125,12 @@ void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[
 			
 			for (i = 0; i < NIFFT; i++)
 			{
-#pragma HLS PIPELINE
-#pragma HLS DEPENDENCE array inter false
 				pOutDataReal[symb_idx * (NIFFT + CPLen) + CPLen + i] /= norm;
 				pOutDataImag[symb_idx * (NIFFT + CPLen) + CPLen + i] /= norm;
 			}
 
 			for (i = 0; i < CPLen; i++)
 			{
-#pragma HLS PIPELINE
-#pragma HLS DEPENDENCE array inter false
 				pOutDataReal[symb_idx * (NIFFT + CPLen) + i] = pOutDataReal[symb_idx * (NIFFT + CPLen) + NIFFT + i];
 				pOutDataImag[symb_idx * (NIFFT + CPLen) + i] = pOutDataImag[symb_idx * (NIFFT + CPLen) + NIFFT + i];
 			}

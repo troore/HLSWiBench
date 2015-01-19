@@ -14,6 +14,6 @@ create_clock -period 10 -name default
 
 csim_design -argv {4}
 #csynth_design
-#cosim_design  -trace_level none -argv {4}
+#cosim_design  -trace_level none -argv {1}
 #export_design 
 exit

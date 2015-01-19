@@ -1,5 +1,5 @@
 
-open_project -reset scrb_base_prj
+open_project -reset scrb_base_fix_prj
 set_top Scrambling
 add_files Scrambler_base.cpp -cflags "-I../ -I../lib"
 add_files -tb ScrambMain.cpp -cflags "-I../ -I../lib"

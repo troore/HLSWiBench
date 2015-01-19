@@ -1,32 +1,167 @@
-================================================================
-  Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
-  Version: 2013.4
-  Build date: Mon Dec 09 17:07:59 PM 2013
-  Copyright (C) 2013 Xilinx Inc. All rights reserved.
-================================================================
 @I [LIC-101] Checked out feature [VIVADO_HLS]
-@I [HLS-10] Running '/home/troore/Public/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
-            for user 'troore' on host 'debian.pku.edu' (Linux_x86_64 version 3.2.0-4-amd64) on Tue Jan 13 10:54:20 HKT 2015
-            in directory '/home/troore/Projects/comm/HLSWiBench/TransformPrecoding'
-@I [HLS-10] Creating and opening project '/home/troore/Projects/comm/HLSWiBench/TransformPrecoding/tp_base_prj'.
-@I [HLS-10] Adding design file 'TransformPrecoder_base.cpp' to the project.
-@I [HLS-10] Adding design file '../dft/dft_base.cpp' to the project.
+@I [HLS-10] Running '/opt/Xilinx/Vivado_HLS/2013.4/bin/unwrapped/lnx64.o/vivado_hls'
+            for user 'bliang' on host 'ceca7.site' (Linux_x86_64 version 3.7.10-1.40-default) on Sat Jan 17 15:20:16 CST 2015
+            in directory '/home/bliang/HLSWiBench/TransformPrecoding'
+@I [HLS-10] Opening project '/home/bliang/HLSWiBench/TransformPrecoding/tp_prj'.
+@I [HLS-10] Adding design file 'TransformPrecoder.cpp' to the project.
+@I [HLS-10] Adding design file '../dft/dft.cpp' to the project.
 @I [HLS-10] Adding test bench file 'TransformPreMain.cpp' to the project.
 @I [HLS-10] Adding test bench file '../lib/GeneralFunc.cpp' to the project.
 @I [HLS-10] Adding test bench file '../lib/gauss.cpp' to the project.
 @I [HLS-10] Adding test bench file '../lte_phy.cpp' to the project.
-@I [HLS-10] Creating and opening solution '/home/troore/Projects/comm/HLSWiBench/TransformPrecoding/tp_base_prj/solution1'.
-@I [HLS-10] Cleaning up the solution database.
-@I [HLS-10] Setting target device to 'xc7z020clg484-1'
+@I [HLS-10] Opening solution '/home/bliang/HLSWiBench/TransformPrecoding/tp_prj/solution1'.
 @I [SYN-201] Setting up clock 'default' with a period of 10ns.
-   Compiling ../../../../../lte_phy.cpp in debug mode
-   Compiling ../../../../../lib/gauss.cpp in debug mode
-   Compiling ../../../../../lib/GeneralFunc.cpp in debug mode
-   Compiling ../../../../TransformPreMain.cpp in debug mode
-   Compiling ../../../../../dft/dft_base.cpp in debug mode
-   Compiling ../../../../TransformPrecoder_base.cpp in debug mode
-   Generating csim.exe
-Transform Decoder starts
-Transform Decoder ends
-@I [SIM-1] CSim done with 0 errors.
+@I [HLS-10] Setting target device to 'xc7z020clg484-1'
+@I [HLS-10] Importing test bench file '../lte_phy.cpp' ... 
+@I [HLS-10] Importing test bench file '../lib/gauss.cpp' ... 
+@I [HLS-10] Importing test bench file '../lib/GeneralFunc.cpp' ... 
+@I [HLS-10] Importing test bench file 'TransformPreMain.cpp' ... 
+@I [HLS-10] Analyzing design file '../dft/dft.cpp' ... 
+@I [HLS-10] Analyzing design file 'TransformPrecoder.cpp' ... 
+@I [HLS-10] Validating synthesis directives ...
+@I [HLS-10] Starting code transformations ...
+@I [XFORM-603] Inlining function 'ap_fixed_base<49, 0, false, (ap_q_mode)5, (ap_o_mode)3, 0>::operator<<' into 'hls::hotbm::range_redux_payne_hanek_hotbm_pi<20, float, 31, 31>' ().
+@I [XFORM-603] Inlining function 'ap_fixed_base<49, 0, false, (ap_q_mode)5, (ap_o_mode)3, 0>::operator<<' into 'hls::hotbm::range_redux_payne_hanek_hotbm<20, float, 31, 31>' ().
+@I [XFORM-603] Inlining function 'ap_fixed_base<31, 0, false, (ap_q_mode)0, (ap_o_mode)3, 0>::quantization_adjust' into 'ap_fixed_base<31, 0, false, (ap_q_mode)0, (ap_o_mode)3, 0>::ap_fixed_base<49, 0, false, (ap_q_mode)5, (ap_o_mode)3, 0>' ().
+@I [XFORM-603] Inlining function 'ap_fixed_base<31, 0, false, (ap_q_mode)5, (ap_o_mode)3, 0>::operator<<' into 'hls::hotbm::range_redux_payne_hanek_hotbm_pi<20, float, 31, 31>' ().
+@I [XFORM-603] Inlining function 'ap_fixed_base<31, 0, false, (ap_q_mode)5, (ap_o_mode)3, 0>::operator<<' into 'hls::hotbm::range_redux_payne_hanek_hotbm<20, float, 31, 31>' ().
+@I [XFORM-603] Inlining function 'ap_fixed_base<31, 0, false, (ap_q_mode)0, (ap_o_mode)0, 0>::overflow_adjust' into 'ap_fixed_base<31, 0, false, (ap_q_mode)0, (ap_o_mode)0, 0>::ap_fixed_base<32, 32, true, (ap_q_mode)5, (ap_o_mode)3, 0>.1' ().
+@I [XFORM-603] Inlining function 'ap_fixed_base<31, 1, true, (ap_q_mode)5, (ap_o_mode)3, 0>::operator<<' into 'hls::hotbm::my_to_float<31, 1>' ().
+@I [HLS-10] Checking synthesizability ...
+@W [SYNCHK-23] /proj/buildscratch/builds/2013.4/continuous/20131209165331/src/products/hls/hls_lib/src/hls/hls_hotbm.h:130: variable-indexed range selection may cause suboptimal QoR.
+@I [SYNCHK-10] 0 error(s), 1 warning(s).
+@I [XFORM-502] Unrolling all loops for pipelining in function 'hls::hotbm::my_to_float<31, 1>'.
+@I [XFORM-502] Unrolling all loops for pipelining in function 'hls::big_mult_v3small<71, 24, 17>'.
+@I [XFORM-501] Unrolling loop 'Loop-1' in function 'hls::hotbm::my_to_float<31, 1>' completely.
+@I [XFORM-501] Unrolling loop 'Loop-2' in function 'hls::hotbm::my_to_float<31, 1>' completely.
+@I [XFORM-501] Unrolling loop 'Loop-3' in function 'hls::hotbm::my_to_float<31, 1>' completely.
+@I [XFORM-501] Unrolling loop 'Loop-1' in function 'hls::big_mult_v3small<71, 24, 17>' completely.
+@I [XFORM-501] Unrolling loop 'Loop-2' in function 'hls::big_mult_v3small<71, 24, 17>' completely.
+@I [XFORM-501] Unrolling loop 'Loop-3' in function 'hls::big_mult_v3small<71, 24, 17>' completely.
+@I [XFORM-102] Partitioning array 'pp.V' automatically.
+@I [XFORM-102] Partitioning array 'pps.V' automatically.
+@I [XFORM-102] Partitioning array 'out_bits.V' automatically.
+@I [XFORM-102] Partitioning array 'c' automatically.
+@I [XFORM-101] Partitioning array 'swap_table' in dimension 1 completely.
+@I [XFORM-101] Partitioning array 'neg_sin_table' in dimension 1 completely.
+@I [XFORM-101] Partitioning array 'neg_cos_table' in dimension 1 completely.
+@I [XFORM-101] Partitioning array 'pDataMatrix' (TransformPrecoder.cpp:5) in dimension 1 with a cyclic factor 2.
+@I [XFORM-602] Inlining function 'fp_struct<float>::expv' into 'hls::hotbm::range_redux_payne_hanek_hotbm<20, float, 31, 31>' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<float>::data' into 'fp_struct<float>::to_float' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<float>::to_float' into 'fp_struct<float>::to_ieee' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<float>::set_mantissa' into 'hls::hotbm::my_to_float<31, 1>' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<float>::to_ieee' into 'hls::hotbm::my_to_float<31, 1>' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<float>::to_ieee' into 'hls::copysignf' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<double>::data' into 'fp_struct<double>::to_double' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<double>::to_double' into 'fp_struct<double>::to_ieee' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<double>::to_ieee' into 'hls::nan' () automatically.
+@I [XFORM-602] Inlining function 'fp_struct<float>::to_ieee' into 'hls::hotbm::sinf_or_cosf' () automatically.
+@I [XFORM-401] Performing if-conversion on hyperblock in function 'hls::hotbm::range_redux_payne_hanek_hotbm<20, float, 31, 31>'... converting 3 basic blocks.
+@I [XFORM-401] Performing if-conversion on hyperblock in function 'hls::hotbm::range_redux_payne_hanek_hotbm<20, float, 31, 31>'... converting 6 basic blocks.
+@I [XFORM-401] Performing if-conversion on hyperblock in function 'hls::hotbm::sinf_or_cosf'... converting 38 basic blocks.
+@I [XFORM-541] Flattening a loop nest 'TransformPrecoding_loop1' (TransformPrecoder.cpp:11) in function 'TransformPrecoding'.
+@I [XFORM-541] Flattening a loop nest 'dft_loop1' (../dft/dft.cpp:14) in function 'dft'.
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'pDataMatrix_0' (TransformPrecoder.cpp:5) in loop (TransformPrecoder.cpp:11).
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'pDataMatrix_1' (TransformPrecoder.cpp:5) in loop (TransformPrecoder.cpp:11).
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'p0' (../dft/dft.cpp:10) in loop (../dft/dft.cpp:14).
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'a' (../dft/dft.cpp:7) in loop (../dft/dft.cpp:14).
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'p1' (../dft/dft.cpp:10) in loop (../dft/dft.cpp:14).
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'y_0' (../dft/dft.cpp:7) in loop (../dft/dft.cpp:14).
+@I [ANALYSIS-51] Setting 'None' inter dependency for variable 'y_1' (../dft/dft.cpp:7) in loop (../dft/dft.cpp:14).
+@I [HLS-111] Elapsed time: 12.69 seconds; current memory usage: 397 MB.
+@I [HLS-10] Starting hardware synthesis ...
+@I [HLS-10] Synthesizing 'TransformPrecoding' ...
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Scheduling module 'sinf_or_cosf' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [SCHED-11] Starting scheduling ...
+@I [SCHED-61] Pipelining function 'sinf_or_cosf'.
+@I [SCHED-61] Pipelining result: Target II: 1, Final II: 1, Depth: 21.
+@I [SCHED-11] Finished scheduling.
+@I [HLS-111] Elapsed time: 0.72 seconds; current memory usage: 398 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Exploring micro-architecture for module 'sinf_or_cosf' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [BIND-100] Starting micro-architecture generation ...
+@I [BIND-101] Performing variable lifetime analysis.
+@I [BIND-101] Exploring resource sharing.
+@I [BIND-101] Binding ...
+@I [BIND-100] Finished micro-architecture generation.
+@I [HLS-111] Elapsed time: 0.18 seconds; current memory usage: 399 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Scheduling module 'dft' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [SCHED-11] Starting scheduling ...
+@I [SCHED-61] Pipelining loop 'dft_loop1_dft_loop1_1'.
+@I [SCHED-61] Pipelining result: Target II: 1, Final II: 1, Depth: 52.
+@I [SCHED-11] Finished scheduling.
+@I [HLS-111] Elapsed time: 0.31 seconds; current memory usage: 400 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Exploring micro-architecture for module 'dft' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [BIND-100] Starting micro-architecture generation ...
+@I [BIND-101] Performing variable lifetime analysis.
+@I [BIND-101] Exploring resource sharing.
+@I [BIND-101] Binding ...
+@I [BIND-100] Finished micro-architecture generation.
+@I [HLS-111] Elapsed time: 0.11 seconds; current memory usage: 400 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Scheduling module 'TransformPrecoding' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [SCHED-11] Starting scheduling ...
+@I [SCHED-61] Pipelining loop 'TransformPrecoding_loop3'.
+@I [SCHED-61] Pipelining result: Target II: 1, Final II: 1, Depth: 17.
+@I [SCHED-11] Finished scheduling.
+@I [HLS-111] Elapsed time: 0.25 seconds; current memory usage: 401 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Exploring micro-architecture for module 'TransformPrecoding' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [BIND-100] Starting micro-architecture generation ...
+@I [BIND-101] Performing variable lifetime analysis.
+@I [BIND-101] Exploring resource sharing.
+@I [BIND-101] Binding ...
+@I [BIND-100] Finished micro-architecture generation.
+@I [HLS-111] Elapsed time: 0.06 seconds; current memory usage: 401 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Generating RTL for module 'sinf_or_cosf' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [RTGEN-100] Generating core module 'TransformPrecoding_mul_32s_31ns_62_6': 1 instance(s).
+@I [RTGEN-100] Finished creating RTL model for 'sinf_or_cosf'.
+@I [HLS-111] Elapsed time: 0.24 seconds; current memory usage: 403 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Generating RTL for module 'dft' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [RTGEN-100] Generating core module 'TransformPrecoding_fadd_32ns_32ns_32_5_full_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'TransformPrecoding_fmul_32ns_32ns_32_4_max_dsp': 6 instance(s).
+@I [RTGEN-100] Generating core module 'TransformPrecoding_fsub_32ns_32ns_32_5_full_dsp': 2 instance(s).
+@I [RTGEN-100] Generating core module 'TransformPrecoding_sitofp_64ns_32_6': 2 instance(s).
+@I [RTGEN-100] Finished creating RTL model for 'dft'.
+@I [HLS-111] Elapsed time: 0.57 seconds; current memory usage: 408 MB.
+@I [HLS-10] ----------------------------------------------------------------
+@I [HLS-10] -- Generating RTL for module 'TransformPrecoding' 
+@I [HLS-10] ----------------------------------------------------------------
+@I [RTGEN-500] Setting interface mode on port 'TransformPrecoding/pInpSeq' to 'ap_memory'.
+@I [RTGEN-500] Setting interface mode on port 'TransformPrecoding/pDataMatrix_0' to 'ap_memory'.
+@I [RTGEN-500] Setting interface mode on port 'TransformPrecoding/pDataMatrix_1' to 'ap_memory'.
+@I [RTGEN-500] Setting interface mode on port 'TransformPrecoding/NumLayer' to 'ap_none'.
+@I [RTGEN-500] Setting interface mode on port 'TransformPrecoding/MDFT' to 'ap_none'.
+@I [RTGEN-500] Setting interface mode on function 'TransformPrecoding' to 'ap_ctrl_hs'.
+@W [RTGEN-101] Port 'TransformPrecoding/NumLayer' has no fanin or fanout and is left dangling.
+               Please use C simulation to confirm this function argument can be read from or written to.
+@W [RTGEN-101] Port 'TransformPrecoding/MDFT' has no fanin or fanout and is left dangling.
+               Please use C simulation to confirm this function argument can be read from or written to.
+@I [RTGEN-100] Generating core module 'TransformPrecoding_fdiv_32ns_32ns_32_16': 2 instance(s).
+@I [RTGEN-100] Finished creating RTL model for 'TransformPrecoding'.
+@I [HLS-111] Elapsed time: 0.29 seconds; current memory usage: 411 MB.
+@I [RTMG-282] Generating pipelined core: 'TransformPrecoding_mul_32s_31ns_62_6_MulnS_0'
+@I [RTMG-279] Implementing memory 'sinf_or_cosf_hls_ref_4oPi_table_100_V_rom' using distributed ROMs.
+@I [RTMG-279] Implementing memory 'sinf_or_cosf_hls_sin_cos_K0_V_rom' using distributed ROMs.
+@I [RTMG-279] Implementing memory 'sinf_or_cosf_hls_sin_cos_K1_V_rom' using distributed ROMs.
+@I [RTMG-279] Implementing memory 'sinf_or_cosf_hls_sin_cos_K2_V_rom' using distributed ROMs.
+@I [RTMG-278] Implementing memory 'dft_p0_ram' using block RAMs.
+@I [HLS-10] Finished generating all RTL models.
+@I [WSYSC-301] Generating RTL SystemC for 'TransformPrecoding'.
+@I [WVHDL-304] Generating RTL VHDL for 'TransformPrecoding'.
+@I [WVLOG-307] Generating RTL Verilog for 'TransformPrecoding'.
+@I [HLS-112] Total elapsed time: 34.824 seconds; peak memory usage: 411 MB.
 @I [LIC-101] Checked in feature [VIVADO_HLS]

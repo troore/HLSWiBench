@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include <stdio.h>
 
 #include "Turbo.h"
@@ -29,7 +27,7 @@ float Lc;
 /*****************End of globals*****************/
 
 // Turbo Internal Interleaver from 3GPP TS 36.212 v10.0.0 table 5.1.3-3
-
+/*
 int TURBO_INT_K_TABLE[TURBO_INT_K_TABLE_SIZE] = {  40,  48,  56,  64,  72,  80,  88,  96, 104, 112,
 														120, 128, 136, 144, 152, 160, 168, 176, 184, 192,
 														200, 208, 216, 224, 232, 240, 248, 256, 264, 272,
@@ -48,7 +46,7 @@ int TURBO_INT_K_TABLE[TURBO_INT_K_TABLE_SIZE] = {  40,  48,  56,  64,  72,  80, 
 												   3776,3840,3904,3968,4032,4096,4160,4224,4288,4352,
 												   4416,4480,4544,4608,4672,4736,4800,4864,4928,4992,
 												   5056,5120,5184,5248,5312,5376,5440,5504,5568,5632,
-												   5696,5760,5824,5888,5952,6016,6080,6144};
+												   5696,5760,5824,5888,5952,6016,6080,out_data_length};
 
 int TURBO_INT_F1_TABLE[TURBO_INT_K_TABLE_SIZE] = {  3,  7, 19,  7,  7, 11,  5, 11,  7, 41,103, 15,  9,
 													17,  9, 21,101, 21, 57, 23, 13, 27, 11, 27, 85, 29,
@@ -82,7 +80,7 @@ int TURBO_INT_F2_TABLE[TURBO_INT_K_TABLE_SIZE] = { 10, 12, 42, 16, 18, 20, 22, 2
 												   234,158, 80, 96,902,166,336,170, 86,174,176,178,120,
 												   182,184,186, 94,190,480};
 
-
+*/
 float max_log(float a, float b)
 {
 	return (a > b) ? a : b;
@@ -155,7 +153,6 @@ void internal_interleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for(i = 0; i < m; i++)
     {
 		if ((0 == f1) && (0 == f2))
@@ -190,7 +187,6 @@ void internal_interleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for(i = 0; i < m; i++)
     {
 #pragma HLS PIPELINE
@@ -226,7 +222,6 @@ void internal_deinterleaver(int in[BLOCK_SIZE], int out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for (i = 0; i < m; i++)
     {
 		if ((0 == f1) && (0 == f2))
@@ -261,7 +256,6 @@ void internal_deinterleaver(float in[BLOCK_SIZE], float out[BLOCK_SIZE], int m)
         }
     }
 
-    assert(m < 6145);
     for (i = 0; i < m; i++)
     {
 #pragma HLS PIPELINE
@@ -453,22 +447,14 @@ int calc_state_transition(int instate, int input, int parity[N_GENS - 1])
 
 	calc_state_transition_loop2:for (j = 0; j < (N_GENS - 1); j++)
 	{
-		/*parity_temp = (instate | (in << (CST_LEN - 1))) & g_gen_pols[j + 1];
-		parity_bit = 0;*/
+		parity_temp = (instate | (in << (CST_LEN - 1))) & g_gen_pols[j + 1];
+		parity_bit = 0;
 		calc_state_transition_loop2_in:for (i = 0; i < CST_LEN; i++)
 		{
-#pragma HLS LOOP_FLATTEN
-			if(i == 0){
-				parity_temp = (instate | (in << (CST_LEN - 1))) & g_gen_pols[j + 1];
-				parity_bit = 0;
-			}
 			parity_bit = (parity_temp & 1) ^ parity_bit;
 			parity_temp = parity_temp >> 1;
-			if(i == CST_LEN){
-				parity[j] = parity_bit;
-			}
 		}
-		/*parity[j] = parity_bit;*/
+		parity[j] = parity_bit;
 	}
 	
 	return (in << (CST_LEN - 2) | (instate >> 1)) & ((1 << (CST_LEN - 1)) - 1);
@@ -522,11 +508,9 @@ void turbo_decoding(float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX
 	set_generator_polynomials(g_gens, N_GENS, CST_LEN);
 
 //	out_data_length = lte_phy_params->td_out_buf_sz;
-//  according to lte_phy.cpp, maximum of td_out_buf_sz is 18432 (72 MHz).
+//  according to lte_phy.cpp, maximum of td_out_buf_sz is out_data_length (72 MHz).
 
-//	assert(out_data_length < 18433);
 	n_blocks = ((out_data_length + BLOCK_SIZE - 1) / BLOCK_SIZE);
-//	assert(n_blocks < 4);
 
 	if (out_data_length % BLOCK_SIZE)
 	{
@@ -547,14 +531,8 @@ void turbo_decoding(float pInpData[N_TURBO_OUT_MAX], int pOutBits[N_TURBO_IN_MAX
 	out_bit_offset = 0;
 	out_block_offset = 0;
 
-	//	for (i = 0; i < n_blocks; i++)
-		for (i = 0; i < 3; i++)
+		for (i = 0; i < n_blocks; i++)
 		{
-	#pragma HLS UNROLL
-	//#pragma HLS LOOP_TRIPCOUNT max=3
-			if(i >= n_blocks)
-				break;
-
 			cur_blk_len = (i != (n_blocks - 1)) ? BLOCK_SIZE : last_block_length;
 			// data part
 			for (j = 0; j < BLOCK_SIZE; j++)
@@ -607,7 +585,6 @@ void decode_block(float recv_syst1[N_UNCODED + N_TAIL],
 		int n_iters)
 {
 	int n_tailed = interleaver_size + N_TAIL;
-	assert(n_tailed < 6148);
 	int i;
 	int j;
 	
@@ -630,7 +607,6 @@ void decode_block(float recv_syst1[N_UNCODED + N_TAIL],
 	internal_deinterleaver(recv_syst2, deint_recv_syst2, interleaver_size);
 
 	// Combine the results from recv_syst1 and recv_syst2 (in case some bits are transmitted several times)
-	assert(interleaver_size < 6145);
 	for (i = 0; i < interleaver_size; i++)
 	{
 #pragma HLS PIPELINE
@@ -644,13 +620,11 @@ void decode_block(float recv_syst1[N_UNCODED + N_TAIL],
 	for (i = interleaver_size; i < n_tailed; i++)
 	{
 #pragma HLS PIPELINE
-#pragma HLS LOOP_TRIPCOUNT min=3 max=3 avg=3
 		recv_syst[i] = recv_syst1[i];
 		int_recv_syst[i] = recv_syst2[i];
 	}
 
 	// do the iterative decoding
-	assert(n_iters < 101);
 	for (i = 0; i < n_iters; i++)
 	{
 	//	map_decoder(recv_syst1, recv_parity1, Le21, Le12, interleaver_size);
@@ -705,7 +679,6 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 
 	Lc = 1.0;
 //	com_log = max_log;
-	assert(block_length < 6148);
 	for (k = 0; k <= block_length; k++)
 	{
 		denom[k] = -LOG_INFINITY;
@@ -828,39 +801,22 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 	for (k = 1; k <= block_length; k++)
 	{
 #pragma HLS DEPENDENCE array inter false
-/*		kk = k - 1;
+		kk = k - 1;
 		nom = -LOG_INFINITY;
-		den = -LOG_INFINITY;*/
+		den = -LOG_INFINITY;
 		for (s_prim = 0; s_prim < N_STATES; s_prim++)
 		{
-/*			if(s_prim == 0){
-				kk = k - 1;
-				nom = -LOG_INFINITY;
-				den = -LOG_INFINITY;
-			}*/
-/*			s0 = g_state_trans[s_prim * 2 + 0];
+			s0 = g_state_trans[s_prim * 2 + 0];
 			s1 = g_state_trans[s_prim * 2 + 1];
 			exp_temp0 = 0.0;
-			exp_temp1 = 0.0;*/
+			exp_temp1 = 0.0;
 			for (j = 0; j < (N_GENS - 1); j++)
 			{
 #pragma HLS DEPENDENCE array inter false
 #pragma HLS PIPELINE
-#pragma HLS LOOP_FLATTEN
-				if(s_prim == 0 && j == 0){
-						kk = k - 1;
-						nom = -LOG_INFINITY;
-						den = -LOG_INFINITY;
-				}
-				if(j == 0){
-					s0 = g_state_trans[s_prim * 2 + 0];
-					s1 = g_state_trans[s_prim * 2 + 1];
-					exp_temp0 = 0.0;
-					exp_temp1 = 0.0;
-				}
-
 				rp = recv_parity[kk * (N_GENS - 1) + j];
-				if (0 == g_output_parity[s_prim * (N_GENS - 1) * 2 + j * 2 + 0])
+				int index = s_prim * (N_GENS - 1) * 2 + j * 2;
+				if (0 == g_output_parity[index + 0])
 				{
 					exp_temp0 += rp;
 				}
@@ -868,7 +824,7 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 				{
 					exp_temp0 -= rp; 
 				}
-				if (0 == g_output_parity[s_prim * (N_GENS - 1) * 2 + j * 2 + 1])
+				if (0 == g_output_parity[index + 1])
 				{ 
 					exp_temp1 += rp;
 				}
@@ -876,24 +832,11 @@ void log_decoder(float recv_syst[N_UNCODED + N_TAIL],
 				{
 					exp_temp1 -= rp;
 				}
-
-
-				if(j == N_GENS - 2){
-					nom = max_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
-					den = max_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
-				}
-				if(j == N_GENS - 2 && s_prim == N_STATES - 1){
-					extrinsic[kk] = nom - den;
-				}
 			}
-			//	nom = com_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
-			//	den = com_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
-//			nom = max_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
-//			den = max_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
-//			if(s_prim == N_STATES - 1)
-//				extrinsic[kk] = nom - den;
+			nom = max_log(nom, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp0 + beta[s0 * (block_length + 1) + k]);
+			den = max_log(den, alpha[s_prim * (block_length + 1) + kk] + 0.5 * exp_temp1 + beta[s1 * (block_length + 1) + k]);
 		}
-//		extrinsic[kk] = nom - den;
+		extrinsic[kk] = nom - den;
 	//	std::cout << nom << "\t" << den << std::endl;
 	//	std::cout << extrinsic[kk] << std::endl;
 	}

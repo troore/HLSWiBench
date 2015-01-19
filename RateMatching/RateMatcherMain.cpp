@@ -10,7 +10,7 @@
 //#include "timer/meas.h"
 //#include "check.h"
 
-#define TxRateM
+//#define TxRateM
 
 LTE_PHY_PARAMS lte_phy_params;
 

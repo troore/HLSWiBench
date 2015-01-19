@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "TransformPrecoder.h"
 #include "dft/dft.h"
 
@@ -6,7 +6,7 @@ void TransformPrecoding(float pInpSeq[N_TRANS_ENCODER_IN_MAX], float pDataMatrix
 {
 //	int NumLayer = lte_phy_params->N_tx_ant;
 //	int MDFT = lte_phy_params->N_dft_sz;
-
+	//printf("%d,%d\n",NumLayer, MDFT);
 	int NumULSymbSF = LTE_PHY_N_SYMB_PER_SUBFR;
 
 	TransformPrecoding_loop1:for(int nlayer = 0; nlayer < NumLayer; nlayer++)

@@ -1,12 +1,9 @@
 
-#open_project -reset rem_base_prj
-open_project -reset rem_prj
-set_top SubCarrierMapping
-add_files ResMapper.cpp -cflags "-I../ -I../lib"
-add_files ../dmrs/dmrs.cpp -cflags "-I../ -I../lib"
-#add_files -tb SubCarrierMapInputReal
-#add_files -tb SubCarrierMapInputImag
-add_files -tb ResMapMain.cpp -cflags "-I../ -I../lib"
+open_project -reset ofmod_baseline_two_arrays_iter
+set_top ofmodulating_two_arrays
+add_files OFDM_baseline_iter_two_arrays.cpp -cflags "-I../ -I../lib"
+add_files ../fft/fft_base.cpp -cflags "-I../ -I../lib"
+add_files -tb OFDMMain_iter_two_arrays.cpp -cflags "-I../ -I../lib"
 add_files -tb ../lib/GeneralFunc.cpp -cflags "-I../lib"
 add_files -tb ../lib/gauss.cpp -cflags "-I../lib"
 add_files -tb ../lte_phy.cpp -cflags "-I../"

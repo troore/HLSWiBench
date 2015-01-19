@@ -1,5 +1,5 @@
 
-#include "dmrs.h"
+#include "dmrs/dmrs.h"
 #include "lte_phy.h"
 
 void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
@@ -24,7 +24,6 @@ void SubCarrierMapping(/*LTE_PHY_PARAMS *lte_phy_params, */
 //	int MDFT = lte_phy_params->N_dft_sz;
 
 	float DMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2];
-#pragma HLS ARRAY_PARTITION variable=DMRS block factor=2 dim=1
 
 	geneDMRS(DMRS, NumLayer, MDFT);
 
