@@ -338,6 +338,10 @@ void Demodulating(std::complex<float> pDecSeq[N_MOD_OUT_MAX], int pHD[N_MOD_IN_M
 
 void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MAX * 2], float pLLR[N_MOD_IN_MAX], int in_buf_sz, int mod_type, float awgnSigma)
 {
+#pragma HLS ARRAY_PARTITION variable=QAM16_table block factor=16 dim=1
+#pragma HLS RESOURCE variable=QAM16_table core=RAM_2P_BRAM
+#pragma HLS ARRAY_PARTITION variable=pDecSeq block factor=16 dim=1
+#pragma HLS RESOURCE variable=pDecSeq core=RAM_2P_BRAM
 
 	float No = 2.0 * (pow(awgnSigma, 2.0));
 //	float (*p_table)[2];
@@ -346,6 +350,8 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MA
 
 	int idx_table[MAX_MOD_TABLE_LEN][MAX_MOD_BITS_PER_SAMP];
 	float metric[MAX_MOD_TABLE_LEN];
+//#pragma HLS ARRAY_PARTITION variable=metric block factor=16 dim=1
+//#pragma HLS RESOURCE variable=metric core=RAM_2P_BRAM
 	float metric_set[2][(MAX_MOD_TABLE_LEN / 2)];
 
 //	printf("in_buf_sz = %d\n", in_buf_sz);
@@ -388,12 +394,13 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MA
 #pragma HLS PIPELINE
 		DEMOD_TABLE_LOOP1: for(j = 0; j < mod_table_len; j++)
 		{
-#pragma HLS UNROLL
+//#pragma HLS UNROLL
 			//	metric[j] = pow(abs((pDecSeq[i] - (std::complex<float>(p_table[j][0], p_table[j][1])))), 2.0);
 			//	metric[j] = pow(abs((pDecSeq[i] - (std::complex<float>(QAM16_table[j][0], QAM16_table[j][1])))), 2.0);
 			//	std::complex<float> tmp = pDecSeq[i] - (std::complex<float>(QAM16_table[j][0], QAM16_table[j][1]));
 			//	metric[j] = tmp.imag() * tmp.imag() + tmp.real() * tmp.real();
 			float tmp[2];
+#pragma HLS RESOURCE variable=tmp core=RAM_2P_BRAM
 			
 			tmp[0] = pDecSeq[2 * i + 0] - QAM16_table[j][0];
 			tmp[1] = pDecSeq[2 * i + 1] - QAM16_table[j][1];
@@ -402,14 +409,14 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MA
 
 		DEMOD_BITS_LOOP: for (j = 0; j < bits_per_samp; j++)
 		{
-#pragma HLS UNROLL
+//#pragma HLS UNROLL
 			float min0, min1;
 		//	int idx0 = 0, idx1 = 0;
 			int idx[2] = {0, 0};
 
 			DEMOD_TABLE_LOOP2: for (k = 0; k < mod_table_len; k++)
 			{
-#pragma HLS UNROLL
+//#pragma HLS UNROLL
 				/*
 				if(idx_table[k][j] == 0)
 				{
