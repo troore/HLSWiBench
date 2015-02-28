@@ -12,8 +12,8 @@ open_solution -reset "solution1"
 set_part {xc7z020clg484-1}
 create_clock -period 10 -name default
 
-#csim_design -argv {0}
+csim_design -argv {4}
 csynth_design
-cosim_design  -trace_level none -argv {1}
+cosim_design  -trace_level none -argv {4}
 #export_design 
 exit

@@ -7,7 +7,7 @@
 #include "GeneralFunc.h"
 
 #include "Scrambler.h"
-//#include "check.h"
+#include "check.h"
 
 #define Scramb
 
@@ -36,8 +36,8 @@ void test_descrambling(LTE_PHY_PARAMS *lte_phy_params)
 	float *rx_scramb_out = (float *)malloc(lte_phy_params->descramb_out_buf_sz * sizeof(float));
 	int i;
 
-//	ReadInputFromFiles(lte_phy_params->descramb_in, lte_phy_params->descramb_in_buf_sz, "testScrambleOutput");
-	GeneRandomInput(lte_phy_params->descramb_in, lte_phy_params->descramb_in_buf_sz, "ScrambleOutput");
+	ReadInputFromFiles(lte_phy_params->descramb_in, lte_phy_params->descramb_in_buf_sz, "testScrambleOutput");
+//	GeneRandomInput(lte_phy_params->descramb_in, lte_phy_params->descramb_in_buf_sz, "ScrambleOutput");
 //	ReadInputFromFiles(rx_scramb_in, in_buf_sz, "testScrambleOutput");
 	
 	for (i = 0; i < lte_phy_params->descramb_in_buf_sz; i++)
@@ -98,17 +98,15 @@ int main(int argc, char *argv[])
 		lte_phy_init(&lte_phy_params, fs_id);
 	}
 
-#ifdef Scramb
+//#ifdef Scramb
 	test_scrambling(&lte_phy_params);
-#else
+//#else
 	test_descrambling(&lte_phy_params);
-/*
 	strcpy(tx_in_fname, "ScrambleInput");
 	strcpy(rx_out_fname, "testDescrambleOutput");
 	err_n = check_float(tx_in_fname, rx_out_fname);
 	printf("%d\n", err_n);
-*/
-#endif
+//#endif
 
 	return 0;
 }

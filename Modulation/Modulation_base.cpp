@@ -225,7 +225,7 @@ void Modulating(/*LTE_PHY_PARAMS *lte_phy_params, */int pBitsSeq[N_MOD_IN_MAX], 
 	bits_per_samp = QAM16_BITS_PER_SAMP;
 	mod_table_len = QAM16_TABLE_LEN;
 
-	MOD_SAMP_LOOP: for (n_samp = 0; n_samp < (/*in_buf_sz*/ 7200 / bits_per_samp); n_samp++)
+	MOD_SAMP_LOOP: for (n_samp = 0; n_samp < (in_buf_sz / bits_per_samp); n_samp++)
 	{
 		idx = 0;
 		MOD_SIG_LOOP: for (b = 0; b < bits_per_samp; b++)

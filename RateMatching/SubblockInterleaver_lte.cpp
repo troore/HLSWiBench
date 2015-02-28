@@ -7,7 +7,7 @@ static int InterColumnPattern[32] = {0,16,8,24,4,20,12,28,
 									19,11,27,7,23,15,31};
 static int Rate = 3, C_sb = 32, DummyValue = 1000000;
 
-void interleaving_first_two(int R_sb, int NumDummy, int SeqLen, int pInpMtr[RATE * (BLOCK_SIZE + 4)], int pInterMatrix[((BLOCK_SIZE + 31) / 32) * 32], int pOutMtr[RATE * (BLOCK_SIZE + 4)]){
+void interleaving_first_two(int R_sb, int NumDummy, int SeqLen, int pInpMtr[RATE * (BLOCK_SIZE + 4)], int pInterMatrix[((BLOCK_SIZE + 4 + 31) / 32) * 32], int pOutMtr[RATE * (BLOCK_SIZE + 4)]){
 	int OutIdx;
 	for (int StrIdx = 0; StrIdx < (Rate - 1); StrIdx++)
 		{
@@ -55,8 +55,8 @@ void interleaving_first_two(int R_sb, int NumDummy, int SeqLen, int pInpMtr[RATE
 
 void interleaving_the_third(int NumDummy, int K_pi, int SeqLen, int R_sb, int pInpMtr[RATE * (BLOCK_SIZE + 4)], int pOutMtr[RATE * (BLOCK_SIZE + 4)]){
 	int OutIdx;
-	int Pi[((BLOCK_SIZE + 31) / 32) * 32];  // Why not BLOCK_SIZE + 4 + 31 ?
-		int pInterSeq[((BLOCK_SIZE + 31) / 32) * 32];
+	int Pi[((BLOCK_SIZE + 4 + 31) / 32) * 32];  // Why not BLOCK_SIZE + 4 + 31 ?
+		int pInterSeq[((BLOCK_SIZE + 4 + 31) / 32) * 32];
 
 		rate3_dummy_assignment_loop:for (int k = 0;k < NumDummy; k++)
 		{
@@ -111,7 +111,7 @@ void SubblockInterleaving(int SeqLen, int pInpMtr[RATE * (BLOCK_SIZE + 4)], int 
 	int K_pi = R_sb * C_sb;
 	int NumDummy = K_pi - SeqLen;
 	int OutIdx;
-	int pInterMatrix[((BLOCK_SIZE + 31) / 32) * 32]; // Why it is not BLOCK_SIZE + 4 + 31 instead of BLOCK_SIZE + 31?
+	int pInterMatrix[((BLOCK_SIZE + 4 + 31) / 32) * 32]; // Why it is not BLOCK_SIZE + 4 + 31 instead of BLOCK_SIZE + 31?
 
 	interleaving_first_two(R_sb, NumDummy, SeqLen, pInpMtr, pInterMatrix, pOutMtr);
 	interleaving_the_third(NumDummy, K_pi, SeqLen, R_sb, pInpMtr, pOutMtr);
@@ -225,7 +225,7 @@ void SubblockDeInterleaving(int SeqLen, float pInpMtr[RATE * (BLOCK_SIZE + 4)], 
 	DummyValue = (float)1000000;
 	
 //////////////////// DeInterleaving for i=0,1 ///////////////////////
-	float pInterMatrix[((BLOCK_SIZE + 31) / 32) * 32];
+	float pInterMatrix[((BLOCK_SIZE + 4 + 31) / 32) * 32] = {0.0};
 #pragma HLS DEPENDENCE variable=pInterMatrix inter false
 
 	for (int StrIdx = 0; StrIdx < (Rate - 1); StrIdx++)
@@ -287,8 +287,8 @@ void SubblockDeInterleaving(int SeqLen, float pInpMtr[RATE * (BLOCK_SIZE + 4)], 
 	}
 
 //////////////////// DeInterleaving for i=2 ///////////////////////
-	int Pi[((BLOCK_SIZE + 31) / 32) * 32];
-	float pInterSeq[((BLOCK_SIZE + 31) / 32) * 32];
+	int Pi[((BLOCK_SIZE + 4 + 31) / 32) * 32] = {0};
+	float pInterSeq[((BLOCK_SIZE + 4 + 31) / 32) * 32] = {0.0};
 #pragma HLS DEPENDENCE variable=pInterSeq inter false
 	
 	rate3_dummyvalue_assign:for (int k = 0; k < NumDummy; k++)

@@ -89,18 +89,6 @@ int main(int argc, char *argv[])
 
 	test_SCDemapper(&lte_phy_params);
 
-	/*
-	strcpy(tx_in_fname, "../testsuite/transformprecoderinputreal");
-	strcpy(rx_out_fname, "../testsuite/testtransformdecoderoutputreal");
-	err_n = check_float(tx_in_fname, rx_out_fname);
-	printf("%d\n", err_n);
-	
-	strcpy(tx_in_fname, "../testsuite/TransformPrecoderInputImag");
-	strcpy(rx_out_fname, "../testsuite/testTransformDecoderOutputImag");
-	err_n = check_float(tx_in_fname, rx_out_fname);
-	printf("%d\n", err_n);
-	*/
-
 #endif
 	
 	return 0;

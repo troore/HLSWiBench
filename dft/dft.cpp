@@ -4,10 +4,11 @@
    Discrete Fourier Transform
  */
 //void dft(int n, float a[N], float y[N], int direction)
-void dft(int n, float a[], float y[], int direction)
+void dft(int n, float a[2 * N], float y[2 * N], int direction)
 {
 	int k, j;
-	float p0[1201], p1[1201];
+//	float p0[1201], p1[1201];
+	float p0[N], p1[N];
 	p0[0] = 0.0; p1[0] = 0.0;
 	float ang;
 	float pre_ang = (float)direction * TWO_PI / (float)n;

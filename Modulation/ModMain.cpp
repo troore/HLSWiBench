@@ -36,8 +36,8 @@ void test_demod(LTE_PHY_PARAMS *lte_phy_params, int mod_type)
 
 	float awgn_sigma = 0.193649; //this value is for the standard input  see "AWGNSigma"
 	
-//	ReadInputFromFiles(lte_phy_params->demod_in, lte_phy_params->demod_in_buf_sz, "testModulationRandomOutputReal", "testModulationRandomOutputImag");
-	GeneRandomInput(lte_phy_params->demod_in, lte_phy_params->demod_in_buf_sz, "testModulationRandomOutputReal", "testModulationRandomOutputImag");
+	ReadInputFromFiles(lte_phy_params->demod_in, lte_phy_params->demod_in_buf_sz, "testModulationRandomOutputReal", "testModulationRandomOutputImag");
+//	GeneRandomInput(lte_phy_params->demod_in, lte_phy_params->demod_in_buf_sz, "testModulationRandomOutputReal", "testModulationRandomOutputImag");
 
 	Demodulating(lte_phy_params->demod_in, lte_phy_params->demod_LLR, lte_phy_params->demod_in_buf_sz, mod_type, awgn_sigma);
 
@@ -87,24 +87,22 @@ int main(int argc, char *argv[])
 		lte_phy_init(&lte_phy_params, fs_id);
 	}
 
-#ifdef Mod
+//#ifdef Mod
 
 //	test_mod(&lte_phy_params, mod_type);
 	test_mod(&lte_phy_params, 2);
 
-#else
+//#else
 
 //	test_demod(&lte_phy_params, mod_type);
 	test_demod(&lte_phy_params, 2);
 
-	/*
 	strcpy(tx_in_fname, "RandomModulationInput");
 	strcpy(rx_out_fname, "testDemodulationOutput");
 	err_n = check_float(tx_in_fname, rx_out_fname);
 	printf("%d\n", err_n);
-	*/
 
-#endif
+//#endif
 
 	return 0;
 }

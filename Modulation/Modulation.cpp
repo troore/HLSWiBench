@@ -225,7 +225,7 @@ void Modulating(/*LTE_PHY_PARAMS *lte_phy_params, */int pBitsSeq[N_MOD_IN_MAX], 
 	bits_per_samp = QAM16_BITS_PER_SAMP;
 	mod_table_len = QAM16_TABLE_LEN;
 
-	MOD_SAMP_LOOP: for (n_samp = 0; n_samp < (/*in_buf_sz*/ 7200 / bits_per_samp); n_samp++)
+	MOD_SAMP_LOOP: for (n_samp = 0; n_samp < (in_buf_sz / bits_per_samp); n_samp++)
 	{
 #pragma HLS PIPELINE
 		idx = 0;
@@ -338,10 +338,11 @@ void Demodulating(std::complex<float> pDecSeq[N_MOD_OUT_MAX], int pHD[N_MOD_IN_M
 
 void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MAX * 2], float pLLR[N_MOD_IN_MAX], int in_buf_sz, int mod_type, float awgnSigma)
 {
-#pragma HLS ARRAY_PARTITION variable=QAM16_table block factor=16 dim=1
-#pragma HLS RESOURCE variable=QAM16_table core=RAM_2P_BRAM
-#pragma HLS ARRAY_PARTITION variable=pDecSeq block factor=16 dim=1
-#pragma HLS RESOURCE variable=pDecSeq core=RAM_2P_BRAM
+#pragma HLS ARRAY_PARTITION variable=pLLR cyclic factor=4 dim=1
+#pragma HLS ARRAY_PARTITION variable=QAM16_table cyclic factor=16 dim=1
+//#pragma HLS RESOURCE variable=QAM16_table core=RAM_2P_BRAM
+#pragma HLS ARRAY_PARTITION variable=pDecSeq cyclic factor=16 dim=1
+//#pragma HLS RESOURCE variable=pDecSeq core=RAM_2P_BRAM
 
 	float No = 2.0 * (pow(awgnSigma, 2.0));
 //	float (*p_table)[2];
@@ -388,8 +389,9 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MA
 			b--;
 		}
 	}
+//	printf("%d\n", in_buf_sz);
 	
-	DEMOD_SYMB_LOOP: for (i = 0; i < /*in_buf_sz*/ 1800; i++)
+	DEMOD_SYMB_LOOP: for (i = 0; i < in_buf_sz /*28800*/; i++)
 	{
 #pragma HLS PIPELINE
 		DEMOD_TABLE_LOOP1: for(j = 0; j < mod_table_len; j++)
@@ -400,7 +402,7 @@ void Demodulating(/*LTE_PHY_PARAMS *lte_phy_params, */float pDecSeq[N_MOD_OUT_MA
 			//	std::complex<float> tmp = pDecSeq[i] - (std::complex<float>(QAM16_table[j][0], QAM16_table[j][1]));
 			//	metric[j] = tmp.imag() * tmp.imag() + tmp.real() * tmp.real();
 			float tmp[2];
-#pragma HLS RESOURCE variable=tmp core=RAM_2P_BRAM
+//#pragma HLS RESOURCE variable=tmp core=RAM_2P_BRAM
 			
 			tmp[0] = pDecSeq[2 * i + 0] - QAM16_table[j][0];
 			tmp[1] = pDecSeq[2 * i + 1] - QAM16_table[j][1];

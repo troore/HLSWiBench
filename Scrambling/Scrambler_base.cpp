@@ -11,10 +11,11 @@ void Scrambling(/*LTE_PHY_PARAMS *lte_phy_params, */int pInpSeq[N_SCRAMB_IN_MAX]
 //	n_inp = lte_phy_params->scramb_in_buf_sz;
 
 	printf("%d\n", n);
-	GenScrambInt(scramb_seq_int, 6144);
+//	GenScrambInt(scramb_seq_int, 6144);
+	GenScrambInt(scramb_seq_int, n);
 
 	////////////////////////Scrambling////////////////////////////
-	Scrambling_label1:for (i = 0; i < 6144; i++)
+	Scrambling_label1:for (i = 0; i < n; i++)
 	{
 		pOutSeq[i] = (pInpSeq[i] + scramb_seq_int[i]) % 2;
 	}

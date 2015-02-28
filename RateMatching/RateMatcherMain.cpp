@@ -8,7 +8,7 @@
 #include "RateMatcher.h"
 #include "GeneralFunc.h"
 //#include "timer/meas.h"
-//#include "check.h"
+#include "check.h"
 
 //#define TxRateM
 
@@ -32,8 +32,8 @@ void rx_rate_matching(LTE_PHY_PARAMS *lte_phy_params)
 {
 	std::cout << "Rx RateMatching starts" << std::endl;
 
-//	ReadInputFromFiles(lte_phy_params->rdm_in, lte_phy_params->rdm_in_buf_sz, "testTxRateMatchOutput");
-	GeneRandomInput(lte_phy_params->rm_in, lte_phy_params->rm_in_buf_sz, "RxRateMatchInput");
+	ReadInputFromFiles(lte_phy_params->rdm_in, lte_phy_params->rdm_in_buf_sz, "testTxRateMatchOutput");
+//	GeneRandomInput(lte_phy_params->rdm_in, lte_phy_params->rdm_in_buf_sz, "RxRateMatchInput");
 
 	RxRateMatching(lte_phy_params->rdm_in, lte_phy_params->rdm_out, lte_phy_params->rdm_hard, lte_phy_params->rdm_out_buf_sz);
 
@@ -75,22 +75,20 @@ int main(int argc, char *argv[])
 		lte_phy_init(&lte_phy_params, fs_id);
 	}
 
-	#ifdef TxRateM
+//	#ifdef TxRateM
 	
 	tx_rate_matching(&lte_phy_params);
 	
-	#else
+//	#else
 
 	rx_rate_matching(&lte_phy_params);
 
-	/*
 	strcpy(tx_in_fname, "TxRateMatchInput");
 	strcpy(rx_out_fname, "testRxRateMatchOutput");
 	err_n = check_float(tx_in_fname, rx_out_fname);
 	printf("%d\n", err_n);
-	*/
 	
-	#endif
+//	#endif
 	
 	return 0;
 }

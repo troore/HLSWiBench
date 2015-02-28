@@ -131,7 +131,7 @@ void SubblockDeInterleaving(int SeqLen, float pInpMtr[RATE * (BLOCK_SIZE + 4)], 
 	DummyValue = (float)1000000;
 	
 //////////////////// DeInterleaving for i=0,1 ///////////////////////
-	float pInterMatrix[((BLOCK_SIZE + 4 + 31) / 32) * 32];
+	float pInterMatrix[((BLOCK_SIZE + 4 + 31) / 32) * 32] = {0.0};
 
 	for (int StrIdx = 0; StrIdx < (Rate - 1); StrIdx++)
 	{
@@ -190,8 +190,8 @@ void SubblockDeInterleaving(int SeqLen, float pInpMtr[RATE * (BLOCK_SIZE + 4)], 
 	}
 
 //////////////////// DeInterleaving for i=2 ///////////////////////
-	int Pi[((BLOCK_SIZE + 4 + 31) / 32) * 32];
-	float pInterSeq[((BLOCK_SIZE + 4 + 31) / 32) * 32];
+	int Pi[((BLOCK_SIZE + 4 + 31) / 32) * 32] = {0};
+	float pInterSeq[((BLOCK_SIZE + 4 + 31) / 32) * 32] = {0.0};
 	
 	for (int k = 0; k < NumDummy; k++)
 		pInterSeq[k] = DummyValue;

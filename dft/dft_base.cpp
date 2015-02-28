@@ -1,10 +1,11 @@
 #include <math.h>
 #include "dft.h"
+
 /*
    Discrete Fourier Transform
  */
 //void dft(int n, float a[N], float y[N], int direction)
-void dft(int n, float a[], float y[], int direction)
+void dft(int n, float a[2 * N], float y[2 * N], int direction)
 {
 	int k, j;
 	float ang;

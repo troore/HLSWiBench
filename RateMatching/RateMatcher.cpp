@@ -1,4 +1,5 @@
 
+#include <stdio.h>
 #include "RateMatcher.h"
 
 
@@ -83,8 +84,8 @@ void RxRateMatching(float pLLRin[N_RM_OUT_MAX], float pLLRout[N_RM_IN_MAX], int 
 	int cur_blk_len;
 //	int out_buf_sz;
 	
-	float pInMatrix[RATE * (BLOCK_SIZE + 4)];
-	float pOutMatrix[RATE * (BLOCK_SIZE + 4)];
+	float pInMatrix[RATE * (BLOCK_SIZE + 4)] = {0.0};
+	float pOutMatrix[RATE * (BLOCK_SIZE + 4)] = {0.0};
 
 	int i, j, r;
 
@@ -101,6 +102,7 @@ void RxRateMatching(float pLLRin[N_RM_OUT_MAX], float pLLRout[N_RM_IN_MAX], int 
 	{
 		rm_last_blk_len = rm_blk_sz;
 	}
+
 
 	out_block_offset = 0;
 	DeTransposition_loop:for (i = 0; i < n_blocks; i++)

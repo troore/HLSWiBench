@@ -81,12 +81,12 @@ void RxRateMatching(float pLLRin[N_RM_OUT_MAX], float pLLRout[N_RM_IN_MAX], int 
 	int cur_blk_len;
 //	int out_buf_sz;
 	
-	float pInMatrix[RATE * (BLOCK_SIZE + 4)];
-	float pOutMatrix[RATE * (BLOCK_SIZE + 4)];
+	float pInMatrix[RATE * (BLOCK_SIZE + 4)] = {0.0};
+	float pOutMatrix[RATE * (BLOCK_SIZE + 4)] = {0.0};
 
 	int i, j, r;
 
-	printf("%d\n",out_buf_sz);
+//	printf("%d\n",out_buf_sz);
 
 //	out_buf_sz = lte_phy_params->rdm_out_buf_sz;
 	rm_blk_sz = BLOCK_SIZE + 4;

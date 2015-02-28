@@ -33,8 +33,8 @@ void test_turbo_decoding(LTE_PHY_PARAMS *lte_phy_params, int n_iters)
 {
 	std::cout << "Turbo Decoder starts" << std::endl;
 	
-//	ReadInputFromFiles(lte_phy_params->td_in, lte_phy_params->td_in_buf_sz, "testTurboEncoderOutput");
-	GeneRandomInput(lte_phy_params->td_in, lte_phy_params->td_in_buf_sz, "TurboDecoderInput");
+	ReadInputFromFiles(lte_phy_params->td_in, lte_phy_params->td_in_buf_sz, "testTurboEncoderOutput");
+//	GeneRandomInput(lte_phy_params->td_in, lte_phy_params->td_in_buf_sz, "TurboDecoderInput");
 	
 	for (int i = 0; i < lte_phy_params->td_in_buf_sz; i++)
 	{
@@ -89,11 +89,11 @@ int main(int argc, char *argv[])
 		lte_phy_init(&lte_phy_params, fs_id);
 	}
 
-#ifdef TurboEnc
+//#ifdef TurboEnc
 
 	test_turbo_encoding(&lte_phy_params);
 	
-#else
+//#else
 
 	int n_iters = 1;
 	
@@ -101,14 +101,11 @@ int main(int argc, char *argv[])
 
 	strcpy(tx_in_fname, "TurboEncoderInput");
 	strcpy(rx_out_fname, "testTurboDecoderOutput");
-	//err_n = check_float(tx_in_fname, rx_out_fname);
-	//printf("%d\n", err_n);
+	err_n = check_float(tx_in_fname, rx_out_fname);
+	printf("%d\n", err_n);
 
-#endif
+//#endif
 	
 	return 0;
 }
-
-
-
 

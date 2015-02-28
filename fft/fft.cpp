@@ -1,69 +1,6 @@
 
-/* Factored discrete Fourier transform, or FFT, and its inverse iFFT */
-
-#include <assert.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
 #include "fft.h"
-#include "lte_phy.h"
-
-#define N (1 << 5)
-#define PI	3.14159265358979323846264338327950288
-
-#ifdef DEBUG
-float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
-#else
-//float v[2 * N], v1[2 * N], vout[2 * N], v1out[2 * N];
-float v_real[N], v1_real[N], vout_real[N], v1out_real[N];
-float v_imag[N], v1_imag[N], vout_imag[N], v1out_imag[N];
-#endif
-
-/* Print a vector of complexes as ordered pairs. */
-
-static void print_vector(
-	const char *title,
-	float (*x)[2],
-	int n)
-{
-	int i;
-	printf("%s (dim=%d):", title, n);
-
-	for (i = 0; i < n; i++ )
-		printf(" %f,%f ", x[i][0], x[i][1]);
-	
-	putchar('\n');
-}
-
-static void print_vector(
-		const char *title,
-		float *x,
-		int n)
-{
-	int i;
-	printf("%s (dim=%d):", title, n);
-
-	for (i = 0; i < n; i++ )
-		printf(" %f,%f ", x[i], x[i + n]);
-	
-	putchar('\n');
-}
-
-static void print_vector(
-	const char *title,
-	float *x_real, float *x_imag,
-	int n)
-{
-	int i;
-	printf("%s (dim=%d):", title, n);
-
-	for (i = 0; i < n; i++ )
-		printf(" %f,%f ", x_real[i], x_imag[i]);
-	
-	putchar('\n');
-}
 
 static int BitReverse(int src, int size)
 {
@@ -147,7 +84,7 @@ void fft_iter(int n, float *a, float *y, int direction)
 	float wtr, wti;
 	float tr, ti;
 	float xr, xi;
-	int index[LTE_PHY_FFT_SIZE_MAX];
+	int index[N];
 
 	s = log2(n);
 	for (i = 0; i < n; i++)
@@ -219,7 +156,7 @@ void fft_iter(int n, float *a_real, float *a_imag, float *y_real, float *y_imag,
 	float wtr, wti;
 	float tr, ti;
 	float xr, xi;
-	int index[LTE_PHY_FFT_SIZE_MAX];
+	int index[N];
 
 	s = log2(n);
 	for (i = 0; i < n; i++)
@@ -240,8 +177,8 @@ void fft_iter(int n, float *a_real, float *a_imag, float *y_real, float *y_imag,
 		wdr = cos(t);
 		wdi = ((float)direction) * sin(t);
 
-		float y_real_tmp[LTE_PHY_FFT_SIZE_MAX];
-		float y_imag_tmp[LTE_PHY_FFT_SIZE_MAX];
+		float y_real_tmp[N];
+		float y_imag_tmp[N];
 		for(k = 0; k < n; k++)
 		{
 #pragma HLS PIPELINE
@@ -282,7 +219,7 @@ void fft_iter(int n, float *a_real, float *a_imag, float *y_real, float *y_imag,
 	}
 }
 
-void fft_nrvs(int n, float *a, float *y, int direction)
+void fft_nrvs_same_array(int n, float *a, float *y, int direction)
 {
 	int p, i, k;
 	int lgn;
@@ -333,8 +270,8 @@ void fft_nrvs(int n, float *a, float *y, int direction)
 	}
 }
 
-void fft_nrvs(int n, float *a_real, float *a_imag,
-			  float *y_real, float *y_imag,
+void fft_nrvs_two_arrays(int n, float a_real[N], float a_imag[N],
+			  float y_real[N], float y_imag[N],
 			  int direction)
 {
 	int p, i, k;
@@ -384,83 +321,3 @@ void fft_nrvs(int n, float *a_real, float *a_imag,
 		}
 	}
 }
-
-/*
-int main(int argc, char *argv[])
-{
-//	float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
-	int k;
-
-	FILE *fptr_real, *fptr_imag;
-
-//	fptr_real = fopen("../lte/src/OFDM/testsuite/ModulationInputReal", "r");
-//	fptr_imag = fopen("../lte/src/OFDM/testsuite/ModulationInputImag", "r");
-
-	// Fill v[] with a function of known FFT:
-	for (k = 0; k < N; k++)
-	{
-#ifdef DEBUG
-		v[k][0] = 0.125 * cos((2 * PI * k ) / (float)N);
-		v[k][1] = 0.125 * sin((2 * PI * k) / (float)N);
-#else
-		//	v[k] = 0.125 * cos((2 * PI * k) / (float)N);
-		//	v[k + N] = 0.125 * sin((2 * PI * k ) / (float)N);
-		v_real[k] = 0.125 * cos((2 * PI * k) / (float)N);
-		v_imag[k + N] = 0.125 * sin((2 * PI * k ) / (float)N);
-#endif
-	//	v1[k][0] =  0.3*cos(2*PI*k/(float)N);
-	//	v1[k][1] = -0.3*sin(2*PI*k/(float)N);
-
-	//	fscanf(fptr_real, "%f", &(v[k][0]));
-	//	fscanf(fptr_imag, "%f", &(v[k][1]));
-	}
-
-//	v[0]=1;v[1]=0;
-//	v[2]=2;v[3]=0;
-//	v[4]=4;v[5]=0;
-//	v[6]=3;v[7]=0;
-
-//	print_vector("Orig", v, N);
-	print_vector("Orig", v_real, v_imag, N);
-#ifdef DEBUG
-	fft_recur(N, v, vout, -1);
-#else
-//	fft_nrvs(N, v, vout, -1);
-	fft_nrvs_two_arrays(N, v_real, v_imag, vout_real, vout_imag, -1);
-#endif
-
-#ifdef DEBUG
-	for (k = 0; k < N; k++)
-	{
-		vout[k][0] /= N;
-		vout[k][1] /= N;
-	}
-#else
-	for (k = 0; k < N; k++)
-	{
-		//	vout[k] /= N;
-		//	vout[k + N] /= N;
-		vout_real[k] /= N;
-		vout_imag[k] /= N;
-	}
-#endif
-//	print_vector("iFFT", vout, N);
-	print_vector("iFFT", vout_real, vout_imag, N);
-#ifdef DEBUG
-	fft_recur(N, vout, v, 1);
-#else
-//	fft_nrvs(N, vout, v, 1);
-	fft_nrvs_two_arrays(N, vout_real, vout_imag, v_real, v_imag, 1);
-#endif
-//	print_vector(" FFT", v, N);
-	print_vector(" FFT", v_real, v_imag, N);
-
-//	print_vector("Orig", v1, N);
-//	fft(N, v1, v1out, -1);
-//	print_vector(" FFT", v1out, N);
-//	fft(N, v1out, v1, 1);
-//	print_vector("iFFT", v1, N);
-
-	return 0;
-}
-*/
