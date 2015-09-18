@@ -3,11 +3,12 @@ SRC_DIR = ..
 LIB_DIR = ../../lib
 
 SRCS = $(SRC_DIR)/EqualizerMain.cpp $(SRC_DIR)/Equalizer_baseline.cpp
-SRCS += ../../lte_phy.cpp $(LIB_DIR)/GeneralFunc.cpp $(LIB_DIR)/gauss.cpp $(LIB_DIR)/check.cpp ../../dmrs/dmrs_base.cpp
+SRCS += ../../ResMapping/ResMapper_base.cpp ../../OFDM/OFDM_baseline.cpp
+SRCS += ../../lte_phy.cpp $(LIB_DIR)/GeneralFunc.cpp $(LIB_DIR)/gauss.cpp $(LIB_DIR)/check.cpp ../../dmrs/dmrs_base.cpp ../../fft/fft_no_pragmas.cpp
 
 OBJS := $(patsubst %.cpp, %.o, $(SRCS))
 
-INC_FLAGS = -I.. -I../../ -I$(LIB_DIR)
+INC_FLAGS = -I.. -I../../ -I$(LIB_DIR) -I../../fft -I../../ResMapping -I../../OFDM
 
 CXXFLAGS = -g -Wall
 LINKFLAGS = 

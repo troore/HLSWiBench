@@ -38,7 +38,8 @@ void ofmodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_FFT
 				p_samp_in_buf[i + NIFFT] = pInpData[symb_idx * NIFFT + i + in_buf_sz];
 			}
 			
-			fft_nrvs(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
+		//	fft_nrvs(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
+			fft_nrvs_same_array(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
 			
 			for (i = 0; i < NIFFT; i++)
 			{
@@ -91,7 +92,8 @@ void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpData[2 * LTE_PHY_F
 				p_samp_in_buf[i + NIFFT] = pInpData[symb_idx * (CPLen + NIFFT) + i + CPLen + in_buf_sz];
 			}
 
-			fft_iter(NIFFT, p_samp_in_buf, p_samp_out_buf, -1);
+		//	fft_iter(NIFFT, p_samp_in_buf, p_samp_out_buf, -1);
+			fft_nrvs_same_array(NIFFT, p_samp_in_buf, p_samp_out_buf, -1);
 
 			for(i = 0; i < NIFFT; i++)
 			{
@@ -121,7 +123,12 @@ void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[
 			int symb_idx = nlayer * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT);
 			
+			/*
 			fft_iter(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
+					 pOutDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pOutDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
+					 -1);
+					 */
+			fft_iter_two_arrays(NIFFT, pInpDataReal + symb_idx * NIFFT, pInpDataImag + symb_idx * NIFFT,
 					 pOutDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pOutDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
 					 -1);
 			
@@ -140,7 +147,7 @@ void ofmodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[
 	}
 }
 
-void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX],
+void ofdemodulating_two_arrays(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_FFT_SIZE_MAX], float pInpDataImag[LTE_PHY_FFT_SIZE_MAX],
 					float pOutDataReal[LTE_PHY_FFT_SIZE_MAX], float pOutDataImag[LTE_PHY_FFT_SIZE_MAX])
 {
 	int NumRxAntenna = lte_phy_params->N_rx_ant;
@@ -157,7 +164,12 @@ void ofdemodulating(LTE_PHY_PARAMS *lte_phy_params, float pInpDataReal[LTE_PHY_F
 			int symb_idx = nrx * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT);
 
+			/*
 			fft_nrvs(NIFFT, pInpDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pInpDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
+					 pOutDataReal + symb_idx * NIFFT, pOutDataImag + symb_idx * NIFFT,
+					 1);
+					 */
+			fft_nrvs_two_arrays(NIFFT, pInpDataReal + symb_idx * (CPLen + NIFFT) + CPLen, pInpDataImag + symb_idx * (CPLen + NIFFT) + CPLen,
 					 pOutDataReal + symb_idx * NIFFT, pOutDataImag + symb_idx * NIFFT,
 					 1);
 
