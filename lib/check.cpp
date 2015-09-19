@@ -1,6 +1,6 @@
 #include "check.h"
 
-int check_float(char *s1,char *s2)
+int check_float(char *s1, char *s2)
 {
 	FILE *fp1 = fopen(s1,"r");
 	FILE *fp2 = fopen(s2,"r");

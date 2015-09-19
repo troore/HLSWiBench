@@ -7,9 +7,9 @@
 
 #include "OFDM.h"
 #include "lte_phy.h"
-//#include "check.h"
+#include "check.h"
 
-#define MOD
+//#define TWO
 
 LTE_PHY_PARAMS lte_phy_params;
 
@@ -17,16 +17,24 @@ void test_mod(LTE_PHY_PARAMS *lte_phy_params)
 {
 	std::cout << "OFDM modulation starts" << std::endl;
 
+#ifndef TWO
 	GeneRandomInput(lte_phy_params->ofmod_in, lte_phy_params->ofmod_in_buf_sz, "RandomModulationInputReal", "RandomModulationInputImag");
-//	GeneRandomInput(lte_phy_params->ofmod_in_real, lte_phy_params->ofmod_in_imag, lte_phy_params->ofmod_in_buf_sz, "RandomModulationInputReal", "RandomModulationInputImag");
+#else
+	GeneRandomInput(lte_phy_params->ofmod_in_real, lte_phy_params->ofmod_in_imag, lte_phy_params->ofmod_in_buf_sz, "RandomModulationInputReal", "RandomModulationInputImag");
+#endif
 
-	printf("%d\n", lte_phy_params->ofmod_in_buf_sz);
+#ifndef TWO
+	ofmodulating(lte_phy_params->ofmod_in, lte_phy_params->ofmod_out, lte_phy_params->N_tx_ant, lte_phy_params->N_fft_sz, lte_phy_params->N_samps_cp_l_0);
+#else
+	ofmodulating(lte_phy_params->ofmod_in_real, lte_phy_params->ofmod_in_imag, lte_phy_params->ofmod_out_real, lte_phy_params->ofmod_out_imag,
+		lte_phy_params->N_tx_ant, lte_phy_params->N_fft_sz, lte_phy_params->N_samps_cp_l_0);
+#endif
 
-	ofmodulating(lte_phy_params, lte_phy_params->ofmod_in, lte_phy_params->ofmod_out);
-//	ofmodulating(lte_phy_params, lte_phy_params->ofmod_in_real, lte_phy_params->ofmod_in_imag, lte_phy_params->ofmod_out_real, lte_phy_params->ofmod_out_imag);
-	
+#ifndef TWO
 	WriteOutputToFiles(lte_phy_params->ofmod_out, lte_phy_params->ofmod_out_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
-//	WriteOutputToFiles(lte_phy_params->ofmod_out_real, lte_phy_params->ofmod_out_imag, lte_phy_params->ofmod_out_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
+#else
+	WriteOutputToFiles(lte_phy_params->ofmod_out_real, lte_phy_params->ofmod_out_imag, lte_phy_params->ofmod_out_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
+#endif
 
 	std::cout << "OFDM modulation ends" << std::endl;
 }
@@ -36,15 +44,25 @@ void test_demod(LTE_PHY_PARAMS *lte_phy_params)
 	
 	std::cout <<"OFDM demodulation starts"<< std::endl;
 
-	GeneRandomInput(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_in_buf_sz, "RandomDemodulationInputReal", "RandomDemodulationInputImag");
-//	ReadInputFromFiles(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_in_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
-//	ReadInputFromFiles(lte_phy_params->ofdemod_in_real, lte_phy_params->ofdemod_in_imag, lte_phy_params->ofdemod_in_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
+	#ifndef TWO
+//	GeneRandomInput(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_in_buf_sz, "RandomDemodulationInputReal", "RandomDemodulationInputImag");
+	ReadInputFromFiles(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_in_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
+	#else
+//	GeneRandomInput(lte_phy_params->ofdemod_in_real, lte_phy_params->ofdemod_in_imag, lte_phy_params->ofdemod_in_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
+	ReadInputFromFiles(lte_phy_params->ofdemod_in_real, lte_phy_params->ofdemod_in_imag, lte_phy_params->ofdemod_in_buf_sz, "testModulationOutputReal", "testModulationOutputImag");
+	#endif
 
-	ofdemodulating(lte_phy_params, lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_out);
-//	ofdemodulating(lte_phy_params, lte_phy_params->ofdemod_in_real, lte_phy_params->ofdemod_in_imag, lte_phy_params->ofdemod_out_real, lte_phy_params->ofdemod_out_imag);
+#ifndef TWO
+	ofdemodulating(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_out, lte_phy_params->N_rx_ant, lte_phy_params->N_fft_sz, lte_phy_params->N_samps_cp_l_0);
+#else
+	ofdemodulating(lte_phy_params->ofdemod_in_real, lte_phy_params->ofdemod_in_imag, lte_phy_params->ofdemod_out_real, lte_phy_params->ofdemod_out_imag, lte_phy_params->N_tx_ant, lte_phy_params->N_fft_sz, lte_phy_params->N_samps_cp_l_0);
+#endif
 
+#ifndef TWO
 	WriteOutputToFiles(lte_phy_params->ofdemod_out, lte_phy_params->ofdemod_out_buf_sz, "testDemodulationOutputReal", "testDemodulationOutputImag");
-//	WriteOutputToFiles(lte_phy_params->ofdemod_out_real, lte_phy_params->ofdemod_out_imag, lte_phy_params->ofdemod_out_buf_sz, "testDemodulationOutputReal", "testDemodulationOutputImag");
+#else
+	WriteOutputToFiles(lte_phy_params->ofdemod_out_real, lte_phy_params->ofdemod_out_imag, lte_phy_params->ofdemod_out_buf_sz, "testDemodulationOutputReal", "testDemodulationOutputImag");
+#endif
 	
 	std::cout << "OFDM demodulation ends" << std::endl;
 }
@@ -83,15 +101,10 @@ int main(int argc, char *argv[])
 		lte_phy_init(&lte_phy_params, fs_id);
 	}
 
-#ifdef MOD
-	
 	test_mod(&lte_phy_params);
 	
-#else
-
 	test_demod(&lte_phy_params);
 
-	/*
 	strcpy(tx_in_fname, "RandomModulationInputReal");
 	strcpy(rx_out_fname, "testDemodulationOutputReal");
 	err_n = check_float(tx_in_fname, rx_out_fname);
@@ -101,10 +114,7 @@ int main(int argc, char *argv[])
 	strcpy(rx_out_fname, "testDemodulationOutputImag");
 	err_n = check_float(tx_in_fname, rx_out_fname);
 	printf("%d\n", err_n);
-	*/
 
-#endif
-	
 	return 0;
 }
 

@@ -10,11 +10,11 @@
 #ifdef DEBUG
 float v[N][2], v1[N][2], vout[N][2], v1out[N][2];
 #else
-/*
 float v[2 * N], v1[2 * N], vout[2 * N], v1out[2 * N];
-*/
+/*
 float v_real[N], v1_real[N], vout_real[N], v1out_real[N];
 float v_imag[N], v1_imag[N], vout_imag[N], v1out_imag[N];
+*/
 #endif
 
 /* Print a vector of complexes as ordered pairs. */
@@ -41,8 +41,10 @@ static void print_vector(
 	int i;
 	printf("%s (dim=%d):", title, n);
 
-	for (i = 0; i < n; i++ )
-		printf(" %f,%f ", x[i], x[i + n]);
+	for (i = 0; i < n; i++ ) {
+		//	printf(" %f,%f ", x[i], x[i + n]);
+		printf(" %f,%f ", x[2 * i + 0], x[2 * i + 1]);
+	}
 	
 	putchar('\n');
 }
@@ -68,7 +70,7 @@ int main(int argc, char *argv[])
 
 	if (argc < 2)
 	{
-		printf("Usage: ./dft n\n");
+		printf("Usage: ./fft n\n");
 		exit(1);
 	}
 
@@ -88,10 +90,12 @@ int main(int argc, char *argv[])
 		v[k][0] = 0.125 * cos((2 * PI * k ) / (float)n);
 		v[k][1] = 0.125 * sin((2 * PI * k) / (float)n);
 #else
-//			v[k] = 0.125 * cos((2 * PI * k) / (float)N);
-//			v[k + N] = 0.125 * sin((2 * PI * k ) / (float)N);
+			v[2 * k + 0] = 0.125 * cos((2 * PI * k) / (float)N);
+			v[2 * k + 1] = 0.125 * sin((2 * PI * k ) / (float)N);
+		/*
 		v_real[k] = 0.125 * cos((2 * PI * k) / (float)n);
 		v_imag[k] = 0.125 * sin((2 * PI * k ) / (float)n);
+		*/
 #endif
 	//	v1[k][0] =  0.3*cos(2*PI*k/(float)N);
 	//	v1[k][1] = -0.3*sin(2*PI*k/(float)N);
@@ -102,15 +106,17 @@ int main(int argc, char *argv[])
 
 
 #ifdef DEBUG
-//	print_vector("Orig", v, n);
+	print_vector("Orig", v, n);
 #else
 //	print_vector("Orig", v_real, v_imag, n);
+	print_vector("Orig", v, n);
 #endif
 
 #ifdef DEBUG
 	fft_recur(n, v, vout, -1);
 #else
-	fft_nrvs_two_arrays(n, v_real, v_imag, vout_real, vout_imag, -1);
+//	fft_nrvs_two_arrays(n, v_real, v_imag, vout_real, vout_imag, -1);
+	fft_nrvs_same_array_cyclic(n, v, vout, -1);
 #endif
 
 #ifdef DEBUG
@@ -122,31 +128,33 @@ int main(int argc, char *argv[])
 #else
 	for (k = 0; k < n; k++)
 	{
-		//	vout[k] /= N;
-		//	vout[k + N] /= N;
-		vout_real[k] /= n;
-		vout_imag[k] /= n;
+		vout[2 * k + 0] /= n;
+		vout[2 * k + 1] /= n;
+		//	vout_real[k] /= n;
+		//	vout_imag[k] /= n;
 	}
 #endif
 
-/*
 #ifdef DEBUG
 	print_vector("iFFT", vout, n);
 #else
-	print_vector("iFFT", vout_real, vout_imag, n);
+//	print_vector("iFFT", vout_real, vout_imag, n);
+	print_vector("iFFT", vout, n);
 #endif
 
 #ifdef DEBUG
 	fft_recur(n, vout, v, 1);
 #else
-	fft_nrvs_two_arrays(n, vout_real, vout_imag, v_real, v_imag, 1);
+//	fft_nrvs_two_arrays(n, vout_real, vout_imag, v_real, v_imag, 1);
+	fft_nrvs_same_array_cyclic(n, vout, v, 1);
 #endif
 
 #ifdef DEBUG
 	print_vector("FFT", v, n);
 #else
-	print_vector("FFT", v_real, v_imag, n);
+//	print_vector("FFT", v_real, v_imag, n);
+	print_vector("FFT", v, n);
 #endif
-*/
+	
 	return 0;
 }
