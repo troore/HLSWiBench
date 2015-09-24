@@ -31,3 +31,11 @@
 2.	Total != Dynamic + static
 
 	Some kernels show this result on power estimation.
+
+2015-09-19 Xuechao Wei <troore@gmail.com>
+
+[Bug Fixed]
+
+Equalizing/Equalizer.cpp
+
+The usage of pX_tmp for pipeline optimization is not correct. But the right way to eliminate dependence is under design.
