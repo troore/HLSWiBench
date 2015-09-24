@@ -1,6 +1,9 @@
 
+#include <stdio.h>
 #include <math.h>
 #include "fft.h"
+
+#define NUM_FFT 2048
 
 static int BitReverse(int src, int size)
 {
@@ -285,11 +288,11 @@ void fft_nrvs_same_array_cyclic(int n, float *a, float *y, int direction)
 
 //	printf("FFT: %d\n", n);
 
-	for (p = 1; p <= (n / 2); p <<= 1)
+	for (p = 1; p <= (/*n*/NUM_FFT / 2); p <<= 1)
 	{
 		//	omega_m[0] = cos((2 * PI) / m);
 		//	omega_m[1] = ((float)direction) * sin((2 * PI) / m);
-		for (i = 0; i < (n >> 1); i++)
+		for (i = 0; i < (/*n*/NUM_FFT >> 1); i++)
 		{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
@@ -314,7 +317,7 @@ void fft_nrvs_same_array_cyclic(int n, float *a, float *y, int direction)
 			y[2 * (2 * i - k + p) + 1] = u[1] - t[1];
 		}
 		
-		for (i = 0; i < n; i++)
+		for (i = 0; i < /*n*/NUM_FFT; i++)
 		{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false

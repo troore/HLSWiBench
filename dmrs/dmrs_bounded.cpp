@@ -3,6 +3,10 @@
 #include <math.h>
 #include "lte_phy.h"
 
+#define N_LAYER 2
+#define N_DFT 2048
+#define NZC 1193
+
 #define PI 3.14159265358979
 
 void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
@@ -31,6 +35,7 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 
 	zc_flag = 1;
 	idx = 0;
+/*
 	look_up_prime_table_loop:while (zc_flag)
 	{
 #pragma HLS PIPELINE
@@ -44,8 +49,10 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 			idx++;
 		}
 	}
+*/
+	Nzc = NZC;
 
-	printf("geneDMRS: %d %d %d\n", N_layer, N_dft, Nzc);
+//	printf("geneDMRS: %d %d %d\n", N_layer, N_dft, Nzc);
 	
 	float tmp1;
 	int tmp2;
@@ -61,7 +68,7 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 
 
 	double theta_pre = -PI * q / (double)Nzc;
-	calculate_px_array_loop:for (int m = 0;m < Nzc; m++)
+	calculate_px_array_loop:for (int m = 0; m < /*Nzc*/ NZC; m++)
 	{
 #pragma HLS PIPELINE
 		double theta = theta_pre *  m * (m + 1.0);
@@ -72,12 +79,12 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 
 	calculate_pDMRS_from_px_loop:for (int slot = 0; slot < 2; slot++)
 	{
-		for (int layer = 0; layer < N_layer; layer++)
+		for (int layer = 0; layer < /*N_layer*/ N_LAYER; layer++)
 		{
 #pragma HLS LOOP_FLATTEN
 			int cs = ncs[slot] + 6 * layer;
 			double alpha = 2.0 * PI * cs / 12.0;
-			for (int n = 0; n < N_dft; n++)
+			for (int n = 0; n < /*N_dft*/N_DFT; n++)
 			{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
@@ -99,7 +106,7 @@ void geneDMRS(float pDMRS[2 * LTE_PHY_N_ANT_MAX * LTE_PHY_DFT_SIZE_MAX * 2],
 	if (N_layer == 2)
 	{
 		int index_offset = 2 * (1 * N_layer + 1) * N_dft;
-		negate_pDMRS_loop:for (int n = 0; n < N_dft; n ++)
+		negate_pDMRS_loop:for (int n = 0; n < /*N_dft*/N_DFT; n ++)
 		{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false

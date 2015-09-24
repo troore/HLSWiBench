@@ -1,12 +1,12 @@
 
-open_project -reset equalizer_chain_prj
+open_project -reset equalizer_chain_bounded_prj
 set_top equalizer_chain
 add_files simple_rx.cpp -cflags "-I../ -I../lib -I../ResMapping -I../OFDM -I../Equalizing"
-add_files ../dmrs/dmrs.cpp -cflags "-I../ -I../lib"
-add_files ../ResMapping/ResMapper.cpp -cflags "-I../ -I../lib"
-add_files ../Equalizing/Equalizer.cpp -cflags "-I../ -I../lib"
-add_files ../fft/fft.cpp
-add_files ../OFDM/OFDM_nrvs_same_array_cyclic.cpp -cflags "-I../ -I../lib"
+add_files ../dmrs/dmrs_bounded.cpp -cflags "-I../ -I../lib"
+add_files ../ResMapping/ResMapper_bounded.cpp -cflags "-I../ -I../lib"
+add_files ../Equalizing/Equalizer_bounded.cpp -cflags "-I../ -I../lib"
+add_files ../fft/fft_bounded.cpp
+add_files ../OFDM/OFDM_nrvs_same_array_cyclic_bounded.cpp -cflags "-I../ -I../lib"
 add_files -tb simple_rx_main.cpp -cflags "-I../ -I../lib"
 add_files -tb ../lib/GeneralFunc.cpp -cflags "-I../lib"
 add_files -tb ../lib/gauss.cpp -cflags "-I../lib"

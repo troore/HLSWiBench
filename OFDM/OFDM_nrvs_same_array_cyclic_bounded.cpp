@@ -4,6 +4,10 @@
 #include "fft/fft.h"
 #include "lte_phy.h"
 
+#define NUM_RX_ANTENNA 2
+#define NUM_UL_SYMB_SF 14
+#define NUM_FFT 2048
+
 void ofmodulating(float pInpData[2 * N_OFMOD_IN_MAX], float pOutData[2 * N_OFMOD_IN_MAX],
 				  int NumLayer, int NIFFT, int CPLen)
 {
@@ -77,14 +81,14 @@ void ofdemodulating(float pInpData[2 * N_OFDEMOD_IN_MAX], float pOutData[2 * N_O
 
 //	printf("OFDM: %d %d %d\n", NumRxAntenna, NumULSymbSF, NIFFT);
 	
-	for (nrx = 0; nrx < NumRxAntenna; nrx++)
+	for (nrx = 0; nrx < /*NumRxAntenna*/ NUM_RX_ANTENNA; nrx++)
 	{
-		for (nsym = 0; nsym < NumULSymbSF; nsym++)
+		for (nsym = 0; nsym < /*NumULSymbSF*/ NUM_UL_SYMB_SF; nsym++)
 		{
 			int symb_idx = nrx * NumULSymbSF + nsym;
 			float norm = (float)sqrt((float)NIFFT) /*(float)1*/;
 
-			for (i = 0; i < NIFFT; i++)
+			for (i = 0; i < /*NIFFT*/NUM_FFT; i++)
 			{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
@@ -95,7 +99,7 @@ void ofdemodulating(float pInpData[2 * N_OFDEMOD_IN_MAX], float pOutData[2 * N_O
 		//	fft_iter(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
 			fft_nrvs_same_array_cyclic(NIFFT, p_samp_in_buf, p_samp_out_buf, 1);
 
-			for(i = 0; i < NIFFT; i++)
+			for(i = 0; i < /*NIFFT*/ NUM_FFT; i++)
 			{
 #pragma HLS PIPELINE
 #pragma HLS DEPENDENCE array inter false
