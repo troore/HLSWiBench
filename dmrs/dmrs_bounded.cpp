@@ -4,7 +4,7 @@
 #include "lte_phy.h"
 
 #define N_LAYER 2
-#define N_DFT 2048
+#define N_DFT 1200
 #define NZC 1193
 
 #define PI 3.14159265358979
