@@ -15,14 +15,21 @@ LTE_PHY_PARAMS lte_phy_params;
 
 void test_equalizer_chain(LTE_PHY_PARAMS *lte_phy_params)
 {
-//	GeneRandomInput(lte_phy_params->resm_in, lte_phy_params->resm_in_buf_sz, "SubCarrierMapInputReal", "SubCarrierMapInputImag");
-	GeneRandomInput(lte_phy_params->ofmod_out, lte_phy_params->ofmod_out_buf_sz, "ModulationInputReal", "ModulationInputImag");
+	GeneRandomInput(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_in_buf_sz, "RandomDemodulationInputReal", "RandomDemodulationInputImag");
 	equalizer_chain(lte_phy_params);
 	WriteOutputToFiles(lte_phy_params->eq_out, lte_phy_params->eq_out_buf_sz, "testLSCELSEqOutputReal", "testLSCELSEqOutputImag");
 }
 
 void test_equalizer_indep(LTE_PHY_PARAMS *lte_phy_params)
-{}
+{
+	GeneRandomInput(lte_phy_params->ofdemod_in, lte_phy_params->ofdemod_in_buf_sz, "RandomDemodulationInputReal", "RandomDemodulationInputImag");
+	GeneRandomInput(lte_phy_params->resdm_in, lte_phy_params->resdm_in_buf_sz, "SubCarrierMapInputReal", "SubCarrierMapInputImag");
+	GeneRandomInput(lte_phy_params->eq_in, lte_phy_params->eq_in_buf_sz, "LSCELSEqOutputReal", "LSCELSEqOutputImag");
+	equalizer_indep(lte_phy_params);
+	WriteOutputToFiles(lte_phy_params->ofdemod_out, lte_phy_params->ofdemod_out_buf_sz, "testDemodulationOutputReal", "testDemodulationOutputImag");
+	WriteOutputToFiles(lte_phy_params->resdm_out, lte_phy_params->resdm_out_buf_sz, "testSubCarrierDemapOutputReal", "testSubCarrierDemapOutputImag");
+	WriteOutputToFiles(lte_phy_params->eq_out, lte_phy_params->eq_out_buf_sz, "testLSCELSEqOutputReal", "testLSCELSEqOutputImag");
+}
 
 int main(int argc, char *argv[])
 {
@@ -57,7 +64,11 @@ int main(int argc, char *argv[])
 		lte_phy_init(&lte_phy_params, fs_id);
 	}
 
+#ifdef CHAIN
 	test_equalizer_chain(&lte_phy_params);
+#else
+	test_equalizer_indep(&lte_phy_params);
+#endif
 
 	/*
 	strcpy(tx_in_fname, "SubCarrierMapInputReal");

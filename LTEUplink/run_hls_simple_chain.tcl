@@ -7,7 +7,7 @@ add_files ../ResMapping/ResMapper.cpp -cflags "-I../ -I../lib"
 add_files ../Equalizing/Equalizer.cpp -cflags "-I../ -I../lib"
 add_files ../fft/fft.cpp
 add_files ../OFDM/OFDM_nrvs_same_array_cyclic.cpp -cflags "-I../ -I../lib"
-add_files -tb simple_rx_main.cpp -cflags "-I../ -I../lib"
+add_files -tb simple_rx_main.cpp -cflags "-I../ -I../lib -DCHAIN"
 add_files -tb ../lib/GeneralFunc.cpp -cflags "-I../lib"
 add_files -tb ../lib/gauss.cpp -cflags "-I../lib"
 add_files -tb ../lib/check.cpp -cflags "-I../lib"
